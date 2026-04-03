@@ -59,7 +59,7 @@
 .dc.sel{border:2.5px solid var(--color-primary);box-shadow:0 0 0 4px rgba(255,107,53,0.2),0 4px 16px rgba(255,107,53,0.25);transform:scale(1.02);}
 .dc.fad{opacity:.2;pointer-events:none;}
 .dc.tod .dn{background:var(--color-primary);color:white;border-radius:50%;box-shadow:0 4px 12px rgba(255,107,53,0.4);transform:scale(1.15);font-weight:700;}
-.dn{width:20px;height:20px;font-size:var(--fs-xs);font-weight:500;line-height:var(--lh-xs);color:var(--color-text-primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin:var(--space-xs);}
+.dn{width:20px;height:20px;font-size:var(--fs-xs);font-weight:500;line-height:var(--lh-xs);color:var(--color-text-primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin:var(--space-xs);overflow:hidden;}
 .th{width:100%;flex:1;object-fit:cover;display:none;border-top:0.5px solid var(--color-border-tertiary);}
 .csw{width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .1s,box-shadow .15s;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,0.1);}
 .csw:hover{transform:scale(1.25);box-shadow:0 4px 10px rgba(0,0,0,0.2);}
@@ -177,7 +177,11 @@ textarea:focus{border-color:var(--color-secondary) !important;box-shadow:0 0 0 3
         <canvas id="cv" style="background:white;cursor:crosshair;touch-action:none;border-radius:4px;display:block;box-shadow:0 1px 3px rgba(0,0,0,0.1);"></canvas>
       </div>
       <div style="padding:var(--space-lg);border-top:0.5px solid var(--color-border-tertiary);flex-shrink:0;">
-        <textarea id="notes" placeholder="What's on your mind today?" style="width:100%;height:60px;resize:none;border:1.5px solid var(--color-border-secondary);border-left:3px solid var(--color-secondary);border-radius:var(--border-radius-md);padding:var(--space-md);font-size:var(--fs-sm);font-family:var(--font-ui);line-height:var(--lh-sm);background:var(--color-background-primary);color:var(--color-text-primary);display:block;transition:all .12s;"></textarea>
+        <textarea id="notes" placeholder="What's on your mind today?" maxlength="500" aria-label="Daily notes" aria-describedby="notes-info" style="width:100%;height:60px;resize:none;border:1.5px solid var(--color-border-secondary);border-left:3px solid var(--color-secondary);border-radius:var(--border-radius-md);padding:var(--space-md);font-size:var(--fs-sm);font-family:var(--font-ui);line-height:var(--lh-sm);background:var(--color-background-primary);color:var(--color-text-primary);display:block;transition:all .12s;"></textarea>
+        <div id="notes-info" style="margin-top:4px;font-size:var(--fs-xs);color:var(--color-text-tertiary);display:flex;justify-content:space-between;">
+          <span>Add thoughts to your day</span>
+          <span id="notes-count" style="font-weight:600;">0/500</span>
+        </div>
       </div>
     </div>
   </div>
@@ -190,10 +194,18 @@ const MNS=['January','February','March','April','May','June','July','August','Se
 const DNS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
 let cur=new Date(), selKey=null, drw=false, lx=0, ly=0;
-let col=COLS[0], penW=3, ers=false, cinit=false;
+let col=COLS[0], penW=3, ers=false, cinit=false, isSaving=false;
 const cache=new Map();
 const cv=document.getElementById('cv');
 const ctx=cv.getContext('2d');
+
+const notesEl=document.getElementById('notes');
+notesEl.addEventListener('input',(e)=>{
+  const count=e.target.value.length;
+  const countEl=document.getElementById('notes-count');
+  if(countEl)countEl.textContent=`${count}/500`;
+});
+
 
 // Build color row
 const cRow=document.getElementById('cRow');
@@ -239,13 +251,25 @@ function toggleMoreWidths(){const more=document.querySelectorAll('.width-more');
 
 function setErs(){ers=!ers;const btn=document.getElementById('erbtn');btn.classList.toggle('on',ers);btn.classList.add('save-pulse');setTimeout(()=>btn.classList.remove('save-pulse'),400);}
 function clrC(){
-  if(confirm('Clear your drawing? You can undo with Ctrl+Z')) {
-    ctx.globalCompositeOperation='source-over';
-    ctx.fillStyle='white';
-    ctx.fillRect(0,0,cv.width,cv.height);
-    const cvWrap=document.getElementById('cwrap');
-    cvWrap.style.animation='none';
-    setTimeout(()=>cvWrap.style.animation='',10);
+  if(!cv || !ctx){
+    showToast('❌ Canvas not available.');
+    return;
+  }
+  if(confirm('Clear your drawing? This cannot be undone.')) {
+    try{
+      ctx.globalCompositeOperation='source-over';
+      ctx.fillStyle='white';
+      ctx.fillRect(0,0,cv.width,cv.height);
+      const cvWrap=document.getElementById('cwrap');
+      if(cvWrap){
+        cvWrap.style.animation='none';
+        setTimeout(()=>cvWrap.style.animation='',10);
+      }
+      showToast('Drawing cleared ✓');
+    }catch(e){
+      console.error('Failed to clear canvas:',e);
+      showToast('❌ Could not clear drawing.');
+    }
   }
 }
 
@@ -283,59 +307,129 @@ cv.addEventListener('touchend',()=>{drw=false;cv.classList.remove('drawing');});
 
 function dkey(y,m,d){return`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;}
 function go(dir){
-  const g=document.getElementById('grid');
-  g.style.opacity='0.5';
-  g.style.pointerEvents='none';
-  setTimeout(()=>{
-    cur=new Date(cur.getFullYear(),cur.getMonth()+dir,1);
-    render();
-    g.style.opacity='1';
-    g.style.pointerEvents='auto';
-  },150);
+  try{
+    const g=document.getElementById('grid');
+    if(!g)return;
+    g.style.opacity='0.5';
+    g.style.pointerEvents='none';
+    const timer=setTimeout(()=>{
+      try{
+        cur=new Date(cur.getFullYear(),cur.getMonth()+dir,1);
+        render();
+      }catch(e){
+        console.error('Failed to render next month:',e);
+      }finally{
+        g.style.opacity='1';
+        g.style.pointerEvents='auto';
+      }
+    },150);
+    return timer;
+  }catch(e){
+    console.error('Navigation failed:',e);
+  }
 }
 
 function render(){
-  const y=cur.getFullYear(), m=cur.getMonth();
-  document.getElementById('mTtl').textContent=`${MNS[m]} ${y}`;
-  const g=document.getElementById('grid');
-  if(!g){
-    console.warn('render: grid container not found');
-    return;
-  }
-  g.innerHTML='';
-  const first=new Date(y,m,1).getDay(), days=new Date(y,m+1,0).getDate();
-  const pd=new Date(y,m,0).getDate(), td=new Date();
-  for(let i=first-1;i>=0;i--)mkCell(g,y,m-1,pd-i,true,false);
-  for(let d=1;d<=days;d++){
-    const isT=y===td.getFullYear()&&m===td.getMonth()&&d===td.getDate();
-    mkCell(g,y,m,d,false,isT);
-  }
-  const tot=g.children.length, rows=Math.ceil(tot/7);
-  for(let d=1;d<=rows*7-tot;d++)mkCell(g,y,m+1,d,true,false);
-  for(let d=1;d<=days;d++){
-    const k=dkey(y,m,d);
-    if(cache.has(k)){setThumb(k,cache.get(k).canvas);}
-    else{try{const raw=localStorage.getItem(`cal:${k}`);if(raw){const data=JSON.parse(raw);cache.set(k,data);setThumb(k,data.canvas);}}catch(e){}}
+  try{
+    const y=cur.getFullYear(), m=cur.getMonth();
+    const mTitle=document.getElementById('mTtl');
+    if(mTitle){
+      mTitle.textContent=`${MNS[m]||'month'} ${y}`;
+    }
+    const g=document.getElementById('grid');
+    if(!g){
+      console.warn('render: grid container not found');
+      return;
+    }
+    g.innerHTML='';
+    const first=new Date(y,m,1).getDay(), days=new Date(y,m+1,0).getDate();
+    const pd=new Date(y,m,0).getDate(), td=new Date();
+    for(let i=first-1;i>=0;i--)mkCell(g,y,m-1,pd-i,true,false);
+    for(let d=1;d<=days;d++){
+      const isT=y===td.getFullYear()&&m===td.getMonth()&&d===td.getDate();
+      mkCell(g,y,m,d,false,isT);
+    }
+    const tot=g.children.length, rows=Math.ceil(tot/7);
+    for(let d=1;d<=rows*7-tot;d++)mkCell(g,y,m+1,d,true,false);
+    for(let d=1;d<=days;d++){
+      const k=dkey(y,m,d);
+      if(cache.has(k)){
+        const cached=cache.get(k);
+        if(cached?.canvas){
+          setThumb(k,cached.canvas);
+        }
+      }else{
+        try{
+          const raw=localStorage.getItem(`cal:${k}`);
+          if(raw){
+            const data=JSON.parse(raw);
+            if(data?.canvas){
+              cache.set(k,data);
+              setThumb(k,data.canvas);
+            }
+          }
+        }catch(e){
+          console.warn(`Failed to load thumbnail for ${k}:`,e);
+        }
+      }
+    }
+  }catch(e){
+    console.error('Render failed:',e);
   }
 }
 
 function mkCell(g,y,m,d,faded,isToday){
-  const date=new Date(y,m,d), ry=date.getFullYear(), rm=date.getMonth(), rd=date.getDate();
-  const k=dkey(ry,rm,rd);
-  const cell=document.createElement('div');
-  cell.className='dc'+(faded?' fad':'')+(isToday?' tod':'');
-  cell.dataset.key=k;
-  const num=document.createElement('div'); num.className='dn'; num.textContent=d; cell.appendChild(num);
-  const img=document.createElement('img'); img.className='th'; img.dataset.key=k; cell.appendChild(img);
-  if(!faded){
-    const lbl=`${DNS[date.getDay()]}, ${MNS[rm]} ${rd} ${ry}`;
-    cell.onclick=()=>openDay(k,lbl);
+  try{
+    const date=new Date(y,m,d), ry=date.getFullYear(), rm=date.getMonth(), rd=date.getDate();
+    const k=dkey(ry,rm,rd);
+    const cell=document.createElement('div');
+    cell.className='dc'+(faded?' fad':'')+(isToday?' tod':'');
+    cell.dataset.key=k;
+    const num=document.createElement('div'); 
+    num.className='dn'; 
+    num.textContent=rd>31?'?':rd; 
+    cell.appendChild(num);
+    const img=document.createElement('img'); 
+    img.className='th'; 
+    img.dataset.key=k;
+    img.alt=`Thumbnail for ${DNS[date.getDay()]}, ${MNS[rm]} ${rd}`;
+    cell.appendChild(img);
+    if(!faded){
+      const lbl=`${DNS[date.getDay()]}, ${MNS[rm]} ${rd} ${ry}`;
+      cell.onclick=()=>openDay(k,lbl);
+      cell.role='button';
+      cell.tabIndex=0;
+      cell.addEventListener('keydown',(e)=>{
+        if(e.key==='Enter'||e.key===' '){
+          e.preventDefault();
+          openDay(k,lbl);
+        }
+      });
+    }
+    g.appendChild(cell);
+  }catch(e){
+    console.warn(`Failed to create cell for ${y}-${m}-${d}:`,e);
   }
-  g.appendChild(cell);
 }
 
 function setThumb(k,url){
-  document.querySelectorAll(`img.th[data-key="${k}"]`).forEach(img=>{img.src=url;img.style.display='block';img.classList.add('day-thumb');setTimeout(()=>img.classList.remove('day-thumb'),300);});
+  if(!url || url.length===0) return;
+  document.querySelectorAll(`img.th[data-key="${k}"]`).forEach(img=>{
+    try{
+      img.onload=()=>{
+        img.style.display='block';
+        img.classList.add('day-thumb');
+        setTimeout(()=>img.classList.remove('day-thumb'),300);
+      };
+      img.onerror=()=>{
+        console.warn(`Failed to load thumbnail for ${k}`);
+        img.style.display='none';
+      };
+      img.src=url;
+    }catch(e){
+      console.warn(`Error setting thumbnail for ${k}:`,e);
+    }
+  });
 }
 
 async function openDay(k,label){
@@ -348,32 +442,68 @@ async function openDay(k,label){
   empty.style.display='none';
   editor.style.display='flex';
 
-  let data=cache.get(k);
-  if(!data){try{const raw=localStorage.getItem(`cal:${k}`);if(raw){data=JSON.parse(raw);cache.set(k,data);}}catch(e){}}
+  let data=null;
+  if(cache.has(k)){
+    data=cache.get(k);
+  } else {
+    try{
+      const raw=localStorage.getItem(`cal:${k}`);
+      if(raw){
+        data=JSON.parse(raw);
+        cache.set(k,data);
+      }
+    }catch(e){
+      console.warn(`Failed to load day data for ${k}:`,e);
+    }
+  }
 
   if(!cinit){
-    await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
-    const wrap=document.getElementById('cwrap');
-    cv.width=Math.max(wrap.clientWidth-24,300);
-    cv.height=Math.max(wrap.clientHeight-24,200);
-    cinit=true;
+    try{
+      await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+      const wrap=document.getElementById('cwrap');
+      if(!wrap){console.error('Canvas wrapper not found');return;}
+      cv.width=Math.max(wrap.clientWidth-32,300);
+      cv.height=Math.max(wrap.clientHeight-32,200);
+      cinit=true;
+    }catch(e){
+      console.error('Failed to initialize canvas:',e);
+      return;
+    }
   }
 
   ctx.globalCompositeOperation='source-over';
-  ctx.fillStyle='white'; ctx.fillRect(0,0,cv.width,cv.height);
+  ctx.fillStyle='white'; 
+  ctx.fillRect(0,0,cv.width,cv.height);
   document.getElementById('notes').value='';
 
   if(data?.canvas){
     const img=new Image();
-    img.onload=()=>{ctx.globalCompositeOperation='source-over';ctx.drawImage(img,0,0);};
+    img.onload=()=>{
+      try{
+        ctx.globalCompositeOperation='source-over';
+        ctx.drawImage(img,0,0);
+      }catch(e){
+        console.warn('Failed to draw image:',e);
+      }
+    };
+    img.onerror=()=>{
+      console.warn(`Failed to load canvas image for ${k}`);
+    };
     img.src=data.canvas;
   }
-  if(data?.note)document.getElementById('notes').value=data.note;
+  if(data?.note){
+    const noteText=String(data.note).substring(0,500);
+    document.getElementById('notes').value=noteText;
+    const countEl=document.getElementById('notes-count');
+    if(countEl)countEl.textContent=`${noteText.length}/500`;
+  }
 
   document.querySelectorAll('.dc').forEach(c=>c.classList.remove('sel'));
   document.querySelector(`.dc[data-key="${k}"]`)?.classList.add('sel');
   document.getElementById('svbtn').textContent='Save';
+  isSaving=false;
 }
+
 
 function closeEd(){
   selKey=null;
@@ -391,26 +521,57 @@ function closeEd(){
 }
 
 async function saveDay(){
-  if(!selKey)return;
-  const tmp=document.createElement('canvas');
-  tmp.width=cv.width; tmp.height=cv.height;
-  const tc=tmp.getContext('2d');
-  tc.fillStyle='white'; tc.fillRect(0,0,tmp.width,tmp.height);
-  tc.drawImage(cv,0,0);
-  const url=tmp.toDataURL('image/png');
-  const note=document.getElementById('notes').value;
-  const data={canvas:url,note};
-  cache.set(selKey,data);
-  try{localStorage.setItem(`cal:${selKey}`,JSON.stringify(data));}catch(e){}
-  setThumb(selKey,url);
+  if(!selKey || isSaving) return;
+  isSaving=true;
   const btn=document.getElementById('svbtn');
-  btn.classList.add('save-success');
   const oldText=btn.textContent;
-  btn.textContent='✓ Saved';
+  btn.textContent='Saving...';
   btn.disabled=true;
-  showToast('Your day is saved! 🎉');
-  setTimeout(()=>{btn.classList.remove('save-success');btn.textContent=oldText;btn.disabled=false;},800);
+  
+  try{
+    const tmp=document.createElement('canvas');
+    tmp.width=cv.width; 
+    tmp.height=cv.height;
+    const tc=tmp.getContext('2d');
+    if(!tc){
+      throw new Error('Failed to get canvas context');
+    }
+    tc.fillStyle='white'; 
+    tc.fillRect(0,0,tmp.width,tmp.height);
+    tc.drawImage(cv,0,0);
+    const url=tmp.toDataURL('image/png');
+    const note=String(document.getElementById('notes').value).substring(0,500);
+    const data={canvas:url,note};
+    cache.set(selKey,data);
+    
+    try{
+      localStorage.setItem(`cal:${selKey}`,JSON.stringify(data));
+    }catch(e){
+      if(e.name==='QuotaExceededError'){
+        showToast('⚠️ Storage full. Try deleting old entries.');
+      }else{
+        showToast('⚠️ Could not save to storage.');
+      }
+      console.error('Storage error:',e);
+    }
+    
+    setThumb(selKey,url);
+    btn.classList.add('save-success');
+    btn.textContent='✓ Saved';
+    showToast('Your day is saved! 🎉');
+    setTimeout(()=>{
+      btn.classList.remove('save-success');btn.textContent=oldText;btn.disabled=false;
+      isSaving=false;
+    },800);
+  }catch(e){
+    console.error('Save failed:',e);
+    showToast('❌ Save failed. Please try again.');
+    btn.textContent=oldText;
+    btn.disabled=false;
+    isSaving=false;
+  }
 }
+
 
 function showToast(msg){
   const toast=document.createElement('div');
