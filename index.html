@@ -4,272 +4,906 @@
 <meta name="description" content="Fun Calendar - Draw, write, and track your daily journey">
 <title>Fun Calendar</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap');
 
-:root{
-  --font-display:'Outfit',sans-serif;
-  --font-ui:'Inter',sans-serif;
-  --fs-xs:11px;--lh-xs:1.3;
-  --fs-sm:13px;--lh-sm:1.4;
-  --fs-base:14px;--lh-base:1.5;
-  --fs-md:16px;--lh-md:1.5;
-  --fs-lg:18px;--lh-lg:1.4;
-  --fs-xl:22px;--lh-xl:1.3;
-  --fs-2xl:28px;--lh-2xl:1.2;
-  --space-xs:4px;--space-sm:8px;--space-md:12px;--space-lg:16px;--space-xl:24px;--space-2xl:32px;--space-3xl:48px;
-  --color-primary:#ff6b35;--color-primary-light:#ffb999;--color-primary-dark:#cc5228;
-  --color-secondary:#4ecdc4;--color-secondary-light:#7ee8e0;--color-secondary-dark:#3aa89f;
-  --color-accent:#ffd93d;--color-accent-dark:#ffb700;
-  --color-success:#2ecc71;--color-success-light:#58e08a;--color-success-dark:#27ae60;
-  --color-warning:#ff9f43;--color-warning-light:#ffd89a;
-  --color-error:#e74c3c;--color-error-light:#ee7b67;
-  --color-neutral-bg:#fffdfa;--color-neutral-bg-secondary:#f7f4f0;--color-neutral-border:#e4dad0;--color-neutral-border-light:#ede5dd;
-  --color-text-primary:#6b5c50;--color-text-secondary:#9a8d82;--color-text-tertiary:#b8ada5;
-}
-
-@media (prefers-color-scheme:dark){
-  :root{
-    --color-neutral-bg:#1a1410;--color-neutral-bg-secondary:#262219;--color-neutral-border:#3d3530;--color-neutral-border-light:#5a5047;
-    --color-text-primary:#faf8f6;--color-text-secondary:#d1ccc6;--color-text-tertiary:#9a8f87;
+  :root {
+    --font-display: 'Outfit', sans-serif;
+    --font-ui: 'Inter', sans-serif;
+    --fs-xs: 11px;
+    --lh-xs: 1.3;
+    --fs-sm: 13px;
+    --lh-sm: 1.4;
+    --fs-base: 14px;
+    --lh-base: 1.5;
+    --fs-md: 16px;
+    --lh-md: 1.5;
+    --fs-lg: 18px;
+    --lh-lg: 1.4;
+    --fs-xl: 22px;
+    --lh-xl: 1.3;
+    --fs-2xl: 28px;
+    --lh-2xl: 1.2;
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 12px;
+    --space-lg: 16px;
+    --space-xl: 24px;
+    --space-2xl: 32px;
+    --space-3xl: 48px;
+    --color-primary: #ff6b35;
+    --color-primary-light: #ffb999;
+    --color-primary-dark: #cc5228;
+    --color-secondary: #4ecdc4;
+    --color-secondary-light: #7ee8e0;
+    --color-secondary-dark: #3aa89f;
+    --color-accent: #ffd93d;
+    --color-accent-dark: #ffb700;
+    --color-success: #2ecc71;
+    --color-success-light: #58e08a;
+    --color-success-dark: #27ae60;
+    --color-warning: #ff9f43;
+    --color-warning-light: #ffd89a;
+    --color-error: #e74c3c;
+    --color-error-light: #ee7b67;
+    --color-neutral-bg: #fffdfa;
+    --color-neutral-bg-secondary: #f7f4f0;
+    --color-neutral-border: #e4dad0;
+    --color-neutral-border-light: #ede5dd;
+    --color-text-primary: #6b5c50;
+    --color-text-secondary: #9a8d82;
+    --color-text-tertiary: #b8ada5;
   }
-}
 
-html[data-theme="dark"]{
-  --color-neutral-bg:#1a1410;--color-neutral-bg-secondary:#262219;--color-neutral-border:#3d3530;--color-neutral-border-light:#5a5047;
-  --color-text-primary:#faf8f6;--color-text-secondary:#d1ccc6;--color-text-tertiary:#9a8f87;
-}
+  @media (prefers-color-scheme:dark) {
+    :root {
+      --color-neutral-bg: #1a1410;
+      --color-neutral-bg-secondary: #262219;
+      --color-neutral-border: #3d3530;
+      --color-neutral-border-light: #5a5047;
+      --color-text-primary: #faf8f6;
+      --color-text-secondary: #d1ccc6;
+      --color-text-tertiary: #9a8f87;
+    }
+  }
 
-html[data-theme="light"]{
-  --color-neutral-bg:#fffdfa;--color-neutral-bg-secondary:#f7f4f0;--color-neutral-border:#e4dad0;--color-neutral-border-light:#ede5dd;
-  --color-text-primary:#6b5c50;--color-text-secondary:#9a8d82;--color-text-tertiary:#b8ada5;
-}
+  html[data-theme="dark"] {
+    --color-neutral-bg: #1a1410;
+    --color-neutral-bg-secondary: #262219;
+    --color-neutral-border: #3d3530;
+    --color-neutral-border-light: #5a5047;
+    --color-text-primary: #faf8f6;
+    --color-text-secondary: #d1ccc6;
+    --color-text-tertiary: #9a8f87;
+  }
 
-:root{
-  --color-background-primary:var(--color-neutral-bg);
-  --color-background-secondary:var(--color-neutral-bg-secondary);
-  --color-border-primary:var(--color-primary);
-  --color-border-secondary:var(--color-neutral-border);
-  --color-border-tertiary:var(--color-neutral-border-light);
+  html[data-theme="light"] {
+    --color-neutral-bg: #fffdfa;
+    --color-neutral-bg-secondary: #f7f4f0;
+    --color-neutral-border: #e4dad0;
+    --color-neutral-border-light: #ede5dd;
+    --color-text-primary: #6b5c50;
+    --color-text-secondary: #9a8d82;
+    --color-text-tertiary: #b8ada5;
+  }
 
-  --border-radius-md:6px;
-  --border-radius-lg:8px;
-}
+  :root {
+    --color-background-primary: var(--color-neutral-bg);
+    --color-background-secondary: var(--color-neutral-bg-secondary);
+    --color-border-primary: var(--color-primary);
+    --color-border-secondary: var(--color-neutral-border);
+    --color-border-tertiary: var(--color-neutral-border-light);
 
-*{box-sizing:border-box;}
-body{margin:0;padding:0;font-family:var(--font-ui);}
-@media(max-width:767px){body{padding-top:8px;}}
+    --border-radius-md: 6px;
+    --border-radius-lg: 8px;
+  }
 
-@keyframes celebrateSave{0%{transform:scale(0.9);opacity:0;}50%{transform:scale(1.1);}100%{transform:scale(1);opacity:0;}}
-@keyframes drawStroke{0%{opacity:0.5;transform:scale(0.8);}100%{opacity:1;transform:scale(1);}}
-@keyframes pulse{0%{transform:scale(1);}50%{transform:scale(1.05);}100%{transform:scale(1);}}
-@keyframes slideIn{from{transform:translateY(8px);opacity:0;}to{transform:translateY(0);opacity:1;}}
-@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
-@keyframes slideInGrid{from{transform:translateY(12px);opacity:0;}to{transform:translateY(0);opacity:1;}}
-@keyframes slideOutLeft{from{opacity:1;transform:translateX(0);}to{opacity:0;transform:translateX(-12px);}}
-@keyframes slideInRight{from{opacity:0;transform:translateX(12px);}to{opacity:1;transform:translateX(0);}}
-@keyframes fadeOutEditor{from{opacity:1;}to{opacity:0;}}
-@keyframes staggerContainer{0%{opacity:0;}100%{opacity:1;}}
-@media(prefers-reduced-motion:no-preference){
-  .dc,.csw,.tbtn,.wbtn,.svbtn,.more-btn{transition:all .15s cubic-bezier(0.25,0.46,0.45,0.94);}
-}
-.dc{border:0.5px solid var(--color-border-tertiary);border-radius:4px;cursor:pointer;display:flex;flex-direction:column;overflow:hidden;transition:border-color .12s,background .12s,box-shadow .12s;}
-.dc:hover{border-color:var(--color-secondary);background:var(--color-background-secondary);box-shadow:0 4px 12px rgba(78,205,196,0.25);transform:translateY(-2px);}
-.dc.sel{border:2.5px solid var(--color-primary);box-shadow:0 0 0 4px rgba(255,107,53,0.2),0 4px 16px rgba(255,107,53,0.25);transform:scale(1.02);}
-.dc.fad{opacity:.2;pointer-events:none;}
-.dc.tod .dn{background:var(--color-primary);color:white;border-radius:50%;box-shadow:0 4px 12px rgba(255,107,53,0.4);transform:scale(1.15);font-weight:700;}
-.dn{width:20px;height:20px;font-size:var(--fs-xs);font-weight:500;line-height:var(--lh-xs);color:var(--color-text-primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin:var(--space-xs);overflow:hidden;}
-.th{width:100%;flex:1;object-fit:cover;display:none;border-top:0.5px solid var(--color-border-tertiary);}
-.csw{width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .1s,box-shadow .15s;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,0.1);}
-.csw:hover{transform:scale(1.25);box-shadow:0 4px 10px rgba(0,0,0,0.2);}
-.csw.on{border-color:var(--color-text-primary);box-shadow:0 0 0 2px var(--color-background-primary),0 0 12px rgba(0,0,0,0.25);transform:scale(1.1);}
-.wbtn{padding:var(--space-xs);border-radius:4px;border:0.5px solid transparent;cursor:pointer;background:none;display:flex;align-items:center;justify-content:center;}
-.wbtn:hover,.wbtn.on{border-color:var(--color-border-secondary);background:var(--color-background-primary);}
-.tbtn{font-size:var(--fs-sm);font-family:var(--font-ui);font-weight:500;padding:var(--space-xs) var(--space-sm);border-radius:4px;border:0.5px solid var(--color-border-secondary);cursor:pointer;background:none;color:var(--color-text-secondary);transition:all .12s;}
-.tbtn:hover{background:var(--color-background-secondary);color:var(--color-primary);border-color:var(--color-primary);box-shadow:0 2px 6px rgba(255,107,53,0.15);}
-.tbtn:focus{outline:2px solid var(--color-primary);outline-offset:2px;}
-.tbtn:disabled{opacity:0.5;cursor:not-allowed;}
-.tbtn.on{background:var(--color-primary-light);border-color:var(--color-primary);color:var(--color-primary-dark);}
-.svbtn{font-size:calc(var(--fs-sm) + 1px);font-family:var(--font-ui);font-weight:700;padding:calc(var(--space-xs) + 2px) calc(var(--space-lg) + 4px);border-radius:6px;border:none;cursor:pointer;background:var(--color-primary);color:white;transition:all .15s cubic-bezier(0.25,0.46,0.45,0.94);box-shadow:0 4px 16px rgba(255,107,53,0.35);text-transform:uppercase;letter-spacing:0.5px;}
-.svbtn:hover{background:var(--color-primary-dark);transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,107,53,0.45);}
-.svbtn:focus{outline:2px solid var(--color-primary-dark);outline-offset:2px;}
-.svbtn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
-textarea{font-family:var(--font-ui);font-size:var(--fs-sm);line-height:var(--lh-sm);}
-textarea::placeholder{color:var(--color-text-tertiary);}
-textarea:focus{border-color:var(--color-secondary) !important;box-shadow:0 0 0 3px rgba(78,205,196,0.1);}
-#erbtn.on{background:var(--color-warning);border-color:var(--color-warning);color:white;}
-.save-success{animation:celebrateSave 0.6s ease-out !important;}
-.toast{position:fixed;bottom:var(--space-xl);right:var(--space-xl);background:var(--color-success);color:white;padding:var(--space-md) var(--space-lg);border-radius:6px;font-size:var(--fs-sm);font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,0.2);animation:slideIn 0.3s cubic-bezier(0.34,1.56,0.64,1);z-index:999;}
-.toast.hide{animation:slideIn 0.3s cubic-bezier(0.34,1.56,0.64,1) reverse;}
-.save-pulse{animation:pulse 0.4s ease-out;}
-.day-thumb{animation:slideIn 0.3s ease-out;}
-#cv{position:relative;transition:box-shadow 0.2s;}
-#cv:hover{box-shadow:0 2px 8px rgba(255,107,53,0.15);}
-#cv.drawing{box-shadow:0 4px 16px rgba(255,107,53,0.25);}
-#editor{animation:slideInRight 0.35s cubic-bezier(0.34,1.56,0.64,1);}
-#editor.closing{animation:slideOutLeft 0.25s ease-in forwards;}
-#grid{transition:opacity 0.15s ease-in-out;}
-#empty{animation:fadeIn 0.3s ease-out;}
-#empty.closing{animation:fadeOutEditor 0.25s ease-in forwards;}
-.dc{animation:slideInGrid 0.4s cubic-bezier(0.34,1.56,0.64,1) backwards;}
+  * {
+    box-sizing: border-box;
+  }
 
-.onboarding-snackbar{position:fixed;bottom:var(--space-xl);right:var(--space-xl);max-width:360px;z-index:1000;background:var(--color-background-secondary);border:1px solid var(--color-border-secondary);border-radius:12px;padding:var(--space-md);box-shadow:0 8px 24px rgba(0,0,0,0.2);color:var(--color-text-primary);font-size:var(--fs-sm);line-height:var(--lh-sm);}
-.onboarding-snackbar h4{margin:0 0 8px 0;font-size:var(--fs-md);color:var(--color-primary);}
-.onboarding-snackbar p{margin:0 0 var(--space-xs) 0;color:var(--color-text-primary);font-weight:600;}
-.onboarding-snackbar .onboarding-actions{display:flex;justify-content:space-between;align-items:center;margin-top:var(--space-sm);}
-.onboarding-snackbar .onboarding-actions button{font-size:var(--fs-xs);padding:6px 10px;border-radius:6px;border:1px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);cursor:pointer;}
-.onboarding-snackbar .onboarding-actions button.skip{background:transparent;color:var(--color-text-secondary);border-color:transparent;}
-.onboarding-snackbar .onboarding-progress{font-size:var(--fs-xs);color:var(--color-text-secondary);margin-top:var(--space-xs);}
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-ui);
+  }
 
-.dc:nth-child(1){animation-delay:0ms;}
-.dc:nth-child(2){animation-delay:30ms;}
-.dc:nth-child(3){animation-delay:60ms;}
-.dc:nth-child(4){animation-delay:90ms;}
-.dc:nth-child(5){animation-delay:120ms;}
-.dc:nth-child(6){animation-delay:150ms;}
-.dc:nth-child(7){animation-delay:180ms;}
-.dc:nth-child(8){animation-delay:210ms;}
-.dc:nth-child(9){animation-delay:240ms;}
-.dc:nth-child(10){animation-delay:270ms;}
-.dc:nth-child(n+11){animation-delay:0;}
-.toolbar-section{animation:slideIn 0.3s cubic-bezier(0.34,1.56,0.64,1);}
-.toolbar-section:nth-of-type(2){animation-delay:50ms;}
-.toolbar-section:nth-of-type(3){animation-delay:100ms;}
-.color-more,.width-more{display:none;}
-.color-more.show,.width-more.show{display:inline-flex;}
-.more-btn{font-size:var(--fs-xs);padding:var(--space-xs) var(--space-sm);background:var(--color-secondary-light);border:1px solid var(--color-secondary);color:var(--color-secondary-dark);cursor:pointer;border-radius:4px;font-weight:700;transition:all .12s;box-shadow:0 1px 4px rgba(78,205,196,0.2);}
-.more-btn:hover{box-shadow:0 2px 8px rgba(78,205,196,0.3);transform:translateY(-1px);}
+  @media(max-width:767px) {
+    body {
+      padding-top: 8px;
+    }
+  }
 
-/* ── Top bar ─────────────────────────────────────────────────────── */
-#top-bar{
-  position:sticky;top:0;z-index:100;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:var(--space-sm) var(--space-xl);
-  border-bottom:0.5px solid var(--color-border-tertiary);
-  background:var(--color-background-secondary);
-  gap:var(--space-md);
-  font-family:var(--font-ui);
-}
-#top-bar-left{display:flex;align-items:center;gap:var(--space-md);}
-#top-bar-right{display:flex;align-items:center;gap:var(--space-sm);}
+  @keyframes celebrateSave {
+    0% {
+      transform: scale(0.9);
+      opacity: 0;
+    }
 
-/* Title — dominant element */
-#app-title{
-  font-family:var(--font-display);
-  font-size:var(--fs-xl);
-  font-weight:700;
-  color:var(--color-primary);
-  letter-spacing:.5px;
-  white-space:nowrap;
-  margin:0;
-  line-height:1;
-}
+    50% {
+      transform: scale(1.1);
+    }
 
-/* Shared bar-btn base — subordinate, ghost style */
-.bar-btn{
-  display:inline-flex;align-items:center;gap:5px;
-  font-size:var(--fs-xs);
-  font-family:var(--font-ui);
-  font-weight:600;
-  letter-spacing:0.3px;
-  padding:5px var(--space-sm);
-  border-radius:20px;
-  border:1px solid var(--color-neutral-border);
-  cursor:pointer;
-  background:transparent;
-  color:var(--color-text-secondary);
-  transition:background .15s,color .15s,border-color .15s,box-shadow .15s;
-  min-height:32px;
-  white-space:nowrap;
-  text-transform:none;
-}
-.bar-btn:hover{
-  background:var(--color-background-primary);
-  color:var(--color-primary);
-  border-color:var(--color-primary);
-  box-shadow:0 2px 6px rgba(255,107,53,0.12);
-}
-.bar-btn:focus-visible{outline:2px solid var(--color-primary);outline-offset:2px;}
+    100% {
+      transform: scale(1);
+      opacity: 0;
+    }
+  }
 
-/* Active (open) state for cal-toggle */
-#cal-toggle.active{
-  background:var(--color-primary);
-  color:white;
-  border-color:var(--color-primary);
-  box-shadow:0 2px 8px rgba(255,107,53,0.3);
-}
-#cal-toggle.active:hover{
-  background:var(--color-primary-dark);
-  border-color:var(--color-primary-dark);
-}
+  @keyframes drawStroke {
+    0% {
+      opacity: 0.5;
+      transform: scale(0.8);
+    }
 
-/* Hide cal-toggle on desktop; show on ≤767 */
-#cal-toggle{display:none;}
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
 
-/* Mobile floating calendar button (thumb zone) */
-#cal-fab{
-  display:none;
-  position:fixed;
-  bottom:var(--space-xl);
-  left:50%;
-  transform:translateX(-50%);
-  z-index:200;
-  background:var(--color-primary);
-  color:white;
-  border:none;
-  border-radius:24px;
-  padding:10px var(--space-xl);
-  font-size:var(--fs-sm);
-  font-family:var(--font-ui);
-  font-weight:700;
-  cursor:pointer;
-  box-shadow:0 4px 20px rgba(255,107,53,0.4);
-  transition:transform .15s,box-shadow .15s,background .15s;
-  gap:6px;
-  align-items:center;
-  white-space:nowrap;
-}
-#cal-fab:hover{transform:translateX(-50%) translateY(-2px);box-shadow:0 8px 24px rgba(255,107,53,0.5);}
-#cal-fab.active{background:var(--color-text-primary);box-shadow:0 4px 20px rgba(0,0,0,0.25);}
-#cal-fab.active:hover{background:var(--color-text-primary);}
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+    }
 
-#main-container{display:flex;gap:var(--space-lg);height:680px;font-family:var(--font-ui);padding:var(--space-lg);}
-#calendar-panel{flex:0 0 298px;}
-#editor-panel{flex:1;}
+    50% {
+      transform: scale(1.05);
+    }
 
-@media(max-width:1023px){
-  #main-container{height:auto;flex-direction:column;gap:var(--space-md);padding:var(--space-md);}
-  #calendar-panel{flex:0 0 auto;min-height:300px;}
-  #editor-panel{flex:1;min-height:400px;}
-}
+    100% {
+      transform: scale(1);
+    }
+  }
 
-@media(max-width:767px){
-  #main-container{height:auto;flex-direction:column;gap:var(--space-md);padding:var(--space-md);padding-bottom:72px;}
-  #calendar-panel{flex:0 0 auto;min-height:280px;}
-  #editor-panel{flex:1;min-height:calc(100vh - 160px);}
-  #cal-toggle{display:none !important;}/* hidden on mobile — FAB takes over */
-  #cal-fab{display:inline-flex;}
-  .tbtn{padding:var(--space-xs) var(--space-sm);min-width:44px;min-height:44px;font-size:var(--fs-xs);}
-  .tbtn:focus,.tbtn:active{outline:2px solid var(--color-secondary);}
-  .svbtn{min-height:44px;font-size:var(--fs-sm);}
-  #eDate{font-size:var(--fs-sm);}
-  textarea{font-size:16px;min-height:80px;}
-  #top-bar{padding:var(--space-xs) var(--space-md);}
-  #app-title{font-size:var(--fs-lg);}
-}
+  @keyframes slideIn {
+    from {
+      transform: translateY(8px);
+      opacity: 0;
+    }
 
-@media(max-width:480px){
-  #main-container{gap:var(--space-xs);padding:var(--space-xs);padding-bottom:72px;}
-  #editor-panel{min-height:calc(100vh - 120px);}
-  .svbtn{padding:var(--space-sm) var(--space-md);min-height:44px;}
-  textarea{font-size:16px;min-height:100px;}
-  #cwrap{padding:var(--space-sm);}
-  #app-title{font-size:var(--fs-md);}
-}
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideInGrid {
+    from {
+      transform: translateY(12px);
+      opacity: 0;
+    }
+
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideOutLeft {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    to {
+      opacity: 0;
+      transform: translateX(-12px);
+    }
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(12px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes fadeOutEditor {
+    from {
+      opacity: 1;
+    }
+
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes staggerContainer {
+    0% {
+      opacity: 0;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @media(prefers-reduced-motion:no-preference) {
+
+    .dc,
+    .csw,
+    .tbtn,
+    .wbtn,
+    .svbtn,
+    .more-btn {
+      transition: all .15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+  }
+
+  .dc {
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: border-color .12s, background .12s, box-shadow .12s;
+  }
+
+  .dc:hover {
+    border-color: var(--color-secondary);
+    background: var(--color-background-secondary);
+    box-shadow: 0 4px 12px rgba(78, 205, 196, 0.25);
+    transform: translateY(-2px);
+  }
+
+  .dc.sel {
+    border: 2.5px solid var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.2), 0 4px 16px rgba(255, 107, 53, 0.25);
+    transform: scale(1.02);
+  }
+
+  .dc.fad {
+    opacity: .2;
+    pointer-events: none;
+  }
+
+  .dc.tod .dn {
+    background: var(--color-primary);
+    color: white;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+    transform: scale(1.15);
+    font-weight: 700;
+  }
+
+  .dn {
+    width: 20px;
+    height: 20px;
+    font-size: var(--fs-xs);
+    font-weight: 500;
+    line-height: var(--lh-xs);
+    color: var(--color-text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin: var(--space-xs);
+    overflow: hidden;
+  }
+
+  .th {
+    width: 100%;
+    flex: 1;
+    object-fit: cover;
+    display: none;
+    border-top: 0.5px solid var(--color-border-tertiary);
+  }
+
+  .csw {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform .1s, box-shadow .15s;
+    flex-shrink: 0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .csw:hover {
+    transform: scale(1.25);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .csw.on {
+    border-color: var(--color-text-primary);
+    box-shadow: 0 0 0 2px var(--color-background-primary), 0 0 12px rgba(0, 0, 0, 0.25);
+    transform: scale(1.1);
+  }
+
+  .wbtn {
+    padding: var(--space-xs);
+    border-radius: 4px;
+    border: 0.5px solid transparent;
+    cursor: pointer;
+    background: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .wbtn:hover,
+  .wbtn.on {
+    border-color: var(--color-border-secondary);
+    background: var(--color-background-primary);
+  }
+
+  .tbtn {
+    font-size: var(--fs-sm);
+    font-family: var(--font-ui);
+    font-weight: 500;
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: 4px;
+    border: 0.5px solid var(--color-border-secondary);
+    cursor: pointer;
+    background: none;
+    color: var(--color-text-secondary);
+    transition: all .12s;
+  }
+
+  .tbtn:hover {
+    background: var(--color-background-secondary);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+    box-shadow: 0 2px 6px rgba(255, 107, 53, 0.15);
+  }
+
+  .tbtn:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .tbtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .tbtn.on {
+    background: var(--color-primary-light);
+    border-color: var(--color-primary);
+    color: var(--color-primary-dark);
+  }
+
+  .svbtn {
+    font-size: calc(var(--fs-sm) + 1px);
+    font-family: var(--font-ui);
+    font-weight: 700;
+    padding: calc(var(--space-xs) + 2px) calc(var(--space-lg) + 4px);
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    background: var(--color-primary);
+    color: white;
+    transition: all .15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: 0 4px 16px rgba(255, 107, 53, 0.35);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .svbtn:hover {
+    background: var(--color-primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(255, 107, 53, 0.45);
+  }
+
+  .svbtn:focus {
+    outline: 2px solid var(--color-primary-dark);
+    outline-offset: 2px;
+  }
+
+  .svbtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  textarea {
+    font-family: var(--font-ui);
+    font-size: var(--fs-sm);
+    line-height: var(--lh-sm);
+  }
+
+  textarea::placeholder {
+    color: var(--color-text-tertiary);
+  }
+
+  textarea:focus {
+    border-color: var(--color-secondary) !important;
+    box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
+  }
+
+  #erbtn.on {
+    background: var(--color-warning);
+    border-color: var(--color-warning);
+    color: white;
+  }
+
+  .save-success {
+    animation: celebrateSave 0.6s ease-out !important;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: var(--space-xl);
+    right: var(--space-xl);
+    background: var(--color-success);
+    color: white;
+    padding: var(--space-md) var(--space-lg);
+    border-radius: 6px;
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 999;
+  }
+
+  .toast.hide {
+    animation: slideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) reverse;
+  }
+
+  .save-pulse {
+    animation: pulse 0.4s ease-out;
+  }
+
+  .day-thumb {
+    animation: slideIn 0.3s ease-out;
+  }
+
+  #cv {
+    position: relative;
+    transition: box-shadow 0.2s;
+  }
+
+  #cv:hover {
+    box-shadow: 0 2px 8px rgba(255, 107, 53, 0.15);
+  }
+
+  #cv.drawing {
+    box-shadow: 0 4px 16px rgba(255, 107, 53, 0.25);
+  }
+
+  #editor {
+    animation: slideInRight 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  #editor.closing {
+    animation: slideOutLeft 0.25s ease-in forwards;
+  }
+
+  #grid {
+    transition: opacity 0.15s ease-in-out;
+  }
+
+  #empty {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  #empty.closing {
+    animation: fadeOutEditor 0.25s ease-in forwards;
+  }
+
+  .dc {
+    animation: slideInGrid 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+  }
+
+  .onboarding-snackbar {
+    position: fixed;
+    bottom: var(--space-xl);
+    right: var(--space-xl);
+    max-width: 360px;
+    z-index: 1000;
+    background: var(--color-background-secondary);
+    border: 1px solid var(--color-border-secondary);
+    border-radius: 12px;
+    padding: var(--space-md);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    color: var(--color-text-primary);
+    font-size: var(--fs-sm);
+    line-height: var(--lh-sm);
+  }
+
+  .onboarding-snackbar h4 {
+    margin: 0 0 8px 0;
+    font-size: var(--fs-md);
+    color: var(--color-primary);
+  }
+
+  .onboarding-snackbar p {
+    margin: 0 0 var(--space-xs) 0;
+    color: var(--color-text-primary);
+    font-weight: 600;
+  }
+
+  .onboarding-snackbar .onboarding-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--space-sm);
+  }
+
+  .onboarding-snackbar .onboarding-actions button {
+    font-size: var(--fs-xs);
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--color-border-secondary);
+    background: var(--color-background-primary);
+    color: var(--color-text-primary);
+    cursor: pointer;
+  }
+
+  .onboarding-snackbar .onboarding-actions button.skip {
+    background: transparent;
+    color: var(--color-text-secondary);
+    border-color: transparent;
+  }
+
+  .onboarding-snackbar .onboarding-progress {
+    font-size: var(--fs-xs);
+    color: var(--color-text-secondary);
+    margin-top: var(--space-xs);
+  }
+
+  .dc:nth-child(1) {
+    animation-delay: 0ms;
+  }
+
+  .dc:nth-child(2) {
+    animation-delay: 30ms;
+  }
+
+  .dc:nth-child(3) {
+    animation-delay: 60ms;
+  }
+
+  .dc:nth-child(4) {
+    animation-delay: 90ms;
+  }
+
+  .dc:nth-child(5) {
+    animation-delay: 120ms;
+  }
+
+  .dc:nth-child(6) {
+    animation-delay: 150ms;
+  }
+
+  .dc:nth-child(7) {
+    animation-delay: 180ms;
+  }
+
+  .dc:nth-child(8) {
+    animation-delay: 210ms;
+  }
+
+  .dc:nth-child(9) {
+    animation-delay: 240ms;
+  }
+
+  .dc:nth-child(10) {
+    animation-delay: 270ms;
+  }
+
+  .dc:nth-child(n+11) {
+    animation-delay: 0;
+  }
+
+  .toolbar-section {
+    animation: slideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .toolbar-section:nth-of-type(2) {
+    animation-delay: 50ms;
+  }
+
+  .toolbar-section:nth-of-type(3) {
+    animation-delay: 100ms;
+  }
+
+  .color-more,
+  .width-more {
+    display: none;
+  }
+
+  .color-more.show,
+  .width-more.show {
+    display: inline-flex;
+  }
+
+  .more-btn {
+    font-size: var(--fs-xs);
+    padding: var(--space-xs) var(--space-sm);
+    background: var(--color-secondary-light);
+    border: 1px solid var(--color-secondary);
+    color: var(--color-secondary-dark);
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: 700;
+    transition: all .12s;
+    box-shadow: 0 1px 4px rgba(78, 205, 196, 0.2);
+  }
+
+  .more-btn:hover {
+    box-shadow: 0 2px 8px rgba(78, 205, 196, 0.3);
+    transform: translateY(-1px);
+  }
+
+  /* ── Top bar ─────────────────────────────────────────────────────── */
+  #top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-sm) var(--space-xl);
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    background: var(--color-background-secondary);
+    gap: var(--space-md);
+    font-family: var(--font-ui);
+  }
+
+  #top-bar-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
+  #top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  /* Title — dominant element */
+  #app-title {
+    font-family: var(--font-display);
+    font-size: var(--fs-xl);
+    font-weight: 700;
+    color: var(--color-primary);
+    letter-spacing: .5px;
+    white-space: nowrap;
+    margin: 0;
+    line-height: 1;
+  }
+
+  /* Shared bar-btn base — subordinate, ghost style */
+  .bar-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: var(--fs-xs);
+    font-family: var(--font-ui);
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    padding: 5px var(--space-sm);
+    border-radius: 20px;
+    border: 1px solid var(--color-neutral-border);
+    cursor: pointer;
+    background: transparent;
+    color: var(--color-text-secondary);
+    transition: background .15s, color .15s, border-color .15s, box-shadow .15s;
+    min-height: 32px;
+    white-space: nowrap;
+    text-transform: none;
+  }
+
+  .bar-btn:hover {
+    background: var(--color-background-primary);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+    box-shadow: 0 2px 6px rgba(255, 107, 53, 0.12);
+  }
+
+  .bar-btn:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  /* Active (open) state for cal-toggle */
+  #cal-toggle.active {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+    box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+  }
+
+  #cal-toggle.active:hover {
+    background: var(--color-primary-dark);
+    border-color: var(--color-primary-dark);
+  }
+
+  /* Hide cal-toggle on desktop; show on ≤767 */
+  #cal-toggle {
+    display: none;
+  }
+
+  /* Mobile floating calendar button (thumb zone) */
+  #cal-fab {
+    display: none;
+    position: fixed;
+    bottom: var(--space-xl);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 24px;
+    padding: 10px var(--space-xl);
+    font-size: var(--fs-sm);
+    font-family: var(--font-ui);
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(255, 107, 53, 0.4);
+    transition: transform .15s, box-shadow .15s, background .15s;
+    gap: 6px;
+    align-items: center;
+    white-space: nowrap;
+  }
+
+  #cal-fab:hover {
+    transform: translateX(-50%) translateY(-2px);
+    box-shadow: 0 8px 24px rgba(255, 107, 53, 0.5);
+  }
+
+  #cal-fab.active {
+    background: var(--color-text-primary);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  }
+
+  #cal-fab.active:hover {
+    background: var(--color-text-primary);
+  }
+
+  #main-container {
+    display: flex;
+    gap: var(--space-lg);
+    height: 680px;
+    font-family: var(--font-ui);
+    padding: var(--space-lg);
+  }
+
+  #calendar-panel {
+    flex: 0 0 298px;
+  }
+
+  #editor-panel {
+    flex: 1;
+  }
+
+  @media(max-width:1023px) {
+    #main-container {
+      height: auto;
+      flex-direction: column;
+      gap: var(--space-md);
+      padding: var(--space-md);
+    }
+
+    #calendar-panel {
+      flex: 0 0 auto;
+      min-height: 300px;
+    }
+
+    #editor-panel {
+      flex: 1;
+      min-height: 400px;
+    }
+  }
+
+  @media(max-width:767px) {
+    #main-container {
+      height: auto;
+      flex-direction: column;
+      gap: var(--space-md);
+      padding: var(--space-md);
+      padding-bottom: 72px;
+    }
+
+    #calendar-panel {
+      flex: 0 0 auto;
+      min-height: 280px;
+    }
+
+    #editor-panel {
+      flex: 1;
+      min-height: calc(100vh - 160px);
+    }
+
+    #cal-toggle {
+      display: none !important;
+    }
+
+    /* hidden on mobile — FAB takes over */
+    #cal-fab {
+      display: inline-flex;
+    }
+
+    .tbtn {
+      padding: var(--space-xs) var(--space-sm);
+      min-width: 44px;
+      min-height: 44px;
+      font-size: var(--fs-xs);
+    }
+
+    .tbtn:focus,
+    .tbtn:active {
+      outline: 2px solid var(--color-secondary);
+    }
+
+    .svbtn {
+      min-height: 44px;
+      font-size: var(--fs-sm);
+    }
+
+    #eDate {
+      font-size: var(--fs-sm);
+    }
+
+    textarea {
+      font-size: 16px;
+      min-height: 80px;
+    }
+
+    #top-bar {
+      padding: var(--space-xs) var(--space-md);
+    }
+
+    #app-title {
+      font-size: var(--fs-lg);
+    }
+  }
+
+  @media(max-width:480px) {
+    #main-container {
+      gap: var(--space-xs);
+      padding: var(--space-xs);
+      padding-bottom: 72px;
+    }
+
+    #editor-panel {
+      min-height: calc(100vh - 120px);
+    }
+
+    .svbtn {
+      padding: var(--space-sm) var(--space-md);
+      min-height: 44px;
+    }
+
+    textarea {
+      font-size: 16px;
+      min-height: 100px;
+    }
+
+    #cwrap {
+      padding: var(--space-sm);
+    }
+
+    #app-title {
+      font-size: var(--fs-md);
+    }
+  }
 </style>
 
 <header id="top-bar" role="banner">
   <div id="top-bar-left">
-    <button id="cal-toggle" class="bar-btn" onclick="toggleCalendarPanel()" aria-label="Show calendar" aria-expanded="false">
+    <button id="cal-toggle" class="bar-btn" onclick="toggleCalendarPanel()" aria-label="Show calendar"
+      aria-expanded="false">
       <span aria-hidden="true">📅</span> Show Calendar
     </button>
     <h1 id="app-title">Fun Calendar</h1>
@@ -289,42 +923,77 @@ textarea:focus{border-color:var(--color-secondary) !important;box-shadow:0 0 0 3
 
 <div id="main-container">
 
-  <div id="calendar-panel" style="flex:0 0 298px;flex-direction:column;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-primary);">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-md) var(--space-lg);border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);">
+  <div id="calendar-panel"
+    style="flex:0 0 298px;flex-direction:column;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-primary);">
+    <div
+      style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-md) var(--space-lg);border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);">
       <button class="tbtn" style="font-size:18px;padding:1px 8px;" onclick="go(-1)">&#8249;</button>
-      <span id="mTtl" style="font-size:var(--fs-xl);font-weight:700;font-family:var(--font-display);color:var(--color-primary);letter-spacing:.5px;"></span>
+      <span id="mTtl"
+        style="font-size:var(--fs-xl);font-weight:700;font-family:var(--font-display);color:var(--color-primary);letter-spacing:.5px;"></span>
       <button class="tbtn" style="font-size:18px;padding:1px 8px;" onclick="go(1)">&#8250;</button>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(7,1fr);padding:var(--space-md) var(--space-md) var(--space-sm);gap:var(--space-xs);">
-      <div style="text-align:center;font-size:var(--fs-xs);color:var(--color-text-tertiary);font-weight:600;font-family:var(--font-ui);padding:var(--space-xs);">S</div>
-      <div style="text-align:center;font-size:var(--fs-xs);color:var(--color-text-tertiary);font-weight:600;font-family:var(--font-ui);padding:var(--space-xs);">M</div>
-      <div style="text-align:center;font-size:var(--fs-xs);color:var(--color-text-tertiary);font-weight:600;font-family:var(--font-ui);padding:var(--space-xs);">T</div>
-      <div style="text-align:center;font-size:var(--fs-xs);color:var(--color-text-tertiary);font-weight:600;font-family:var(--font-ui);padding:var(--space-xs);">W</div>
-      <div style="text-align:center;font-size:var(--fs-xs);color:var(--color-text-tertiary);font-weight:600;font-family:var(--font-ui);padding:var(--space-xs);">T</div>
-      <div style="text-align:center;font-size:var(--fs-xs);color:var(--color-text-tertiary);font-weight:600;font-family:var(--font-ui);padding:var(--space-xs);">F</div>
-      <div style="text-align:center;font-size:var(--fs-xs);color:var(--color-text-tertiary);font-weight:600;font-family:var(--font-ui);padding:var(--space-xs);">S</div>
+    <div
+      style="display:grid;grid-template-columns:repeat(7,1fr);padding:var(--space-md) var(--space-md) var(--space-sm);gap:var(--space-xs);">
+      <div
+        style="text-align:center;font-size:var(--fs-xs);color:var(--color-text-tertiary);font-weight:600;font-family:var(--font-ui);padding:var(--space-xs);">
+        S</div>
+      <div
+        style="text-align:center;font-size:var(--fs-xs);color:var(--color-text-tertiary);font-weight:600;font-family:var(--font-ui);padding:var(--space-xs);">
+        M</div>
+      <div
+        style="text-align:center;font-size:var(--fs-xs);color:var(--color-text-tertiary);font-weight:600;font-family:var(--font-ui);padding:var(--space-xs);">
+        T</div>
+      <div
+        style="text-align:center;font-size:var(--fs-xs);color:var(--color-text-tertiary);font-weight:600;font-family:var(--font-ui);padding:var(--space-xs);">
+        W</div>
+      <div
+        style="text-align:center;font-size:var(--fs-xs);color:var(--color-text-tertiary);font-weight:600;font-family:var(--font-ui);padding:var(--space-xs);">
+        T</div>
+      <div
+        style="text-align:center;font-size:var(--fs-xs);color:var(--color-text-tertiary);font-weight:600;font-family:var(--font-ui);padding:var(--space-xs);">
+        F</div>
+      <div
+        style="text-align:center;font-size:var(--fs-xs);color:var(--color-text-tertiary);font-weight:600;font-family:var(--font-ui);padding:var(--space-xs);">
+        S</div>
     </div>
-    <div id="grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:var(--space-xs);padding:var(--space-xs);min-height:300px;overflow:auto;"></div>
+    <div id="grid"
+      style="display:grid;grid-template-columns:repeat(7,1fr);gap:var(--space-xs);padding:var(--space-xs);min-height:300px;overflow:auto;">
+    </div>
   </div>
 
-  <div id="editor-panel" style="flex:1;display:flex;flex-direction:column;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-primary);">
-    <div id="empty" style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;">
-      <div style="width:48px;height:48px;border:2px solid var(--color-secondary);border-radius:8px;display:flex;align-items:center;justify-content:center;position:relative;animation:pulse 2s ease-in-out infinite;">
-        <div style="position:absolute;top:-8px;left:10px;width:4px;height:10px;background:var(--color-secondary);border-radius:2px;"></div>
-        <div style="position:absolute;top:-8px;right:10px;width:4px;height:10px;background:var(--color-secondary);border-radius:2px;"></div>
-        <div style="width:24px;height:2px;background:var(--color-border-tertiary);border-radius:1px;margin-top:2px;"></div>
+  <div id="editor-panel"
+    style="flex:1;display:flex;flex-direction:column;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-primary);">
+    <div id="empty"
+      style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;">
+      <div
+        style="width:48px;height:48px;border:2px solid var(--color-secondary);border-radius:8px;display:flex;align-items:center;justify-content:center;position:relative;animation:pulse 2s ease-in-out infinite;">
+        <div
+          style="position:absolute;top:-8px;left:10px;width:4px;height:10px;background:var(--color-secondary);border-radius:2px;">
+        </div>
+        <div
+          style="position:absolute;top:-8px;right:10px;width:4px;height:10px;background:var(--color-secondary);border-radius:2px;">
+        </div>
+        <div style="width:24px;height:2px;background:var(--color-border-tertiary);border-radius:1px;margin-top:2px;">
+        </div>
       </div>
       <div style="text-align:center;">
-        <p style="font-size:var(--fs-base);font-family:var(--font-ui);line-height:var(--lh-base);color:var(--color-text-primary);margin:0 0 4px 0;font-weight:600;">Pick a day, create your story</p>
-        <p style="font-size:var(--fs-xs);font-family:var(--font-ui);line-height:var(--lh-xs);color:var(--color-text-tertiary);margin:0;">Draw, write, and track your journey</p>
+        <p
+          style="font-size:var(--fs-base);font-family:var(--font-ui);line-height:var(--lh-base);color:var(--color-text-primary);margin:0 0 4px 0;font-weight:600;">
+          Pick a day, create your story</p>
+        <p
+          style="font-size:var(--fs-xs);font-family:var(--font-ui);line-height:var(--lh-xs);color:var(--color-text-tertiary);margin:0;">
+          Draw, write, and track your journey</p>
       </div>
     </div>
     <div id="editor" style="display:none;flex-direction:column;flex:1;min-height:0;overflow:hidden;">
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-md) var(--space-lg);border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);flex-shrink:0;">
-        <span id="eDate" style="font-size:var(--fs-md);font-weight:600;font-family:var(--font-ui);color:var(--color-text-primary);"></span>
+      <div
+        style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-md) var(--space-lg);border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);flex-shrink:0;">
+        <span id="eDate"
+          style="font-size:var(--fs-md);font-weight:600;font-family:var(--font-ui);color:var(--color-text-primary);"></span>
         <button class="tbtn" onclick="closeEd()" style="padding:2px 7px;">&#10005;</button>
       </div>
-      <div style="display:flex;align-items:center;gap:var(--space-md);padding:var(--space-md) var(--space-lg);border-bottom:0.5px solid var(--color-border-tertiary);flex-wrap:wrap;flex-shrink:0;background:var(--color-background-secondary);">
+      <div
+        style="display:flex;align-items:center;gap:var(--space-md);padding:var(--space-md) var(--space-lg);border-bottom:0.5px solid var(--color-border-tertiary);flex-wrap:wrap;flex-shrink:0;background:var(--color-background-secondary);">
         <div style="display:flex;gap:var(--space-xs);align-items:center;">
           <div id="cRow" style="display:flex;gap:var(--space-xs);align-items:center;"></div>
           <button class="more-btn" id="cMoreBtn" onclick="toggleMoreColors()" style="display:none;">More</button>
@@ -344,12 +1013,17 @@ textarea:focus{border-color:var(--color-secondary) !important;box-shadow:0 0 0 3
         <div style="flex:1;"></div>
         <button class="svbtn" id="svbtn" onclick="saveDay()">Save</button>
       </div>
-      <div id="cwrap" style="flex:1;min-height:0;overflow:auto;background:linear-gradient(135deg,rgba(255,216,61,0.04),rgba(78,205,196,0.04));display:flex;align-items:center;justify-content:center;padding:var(--space-lg);">
-        <canvas id="cv" style="background:white;cursor:crosshair;touch-action:none;border-radius:4px;display:block;box-shadow:0 1px 3px rgba(0,0,0,0.1);"></canvas>
+      <div id="cwrap"
+        style="flex:1;min-height:0;overflow:auto;background:linear-gradient(135deg,rgba(255,216,61,0.04),rgba(78,205,196,0.04));display:flex;align-items:center;justify-content:center;padding:var(--space-lg);">
+        <canvas id="cv"
+          style="background:white;cursor:crosshair;touch-action:none;border-radius:4px;display:block;box-shadow:0 1px 3px rgba(0,0,0,0.1);"></canvas>
       </div>
       <div style="padding:var(--space-lg);border-top:0.5px solid var(--color-border-tertiary);flex-shrink:0;">
-        <textarea id="notes" placeholder="What's on your mind today?" maxlength="500" aria-label="Daily notes" aria-describedby="notes-info" style="width:100%;height:60px;resize:none;border:1.5px solid var(--color-border-secondary);border-left:3px solid var(--color-secondary);border-radius:var(--border-radius-md);padding:var(--space-md);font-size:var(--fs-sm);font-family:var(--font-ui);line-height:var(--lh-sm);background:var(--color-background-primary);color:var(--color-text-primary);display:block;transition:all .12s;"></textarea>
-        <div id="notes-info" style="margin-top:4px;font-size:var(--fs-xs);color:var(--color-text-tertiary);display:flex;justify-content:space-between;">
+        <textarea id="notes" placeholder="What's on your mind today?" maxlength="500" aria-label="Daily notes"
+          aria-describedby="notes-info"
+          style="width:100%;height:60px;resize:none;border:1.5px solid var(--color-border-secondary);border-left:3px solid var(--color-secondary);border-radius:var(--border-radius-md);padding:var(--space-md);font-size:var(--fs-sm);font-family:var(--font-ui);line-height:var(--lh-sm);background:var(--color-background-primary);color:var(--color-text-primary);display:block;transition:all .12s;"></textarea>
+        <div id="notes-info"
+          style="margin-top:4px;font-size:var(--fs-xs);color:var(--color-text-tertiary);display:flex;justify-content:space-between;">
           <span>Add thoughts to your day</span>
           <span id="notes-count" style="font-weight:600;">0/500</span>
         </div>
@@ -359,630 +1033,630 @@ textarea:focus{border-color:var(--color-secondary) !important;box-shadow:0 0 0 3
 </div>
 
 <script>
-const COLS=['#2c2416','#ff6b35','#ffd93d','#2ecc71','#4ecdc4','#3aa89f','#5ba3d0','#7c5cef','#ff9f43','#e74c3c','#9a8f87'];
-const WS=[1,3,6,12,22];
-const MNS=['January','February','March','April','May','June','July','August','September','October','November','December'];
-const DNS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const COLS = ['#2c2416', '#ff6b35', '#ffd93d', '#2ecc71', '#4ecdc4', '#3aa89f', '#5ba3d0', '#7c5cef', '#ff9f43', '#e74c3c', '#9a8f87'];
+  const WS = [1, 3, 6, 12, 22];
+  const MNS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const DNS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-let cur=new Date(), selKey=null, drw=false, lx=0, ly=0;
-let col=COLS[0], penW=3, ers=false, cinit=false, isSaving=false;
-const cache=new Map();
-const cv=document.getElementById('cv');
-const ctx=cv.getContext('2d');
-const MAX_HISTORY=30;
-let drawingHistory=[];
-let historyIdx=-1;
+  let cur = new Date(), selKey = null, drw = false, lx = 0, ly = 0;
+  let col = COLS[0], penW = 3, ers = false, cinit = false, isSaving = false;
+  const cache = new Map();
+  const cv = document.getElementById('cv');
+  const ctx = cv.getContext('2d');
+  const MAX_HISTORY = 30;
+  let drawingHistory = [];
+  let historyIdx = -1;
 
-const notesEl=document.getElementById('notes');
-notesEl.addEventListener('input',(e)=>{
-  const count=e.target.value.length;
-  const countEl=document.getElementById('notes-count');
-  if(countEl)countEl.textContent=`${count}/500`;
-});
-
-document.addEventListener('keydown',(e)=>{
-  if(e.ctrlKey||e.metaKey){
-    if(e.key==='z'&&!e.shiftKey){e.preventDefault();undoDrawing();}
-    else if((e.key==='z'&&e.shiftKey)||(e.key==='y')){e.preventDefault();redoDrawing();}
-  }
-});
-
-// Build color row
-const cRow=document.getElementById('cRow');
-const CORE_COLORS=4;
-COLS.forEach((c,i)=>{
-  const el=document.createElement('div');
-  el.className='csw'+(c===col?' on':'')+(i>=CORE_COLORS?' color-more':'');
-  el.style.background=c;
-  if(c==='#f8fafc')el.style.boxShadow='inset 0 0 0 0.5px var(--color-border-tertiary)';
-  el.onclick=()=>{
-    document.querySelectorAll('.csw').forEach(x=>x.classList.remove('on','save-pulse'));
-    el.classList.add('on','save-pulse');
-    setTimeout(()=>el.classList.remove('save-pulse'),400);
-    col=c; ers=false;
-    document.getElementById('erbtn').classList.remove('on');
-  };
-  cRow.appendChild(el);
-});
-if(COLS.length>CORE_COLORS)document.getElementById('cMoreBtn').style.display='block';
-
-// Build width row
-const wRow=document.getElementById('wRow');
-const DISP=[4,6,10,14,19];
-const CORE_WIDTHS=3;
-WS.forEach((sz,i)=>{
-  const btn=document.createElement('div');
-  btn.className='wbtn'+(sz===penW?' on':'')+(i>=CORE_WIDTHS?' width-more':'');
-  const dot=document.createElement('div');
-  dot.style.cssText=`width:${DISP[i]}px;height:${DISP[i]}px;border-radius:50%;background:var(--color-text-primary);`;
-  btn.appendChild(dot);
-  btn.onclick=()=>{
-    document.querySelectorAll('.wbtn').forEach(x=>x.classList.remove('on','save-pulse'));
-    btn.classList.add('on','save-pulse');
-    setTimeout(()=>btn.classList.remove('save-pulse'),400);
-    penW=sz;
-  };
-  wRow.appendChild(btn);
-});
-if(WS.length>CORE_WIDTHS)document.getElementById('wMoreBtn').style.display='block';
-
-function toggleMoreColors(){const more=document.querySelectorAll('.color-more');const btn=document.getElementById('cMoreBtn');const showing=more[0]?.classList.contains('show');more.forEach(el=>el.classList.toggle('show'));btn.textContent=showing?'More':'Less';btn.classList.add('save-pulse');setTimeout(()=>btn.classList.remove('save-pulse'),400);}
-function toggleMoreWidths(){const more=document.querySelectorAll('.width-more');const btn=document.getElementById('wMoreBtn');const showing=more[0]?.classList.contains('show');more.forEach(el=>el.classList.toggle('show'));btn.textContent=showing?'More':'Less';btn.classList.add('save-pulse');setTimeout(()=>btn.classList.remove('save-pulse'),400);}
-
-function setErs(){ers=!ers;const btn=document.getElementById('erbtn');btn.classList.toggle('on',ers);btn.classList.add('save-pulse');setTimeout(()=>btn.classList.remove('save-pulse'),400);}
-function clrC(){
-  if(!cv || !ctx){
-    showToast('❌ Canvas not available.');
-    return;
-  }
-  if(confirm('Clear your drawing? This cannot be undone. Your undo history will also be cleared.')) {
-    try{
-      ctx.globalCompositeOperation='source-over';
-      ctx.fillStyle='white';
-      ctx.fillRect(0,0,cv.width,cv.height);
-      drawingHistory=[];
-      historyIdx=-1;
-      updateHistoryButtons();
-      const cvWrap=document.getElementById('cwrap');
-      if(cvWrap){
-        cvWrap.style.animation='none';
-        setTimeout(()=>cvWrap.style.animation='',10);
-      }
-      showToast('Drawing cleared ✓');
-    }catch(e){
-      showToast('❌ Could not clear drawing.');
-    }
-  }
-}
-
-function gp(e){
-  const r=cv.getBoundingClientRect(), sx=cv.width/r.width, sy=cv.height/r.height;
-  const s=e.touches?e.touches[0]:e;
-  return{x:(s.clientX-r.left)*sx, y:(s.clientY-r.top)*sy};
-}
-function sd(e){
-  drw=true; const p=gp(e); lx=p.x; ly=p.y;
-  cv.classList.add('drawing');
-  ctx.globalCompositeOperation=ers?'destination-out':'source-over';
-  ctx.beginPath();
-  ctx.arc(lx,ly,(ers?penW*3:penW)/2,0,Math.PI*2);
-  ctx.fillStyle=ers?'rgba(0,0,0,1)':col;
-  ctx.fill();
-}
-function mv(e){
-  if(!drw)return; e.preventDefault();
-  const p=gp(e);
-  ctx.globalCompositeOperation=ers?'destination-out':'source-over';
-  ctx.beginPath(); ctx.moveTo(lx,ly); ctx.lineTo(p.x,p.y);
-  ctx.strokeStyle=ers?'rgba(0,0,0,1)':col;
-  ctx.lineWidth=ers?penW*3:penW;
-  ctx.lineCap='round'; ctx.lineJoin='round'; ctx.stroke();
-  lx=p.x; ly=p.y;
-}
-cv.addEventListener('mousedown',sd);
-cv.addEventListener('mousemove',mv);
-cv.addEventListener('mouseup',()=>{drw=false;cv.classList.remove('drawing');saveStateToHistory();});
-cv.addEventListener('mouseleave',()=>{drw=false;cv.classList.remove('drawing');});
-cv.addEventListener('touchstart',e=>{e.preventDefault();sd(e);},{passive:false});
-cv.addEventListener('touchmove',e=>{e.preventDefault();mv(e);},{passive:false});
-cv.addEventListener('touchend',()=>{drw=false;cv.classList.remove('drawing');saveStateToHistory();});
-
-function dkey(y,m,d){return`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;}
-
-function saveStateToHistory(){
-  try{
-    const imageData=cv.toDataURL('image/png');
-    drawingHistory=drawingHistory.slice(0,historyIdx+1);
-    drawingHistory.push(imageData);
-    if(drawingHistory.length>MAX_HISTORY)drawingHistory.shift();
-    else historyIdx++;
-    updateHistoryButtons();
-  }catch(e){}
-}
-
-function undoDrawing(){
-  if(historyIdx<=0)return;
-  historyIdx--;
-  restoreDrawing();
-}
-
-function redoDrawing(){
-  if(historyIdx>=drawingHistory.length-1)return;
-  historyIdx++;
-  restoreDrawing();
-}
-
-function restoreDrawing(){
-  if(historyIdx<0||historyIdx>=drawingHistory.length)return;
-  try{
-    const img=new Image();
-    img.onload=()=>{
-      ctx.globalCompositeOperation='source-over';
-      ctx.fillStyle='white';
-      ctx.fillRect(0,0,cv.width,cv.height);
-      ctx.drawImage(img,0,0);
-      updateHistoryButtons();
-    };
-    img.onerror=()=>{
-      showToast('⚠️ Could not restore drawing.');
-    };
-    img.src=drawingHistory[historyIdx];
-  }catch(e){
-    showToast('⚠️ Could not restore drawing.');
-  }
-}
-
-function updateHistoryButtons(){
-  const undo=document.getElementById('undobtn');
-  const redo=document.getElementById('redobtn');
-  if(undo)undo.disabled=historyIdx<=0;
-  if(redo)redo.disabled=historyIdx>=drawingHistory.length-1;
-}
-
-function go(dir){
-  try{
-    const g=document.getElementById('grid');
-    if(!g)return;
-    g.style.opacity='0.5';
-    g.style.pointerEvents='none';
-    const timer=setTimeout(()=>{
-      try{
-        cur=new Date(cur.getFullYear(),cur.getMonth()+dir,1);
-        render();
-      }catch(e){}finally{
-        g.style.opacity='1';
-        g.style.pointerEvents='auto';
-      }
-    },150);
-    return timer;
-  }catch(e){}
-}
-
-function render(){
-  try{
-    const y=cur.getFullYear(), m=cur.getMonth();
-    const mTitle=document.getElementById('mTtl');
-    if(mTitle){
-      mTitle.textContent=`${MNS[m]||'month'} ${y}`;
-    }
-    const g=document.getElementById('grid');
-    if(!g)return;
-    g.innerHTML='';
-    const first=new Date(y,m,1).getDay(), days=new Date(y,m+1,0).getDate();
-    const pd=new Date(y,m,0).getDate(), td=new Date();
-    for(let i=first-1;i>=0;i--)mkCell(g,y,m-1,pd-i,true,false);
-    for(let d=1;d<=days;d++){
-      const isT=y===td.getFullYear()&&m===td.getMonth()&&d===td.getDate();
-      mkCell(g,y,m,d,false,isT);
-    }
-    const tot=g.children.length, rows=Math.ceil(tot/7);
-    for(let d=1;d<=rows*7-tot;d++)mkCell(g,y,m+1,d,true,false);
-    for(let d=1;d<=days;d++){
-      const k=dkey(y,m,d);
-      if(cache.has(k)){
-        const cached=cache.get(k);
-        if(cached?.canvas){
-          setThumb(k,cached.canvas);
-        }
-      }else{
-        try{
-          const raw=localStorage.getItem(`cal:${k}`);
-          if(raw){
-            const data=JSON.parse(raw);
-            if(data?.canvas){
-              cache.set(k,data);
-              setThumb(k,data.canvas);
-            }
-          }
-        }catch(e){}
-      }
-    }
-  }catch(e){}
-}
-
-function mkCell(g,y,m,d,faded,isToday){
-  try{
-    const date=new Date(y,m,d), ry=date.getFullYear(), rm=date.getMonth(), rd=date.getDate();
-    const k=dkey(ry,rm,rd);
-    const cell=document.createElement('div');
-    cell.className='dc'+(faded?' fad':'')+(isToday?' tod':'');
-    cell.dataset.key=k;
-    const num=document.createElement('div'); 
-    num.className='dn'; 
-    num.textContent=rd>31?'?':rd; 
-    cell.appendChild(num);
-    const img=document.createElement('img'); 
-    img.className='th'; 
-    img.dataset.key=k;
-    img.alt=`Thumbnail for ${DNS[date.getDay()]}, ${MNS[rm]} ${rd}`;
-    cell.appendChild(img);
-    if(!faded){
-      const lbl=`${DNS[date.getDay()]}, ${MNS[rm]} ${rd} ${ry}`;
-      cell.onclick=()=>openDay(k,lbl);
-      cell.role='button';
-      cell.tabIndex=0;
-      cell.addEventListener('keydown',(e)=>{
-        if(e.key==='Enter'||e.key===' '){
-          e.preventDefault();
-          openDay(k,lbl);
-        }
-      });
-    }
-    g.appendChild(cell);
-  }catch(e){}
-}
-
-function setThumb(k,url){
-  if(!url || url.length===0) return;
-  document.querySelectorAll(`img.th[data-key="${k}"]`).forEach(img=>{
-    try{
-      img.onload=()=>{
-        img.style.display='block';
-        img.classList.add('day-thumb');
-        setTimeout(()=>img.classList.remove('day-thumb'),300);
-      };
-      img.onerror=()=>{
-        img.style.display='none';
-      };
-      img.src=url;
-    }catch(e){}
+  const notesEl = document.getElementById('notes');
+  notesEl.addEventListener('input', (e) => {
+    const count = e.target.value.length;
+    const countEl = document.getElementById('notes-count');
+    if (countEl) countEl.textContent = `${count}/500`;
   });
-}
 
-async function openDay(k,label){
-  selKey=k;
-  document.getElementById('eDate').textContent=label;
-  const empty=document.getElementById('empty');
-  const editor=document.getElementById('editor');
-  empty.classList.remove('closing');
-  editor.classList.remove('closing');
-  empty.style.display='none';
-  editor.style.display='flex';
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey || e.metaKey) {
+      if (e.key === 'z' && !e.shiftKey) { e.preventDefault(); undoDrawing(); }
+      else if ((e.key === 'z' && e.shiftKey) || (e.key === 'y')) { e.preventDefault(); redoDrawing(); }
+    }
+  });
 
-  let data=null;
-  if(cache.has(k)){
-    data=cache.get(k);
-  } else {
-    try{
-      const raw=localStorage.getItem(`cal:${k}`);
-      if(raw){
-        data=JSON.parse(raw);
-        cache.set(k,data);
-      }
-    }catch(e){}
-  }
+  // Build color row
+  const cRow = document.getElementById('cRow');
+  const CORE_COLORS = 4;
+  COLS.forEach((c, i) => {
+    const el = document.createElement('div');
+    el.className = 'csw' + (c === col ? ' on' : '') + (i >= CORE_COLORS ? ' color-more' : '');
+    el.style.background = c;
+    if (c === '#f8fafc') el.style.boxShadow = 'inset 0 0 0 0.5px var(--color-border-tertiary)';
+    el.onclick = () => {
+      document.querySelectorAll('.csw').forEach(x => x.classList.remove('on', 'save-pulse'));
+      el.classList.add('on', 'save-pulse');
+      setTimeout(() => el.classList.remove('save-pulse'), 400);
+      col = c; ers = false;
+      document.getElementById('erbtn').classList.remove('on');
+    };
+    cRow.appendChild(el);
+  });
+  if (COLS.length > CORE_COLORS) document.getElementById('cMoreBtn').style.display = 'block';
 
-  if(!cinit){
-    try{
-      await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
-      const wrap=document.getElementById('cwrap');
-      if(!wrap)return;
-      cv.width=Math.max(wrap.clientWidth-32,300);
-      cv.height=Math.max(wrap.clientHeight-32,200);
-      cinit=true;
-    }catch(e){
+  // Build width row
+  const wRow = document.getElementById('wRow');
+  const DISP = [4, 6, 10, 14, 19];
+  const CORE_WIDTHS = 3;
+  WS.forEach((sz, i) => {
+    const btn = document.createElement('div');
+    btn.className = 'wbtn' + (sz === penW ? ' on' : '') + (i >= CORE_WIDTHS ? ' width-more' : '');
+    const dot = document.createElement('div');
+    dot.style.cssText = `width:${DISP[i]}px;height:${DISP[i]}px;border-radius:50%;background:var(--color-text-primary);`;
+    btn.appendChild(dot);
+    btn.onclick = () => {
+      document.querySelectorAll('.wbtn').forEach(x => x.classList.remove('on', 'save-pulse'));
+      btn.classList.add('on', 'save-pulse');
+      setTimeout(() => btn.classList.remove('save-pulse'), 400);
+      penW = sz;
+    };
+    wRow.appendChild(btn);
+  });
+  if (WS.length > CORE_WIDTHS) document.getElementById('wMoreBtn').style.display = 'block';
+
+  function toggleMoreColors() { const more = document.querySelectorAll('.color-more'); const btn = document.getElementById('cMoreBtn'); const showing = more[0]?.classList.contains('show'); more.forEach(el => el.classList.toggle('show')); btn.textContent = showing ? 'More' : 'Less'; btn.classList.add('save-pulse'); setTimeout(() => btn.classList.remove('save-pulse'), 400); }
+  function toggleMoreWidths() { const more = document.querySelectorAll('.width-more'); const btn = document.getElementById('wMoreBtn'); const showing = more[0]?.classList.contains('show'); more.forEach(el => el.classList.toggle('show')); btn.textContent = showing ? 'More' : 'Less'; btn.classList.add('save-pulse'); setTimeout(() => btn.classList.remove('save-pulse'), 400); }
+
+  function setErs() { ers = !ers; const btn = document.getElementById('erbtn'); btn.classList.toggle('on', ers); btn.classList.add('save-pulse'); setTimeout(() => btn.classList.remove('save-pulse'), 400); }
+  function clrC() {
+    if (!cv || !ctx) {
+      showToast('❌ Canvas not available.');
       return;
     }
-  }
-
-  ctx.globalCompositeOperation='source-over';
-  ctx.fillStyle='white'; 
-  ctx.fillRect(0,0,cv.width,cv.height);
-  document.getElementById('notes').value='';
-
-  if(data?.canvas){
-    const img=new Image();
-    img.onload=()=>{
-      try{
-        ctx.globalCompositeOperation='source-over';
-        ctx.drawImage(img,0,0);
-      }catch(e){}
-    };
-    img.onerror=()=>{};
-    img.src=data.canvas;
-  }
-  if(data?.note){
-    const noteText=String(data.note).substring(0,500);
-    document.getElementById('notes').value=noteText;
-    const countEl=document.getElementById('notes-count');
-    if(countEl)countEl.textContent=`${noteText.length}/500`;
-  }
-
-  document.querySelectorAll('.dc').forEach(c=>c.classList.remove('sel'));
-  document.querySelector(`.dc[data-key="${k}"]`)?.classList.add('sel');
-  document.getElementById('svbtn').textContent='Save';
-  isSaving=false;
-
-  // Initialize drawing history
-  try{
-    setTimeout(()=>{
-      drawingHistory=[];
-      historyIdx=-1;
-      saveStateToHistory();
-      updateHistoryButtons();
-    },100);
-  }catch(e){}
-}
-
-
-function closeEd(){
-  selKey=null;
-  const editor=document.getElementById('editor');
-  const empty=document.getElementById('empty');
-  editor.classList.add('closing');
-  empty.classList.add('closing');
-  setTimeout(()=>{
-    editor.style.display='none';
-    empty.style.display='flex';
-    editor.classList.remove('closing');
-    empty.classList.remove('closing');
-  },250);
-  document.querySelectorAll('.dc').forEach(c=>c.classList.remove('sel'));
-}
-
-let lastSaveFailure=null;
-
-async function saveDay(){
-  if(!selKey || isSaving) return;
-  isSaving=true;
-  const btn=document.getElementById('svbtn');
-  const oldText=btn.textContent;
-  btn.textContent='Saving...';
-  btn.disabled=true;
-  
-  try{
-    const tmp=document.createElement('canvas');
-    tmp.width=cv.width; 
-    tmp.height=cv.height;
-    const tc=tmp.getContext('2d');
-    if(!tc){
-      throw new Error('Failed to get canvas context');
-    }
-    tc.fillStyle='white'; 
-    tc.fillRect(0,0,tmp.width,tmp.height);
-    tc.drawImage(cv,0,0);
-    const url=tmp.toDataURL('image/png');
-    const note=String(document.getElementById('notes').value).substring(0,500);
-    const data={canvas:url,note};
-    cache.set(selKey,data);
-    
-    try{
-      localStorage.setItem(`cal:${selKey}`,JSON.stringify(data));
-      lastSaveFailure=null;
-    }catch(e){
-      lastSaveFailure={key:selKey,data,error:e};
-      if(e.name==='QuotaExceededError'){
-        showToastWithRetry('⚠️ Storage full. Retry or delete old entries.', 'retrySave');
-      }else{
-        showToastWithRetry('⚠️ Could not save to storage. Retry?', 'retrySave');
+    if (confirm('Clear your drawing? This cannot be undone. Your undo history will also be cleared.')) {
+      try {
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, cv.width, cv.height);
+        drawingHistory = [];
+        historyIdx = -1;
+        updateHistoryButtons();
+        const cvWrap = document.getElementById('cwrap');
+        if (cvWrap) {
+          cvWrap.style.animation = 'none';
+          setTimeout(() => cvWrap.style.animation = '', 10);
+        }
+        showToast('Drawing cleared ✓');
+      } catch (e) {
+        showToast('❌ Could not clear drawing.');
       }
-      throw e;
-    }
-    
-    setThumb(selKey,url);
-    btn.classList.add('save-success');
-    btn.textContent='✓ Saved';
-    showToast('Your day is saved! 🎉');
-    setTimeout(()=>{
-      btn.classList.remove('save-success');btn.textContent=oldText;btn.disabled=false;
-      isSaving=false;
-    },800);
-  }catch(e){
-    if(!lastSaveFailure){
-      showToast('❌ Save failed. Please try again.');
-    }
-    btn.textContent=oldText;
-    btn.disabled=false;
-    isSaving=false;
-  }
-}
-
-function retrySave(){
-  if(lastSaveFailure){
-    try{
-      localStorage.setItem(`cal:${lastSaveFailure.key}`,JSON.stringify(lastSaveFailure.data));
-      cache.set(lastSaveFailure.key,lastSaveFailure.data);
-      lastSaveFailure=null;
-      showToast('✓ Saved successfully!');
-    }catch(e){
-      showToastWithRetry('❌ Save still failed. Retry?', 'retrySave');
     }
   }
-}
+
+  function gp(e) {
+    const r = cv.getBoundingClientRect(), sx = cv.width / r.width, sy = cv.height / r.height;
+    const s = e.touches ? e.touches[0] : e;
+    return { x: (s.clientX - r.left) * sx, y: (s.clientY - r.top) * sy };
+  }
+  function sd(e) {
+    drw = true; const p = gp(e); lx = p.x; ly = p.y;
+    cv.classList.add('drawing');
+    ctx.globalCompositeOperation = ers ? 'destination-out' : 'source-over';
+    ctx.beginPath();
+    ctx.arc(lx, ly, (ers ? penW * 3 : penW) / 2, 0, Math.PI * 2);
+    ctx.fillStyle = ers ? 'rgba(0,0,0,1)' : col;
+    ctx.fill();
+  }
+  function mv(e) {
+    if (!drw) return; e.preventDefault();
+    const p = gp(e);
+    ctx.globalCompositeOperation = ers ? 'destination-out' : 'source-over';
+    ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(p.x, p.y);
+    ctx.strokeStyle = ers ? 'rgba(0,0,0,1)' : col;
+    ctx.lineWidth = ers ? penW * 3 : penW;
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.stroke();
+    lx = p.x; ly = p.y;
+  }
+  cv.addEventListener('mousedown', sd);
+  cv.addEventListener('mousemove', mv);
+  cv.addEventListener('mouseup', () => { drw = false; cv.classList.remove('drawing'); saveStateToHistory(); });
+  cv.addEventListener('mouseleave', () => { drw = false; cv.classList.remove('drawing'); });
+  cv.addEventListener('touchstart', e => { e.preventDefault(); sd(e); }, { passive: false });
+  cv.addEventListener('touchmove', e => { e.preventDefault(); mv(e); }, { passive: false });
+  cv.addEventListener('touchend', () => { drw = false; cv.classList.remove('drawing'); saveStateToHistory(); });
+
+  function dkey(y, m, d) { return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`; }
+
+  function saveStateToHistory() {
+    try {
+      const imageData = cv.toDataURL('image/png');
+      drawingHistory = drawingHistory.slice(0, historyIdx + 1);
+      drawingHistory.push(imageData);
+      if (drawingHistory.length > MAX_HISTORY) drawingHistory.shift();
+      else historyIdx++;
+      updateHistoryButtons();
+    } catch (e) { }
+  }
+
+  function undoDrawing() {
+    if (historyIdx <= 0) return;
+    historyIdx--;
+    restoreDrawing();
+  }
+
+  function redoDrawing() {
+    if (historyIdx >= drawingHistory.length - 1) return;
+    historyIdx++;
+    restoreDrawing();
+  }
+
+  function restoreDrawing() {
+    if (historyIdx < 0 || historyIdx >= drawingHistory.length) return;
+    try {
+      const img = new Image();
+      img.onload = () => {
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, cv.width, cv.height);
+        ctx.drawImage(img, 0, 0);
+        updateHistoryButtons();
+      };
+      img.onerror = () => {
+        showToast('⚠️ Could not restore drawing.');
+      };
+      img.src = drawingHistory[historyIdx];
+    } catch (e) {
+      showToast('⚠️ Could not restore drawing.');
+    }
+  }
+
+  function updateHistoryButtons() {
+    const undo = document.getElementById('undobtn');
+    const redo = document.getElementById('redobtn');
+    if (undo) undo.disabled = historyIdx <= 0;
+    if (redo) redo.disabled = historyIdx >= drawingHistory.length - 1;
+  }
+
+  function go(dir) {
+    try {
+      const g = document.getElementById('grid');
+      if (!g) return;
+      g.style.opacity = '0.5';
+      g.style.pointerEvents = 'none';
+      const timer = setTimeout(() => {
+        try {
+          cur = new Date(cur.getFullYear(), cur.getMonth() + dir, 1);
+          render();
+        } catch (e) { } finally {
+          g.style.opacity = '1';
+          g.style.pointerEvents = 'auto';
+        }
+      }, 150);
+      return timer;
+    } catch (e) { }
+  }
+
+  function render() {
+    try {
+      const y = cur.getFullYear(), m = cur.getMonth();
+      const mTitle = document.getElementById('mTtl');
+      if (mTitle) {
+        mTitle.textContent = `${MNS[m] || 'month'} ${y}`;
+      }
+      const g = document.getElementById('grid');
+      if (!g) return;
+      g.innerHTML = '';
+      const first = new Date(y, m, 1).getDay(), days = new Date(y, m + 1, 0).getDate();
+      const pd = new Date(y, m, 0).getDate(), td = new Date();
+      for (let i = first - 1; i >= 0; i--)mkCell(g, y, m - 1, pd - i, true, false);
+      for (let d = 1; d <= days; d++) {
+        const isT = y === td.getFullYear() && m === td.getMonth() && d === td.getDate();
+        mkCell(g, y, m, d, false, isT);
+      }
+      const tot = g.children.length, rows = Math.ceil(tot / 7);
+      for (let d = 1; d <= rows * 7 - tot; d++)mkCell(g, y, m + 1, d, true, false);
+      for (let d = 1; d <= days; d++) {
+        const k = dkey(y, m, d);
+        if (cache.has(k)) {
+          const cached = cache.get(k);
+          if (cached?.canvas) {
+            setThumb(k, cached.canvas);
+          }
+        } else {
+          try {
+            const raw = localStorage.getItem(`cal:${k}`);
+            if (raw) {
+              const data = JSON.parse(raw);
+              if (data?.canvas) {
+                cache.set(k, data);
+                setThumb(k, data.canvas);
+              }
+            }
+          } catch (e) { }
+        }
+      }
+    } catch (e) { }
+  }
+
+  function mkCell(g, y, m, d, faded, isToday) {
+    try {
+      const date = new Date(y, m, d), ry = date.getFullYear(), rm = date.getMonth(), rd = date.getDate();
+      const k = dkey(ry, rm, rd);
+      const cell = document.createElement('div');
+      cell.className = 'dc' + (faded ? ' fad' : '') + (isToday ? ' tod' : '');
+      cell.dataset.key = k;
+      const num = document.createElement('div');
+      num.className = 'dn';
+      num.textContent = rd > 31 ? '?' : rd;
+      cell.appendChild(num);
+      const img = document.createElement('img');
+      img.className = 'th';
+      img.dataset.key = k;
+      img.alt = `Thumbnail for ${DNS[date.getDay()]}, ${MNS[rm]} ${rd}`;
+      cell.appendChild(img);
+      if (!faded) {
+        const lbl = `${DNS[date.getDay()]}, ${MNS[rm]} ${rd} ${ry}`;
+        cell.onclick = () => openDay(k, lbl);
+        cell.role = 'button';
+        cell.tabIndex = 0;
+        cell.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openDay(k, lbl);
+          }
+        });
+      }
+      g.appendChild(cell);
+    } catch (e) { }
+  }
+
+  function setThumb(k, url) {
+    if (!url || url.length === 0) return;
+    document.querySelectorAll(`img.th[data-key="${k}"]`).forEach(img => {
+      try {
+        img.onload = () => {
+          img.style.display = 'block';
+          img.classList.add('day-thumb');
+          setTimeout(() => img.classList.remove('day-thumb'), 300);
+        };
+        img.onerror = () => {
+          img.style.display = 'none';
+        };
+        img.src = url;
+      } catch (e) { }
+    });
+  }
+
+  async function openDay(k, label) {
+    selKey = k;
+    document.getElementById('eDate').textContent = label;
+    const empty = document.getElementById('empty');
+    const editor = document.getElementById('editor');
+    empty.classList.remove('closing');
+    editor.classList.remove('closing');
+    empty.style.display = 'none';
+    editor.style.display = 'flex';
+
+    let data = null;
+    if (cache.has(k)) {
+      data = cache.get(k);
+    } else {
+      try {
+        const raw = localStorage.getItem(`cal:${k}`);
+        if (raw) {
+          data = JSON.parse(raw);
+          cache.set(k, data);
+        }
+      } catch (e) { }
+    }
+
+    if (!cinit) {
+      try {
+        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+        const wrap = document.getElementById('cwrap');
+        if (!wrap) return;
+        cv.width = Math.max(wrap.clientWidth - 32, 300);
+        cv.height = Math.max(wrap.clientHeight - 32, 200);
+        cinit = true;
+      } catch (e) {
+        return;
+      }
+    }
+
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, cv.width, cv.height);
+    document.getElementById('notes').value = '';
+
+    if (data?.canvas) {
+      const img = new Image();
+      img.onload = () => {
+        try {
+          ctx.globalCompositeOperation = 'source-over';
+          ctx.drawImage(img, 0, 0);
+        } catch (e) { }
+      };
+      img.onerror = () => { };
+      img.src = data.canvas;
+    }
+    if (data?.note) {
+      const noteText = String(data.note).substring(0, 500);
+      document.getElementById('notes').value = noteText;
+      const countEl = document.getElementById('notes-count');
+      if (countEl) countEl.textContent = `${noteText.length}/500`;
+    }
+
+    document.querySelectorAll('.dc').forEach(c => c.classList.remove('sel'));
+    document.querySelector(`.dc[data-key="${k}"]`)?.classList.add('sel');
+    document.getElementById('svbtn').textContent = 'Save';
+    isSaving = false;
+
+    // Initialize drawing history
+    try {
+      setTimeout(() => {
+        drawingHistory = [];
+        historyIdx = -1;
+        saveStateToHistory();
+        updateHistoryButtons();
+      }, 100);
+    } catch (e) { }
+  }
 
 
-function showToast(msg){
-  const toast=document.createElement('div');
-  toast.className='toast';
-  toast.textContent=msg;
-  document.body.appendChild(toast);
-  setTimeout(()=>{toast.classList.add('hide');setTimeout(()=>toast.remove(),300);},2000);
-}
+  function closeEd() {
+    selKey = null;
+    const editor = document.getElementById('editor');
+    const empty = document.getElementById('empty');
+    editor.classList.add('closing');
+    empty.classList.add('closing');
+    setTimeout(() => {
+      editor.style.display = 'none';
+      empty.style.display = 'flex';
+      editor.classList.remove('closing');
+      empty.classList.remove('closing');
+    }, 250);
+    document.querySelectorAll('.dc').forEach(c => c.classList.remove('sel'));
+  }
 
-function showToastWithRetry(msg,retryFn){
-  const toast=document.createElement('div');
-  toast.className='toast';
-  toast.style.display='flex';
-  toast.style.alignItems='center';
-  toast.style.gap='12px';
-  const text=document.createElement('span');
-  text.textContent=msg;
-  const btn=document.createElement('button');
-  btn.textContent='Retry';
-  btn.style.cssText='background:white;color:#2ecc71;border:none;border-radius:4px;padding:4px 8px;cursor:pointer;font-size:12px;font-weight:600;';
-  btn.onclick=()=>{window[retryFn]?.();toast.remove();};
-  toast.appendChild(text);
-  toast.appendChild(btn);
-  document.body.appendChild(toast);
-  setTimeout(()=>{toast.classList.add('hide');setTimeout(()=>toast.remove(),300);},4000);
-}
+  let lastSaveFailure = null;
 
-const ONBOARD_KEY='fun-calendar-onboarding-done';
-const ONBOARD_STEPS=[
-  'Click any day to open the editor. Start drawing or writing to create your daily entry.',
-  'Customize with colors and brush sizes in the toolbar. Save your work to the calendar.',
-  'Navigate between months using the arrow buttons. Explore your calendar journey anytime.'
-];
-let onboardIdx=0;
+  async function saveDay() {
+    if (!selKey || isSaving) return;
+    isSaving = true;
+    const btn = document.getElementById('svbtn');
+    const oldText = btn.textContent;
+    btn.textContent = 'Saving...';
+    btn.disabled = true;
 
-function updateOnboarding(){
-  const el=document.getElementById('onboarding-snackbar');
-  if(!el) return;
-  const text=document.getElementById('onboarding-text');
-  const progress=document.getElementById('onboarding-progress');
-  text.textContent=ONBOARD_STEPS[onboardIdx];
-  progress.textContent=`Step ${onboardIdx+1} of ${ONBOARD_STEPS.length}`;
-  document.getElementById('onboarding-next').textContent=onboardIdx===ONBOARD_STEPS.length-1?'Got it':'Next';
-}
+    try {
+      const tmp = document.createElement('canvas');
+      tmp.width = cv.width;
+      tmp.height = cv.height;
+      const tc = tmp.getContext('2d');
+      if (!tc) {
+        throw new Error('Failed to get canvas context');
+      }
+      tc.fillStyle = 'white';
+      tc.fillRect(0, 0, tmp.width, tmp.height);
+      tc.drawImage(cv, 0, 0);
+      const url = tmp.toDataURL('image/png');
+      const note = String(document.getElementById('notes').value).substring(0, 500);
+      const data = { canvas: url, note };
+      cache.set(selKey, data);
 
-function completeOnboarding(){
-  localStorage.setItem(ONBOARD_KEY,'true');
-  const el=document.getElementById('onboarding-snackbar');
-  if(el) el.remove();
-}
+      try {
+        localStorage.setItem(`cal:${selKey}`, JSON.stringify(data));
+        lastSaveFailure = null;
+      } catch (e) {
+        lastSaveFailure = { key: selKey, data, error: e };
+        if (e.name === 'QuotaExceededError') {
+          showToastWithRetry('⚠️ Storage full. Retry or delete old entries.', 'retrySave');
+        } else {
+          showToastWithRetry('⚠️ Could not save to storage. Retry?', 'retrySave');
+        }
+        throw e;
+      }
 
-function nextOnboarding(){
-  if(onboardIdx < ONBOARD_STEPS.length - 1){
-    onboardIdx += 1;
-    updateOnboarding();
-  } else {
+      setThumb(selKey, url);
+      btn.classList.add('save-success');
+      btn.textContent = '✓ Saved';
+      showToast('Your day is saved! 🎉');
+      setTimeout(() => {
+        btn.classList.remove('save-success'); btn.textContent = oldText; btn.disabled = false;
+        isSaving = false;
+      }, 800);
+    } catch (e) {
+      if (!lastSaveFailure) {
+        showToast('❌ Save failed. Please try again.');
+      }
+      btn.textContent = oldText;
+      btn.disabled = false;
+      isSaving = false;
+    }
+  }
+
+  function retrySave() {
+    if (lastSaveFailure) {
+      try {
+        localStorage.setItem(`cal:${lastSaveFailure.key}`, JSON.stringify(lastSaveFailure.data));
+        cache.set(lastSaveFailure.key, lastSaveFailure.data);
+        lastSaveFailure = null;
+        showToast('✓ Saved successfully!');
+      } catch (e) {
+        showToastWithRetry('❌ Save still failed. Retry?', 'retrySave');
+      }
+    }
+  }
+
+
+  function showToast(msg) {
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = msg;
+    document.body.appendChild(toast);
+    setTimeout(() => { toast.classList.add('hide'); setTimeout(() => toast.remove(), 300); }, 2000);
+  }
+
+  function showToastWithRetry(msg, retryFn) {
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.style.display = 'flex';
+    toast.style.alignItems = 'center';
+    toast.style.gap = '12px';
+    const text = document.createElement('span');
+    text.textContent = msg;
+    const btn = document.createElement('button');
+    btn.textContent = 'Retry';
+    btn.style.cssText = 'background:white;color:#2ecc71;border:none;border-radius:4px;padding:4px 8px;cursor:pointer;font-size:12px;font-weight:600;';
+    btn.onclick = () => { window[retryFn]?.(); toast.remove(); };
+    toast.appendChild(text);
+    toast.appendChild(btn);
+    document.body.appendChild(toast);
+    setTimeout(() => { toast.classList.add('hide'); setTimeout(() => toast.remove(), 300); }, 4000);
+  }
+
+  const ONBOARD_KEY = 'fun-calendar-onboarding-done';
+  const ONBOARD_STEPS = [
+    'Click any day to open the editor. Start drawing or writing to create your daily entry.',
+    'Customize with colors and brush sizes in the toolbar. Save your work to the calendar.',
+    'Navigate between months using the arrow buttons. Explore your calendar journey anytime.'
+  ];
+  let onboardIdx = 0;
+
+  function updateOnboarding() {
+    const el = document.getElementById('onboarding-snackbar');
+    if (!el) return;
+    const text = document.getElementById('onboarding-text');
+    const progress = document.getElementById('onboarding-progress');
+    text.textContent = ONBOARD_STEPS[onboardIdx];
+    progress.textContent = `Step ${onboardIdx + 1} of ${ONBOARD_STEPS.length}`;
+    document.getElementById('onboarding-next').textContent = onboardIdx === ONBOARD_STEPS.length - 1 ? 'Got it' : 'Next';
+  }
+
+  function completeOnboarding() {
+    localStorage.setItem(ONBOARD_KEY, 'true');
+    const el = document.getElementById('onboarding-snackbar');
+    if (el) el.remove();
+  }
+
+  function nextOnboarding() {
+    if (onboardIdx < ONBOARD_STEPS.length - 1) {
+      onboardIdx += 1;
+      updateOnboarding();
+    } else {
+      completeOnboarding();
+    }
+  }
+
+  function skipOnboarding() {
     completeOnboarding();
   }
-}
 
-function skipOnboarding(){
-  completeOnboarding();
-}
-
-function initOnboarding(){
-  if(typeof window.localStorage==='undefined' || window.localStorage.getItem(ONBOARD_KEY)==='true') return;
-  if(document.getElementById('onboarding-snackbar')) return;
-  const bar=document.createElement('aside');
-  bar.id='onboarding-snackbar';
-  bar.className='onboarding-snackbar';
-  bar.innerHTML=`<h4>Quick Start</h4><p id="onboarding-text"></p><div class="onboarding-actions"><button class="skip" onclick="skipOnboarding()">Skip</button><button id="onboarding-next" onclick="nextOnboarding()">Next</button></div><div class="onboarding-progress" id="onboarding-progress"></div>`;
-  document.body.appendChild(bar);
-  onboardIdx=0;
-  updateOnboarding();
-}
-
-function setCalendarToggleState(visible){
-  // Sync both the top-bar button and the FAB
-  const btn=document.getElementById('cal-toggle');
-  const fab=document.getElementById('cal-fab');
-  const expanded=String(visible);
-  if(btn){
-    btn.classList.toggle('active',visible);
-    btn.setAttribute('aria-expanded',expanded);
-    btn.innerHTML=visible
-      ?'<span aria-hidden="true">📅</span> Hide Calendar'
-      :'<span aria-hidden="true">📅</span> Show Calendar';
+  function initOnboarding() {
+    if (typeof window.localStorage === 'undefined' || window.localStorage.getItem(ONBOARD_KEY) === 'true') return;
+    if (document.getElementById('onboarding-snackbar')) return;
+    const bar = document.createElement('aside');
+    bar.id = 'onboarding-snackbar';
+    bar.className = 'onboarding-snackbar';
+    bar.innerHTML = `<h4>Quick Start</h4><p id="onboarding-text"></p><div class="onboarding-actions"><button class="skip" onclick="skipOnboarding()">Skip</button><button id="onboarding-next" onclick="nextOnboarding()">Next</button></div><div class="onboarding-progress" id="onboarding-progress"></div>`;
+    document.body.appendChild(bar);
+    onboardIdx = 0;
+    updateOnboarding();
   }
-  if(fab){
-    fab.classList.toggle('active',visible);
-    fab.setAttribute('aria-expanded',expanded);
-    fab.innerHTML=visible
-      ?'<span aria-hidden="true">📅</span> Hide Calendar'
-      :'<span aria-hidden="true">📅</span> Show Calendar';
-  }
-}
 
-function toggleCalendarPanel(){
-  const cal=document.getElementById('calendar-panel');
-  const isVisible=cal.style.display==='flex';
-  cal.style.display=isVisible?'none':'flex';
-  setCalendarToggleState(!isVisible);
-}
-
-let _prevMobile=null;
-function updateResponsiveUI(){
-  const width=window.innerWidth;
-  const isMobile=width<=767;
-  const cal=document.getElementById('calendar-panel');
-  if(isMobile){
-    // Only reset calendar visibility when first entering mobile breakpoint
-    if(_prevMobile!==true){
-      if(cal)cal.style.display='none';
-      setCalendarToggleState(false);
+  function setCalendarToggleState(visible) {
+    // Sync both the top-bar button and the FAB
+    const btn = document.getElementById('cal-toggle');
+    const fab = document.getElementById('cal-fab');
+    const expanded = String(visible);
+    if (btn) {
+      btn.classList.toggle('active', visible);
+      btn.setAttribute('aria-expanded', expanded);
+      btn.innerHTML = visible
+        ? '<span aria-hidden="true">📅</span> Hide Calendar'
+        : '<span aria-hidden="true">📅</span> Show Calendar';
     }
-  }else{
-    // Desktop: always show calendar
-    if(cal)cal.style.display='flex';
+    if (fab) {
+      fab.classList.toggle('active', visible);
+      fab.setAttribute('aria-expanded', expanded);
+      fab.innerHTML = visible
+        ? '<span aria-hidden="true">📅</span> Hide Calendar'
+        : '<span aria-hidden="true">📅</span> Show Calendar';
+    }
   }
-  _prevMobile=isMobile;
-}
 
-window.addEventListener('resize',()=>{
-  updateResponsiveUI();
-  if(cinit && cv && selKey){
-    setTimeout(()=>{
-      const wrap=document.getElementById('cwrap');
-      if(wrap){
-        cv.width=Math.max(wrap.clientWidth-32,300);
-        cv.height=Math.max(wrap.clientHeight-32,200);
+  function toggleCalendarPanel() {
+    const cal = document.getElementById('calendar-panel');
+    const isVisible = cal.style.display === 'flex';
+    cal.style.display = isVisible ? 'none' : 'flex';
+    setCalendarToggleState(!isVisible);
+  }
+
+  let _prevMobile = null;
+  function updateResponsiveUI() {
+    const width = window.innerWidth;
+    const isMobile = width <= 767;
+    const cal = document.getElementById('calendar-panel');
+    if (isMobile) {
+      // Only reset calendar visibility when first entering mobile breakpoint
+      if (_prevMobile !== true) {
+        if (cal) cal.style.display = 'none';
+        setCalendarToggleState(false);
       }
-    },100);
+    } else {
+      // Desktop: always show calendar
+      if (cal) cal.style.display = 'flex';
+    }
+    _prevMobile = isMobile;
   }
-});
-window.addEventListener('orientationchange',()=>{
-  setTimeout(updateResponsiveUI,100);
-});
 
-function setThemeUI(theme){
-  const isDark=theme==='dark';
-  const icon=document.getElementById('theme-icon');
-  const label=document.getElementById('theme-label');
-  const btn=document.getElementById('theme-toggle-bar');
-  if(icon)icon.textContent=isDark?'☀️':'🌙';
-  if(label)label.textContent=isDark?'Switch to light':'Switch to dark';
-  if(btn)btn.setAttribute('aria-label',isDark?'Switch to light mode':'Switch to dark mode');
-}
+  window.addEventListener('resize', () => {
+    updateResponsiveUI();
+    if (cinit && cv && selKey) {
+      setTimeout(() => {
+        const wrap = document.getElementById('cwrap');
+        if (wrap) {
+          cv.width = Math.max(wrap.clientWidth - 32, 300);
+          cv.height = Math.max(wrap.clientHeight - 32, 200);
+        }
+      }, 100);
+    }
+  });
+  window.addEventListener('orientationchange', () => {
+    setTimeout(updateResponsiveUI, 100);
+  });
 
-function toggleTheme(){
-  const html=document.documentElement;
-  const currentTheme=html.getAttribute('data-theme');
-  const newTheme=currentTheme==='dark'?'light':'dark';
-  html.setAttribute('data-theme',newTheme);
-  localStorage.setItem('theme-preference',newTheme);
-  setThemeUI(newTheme);
-}
-
-function initTheme(){
-  const html=document.documentElement;
-  let theme=localStorage.getItem('theme-preference');
-  if(!theme){
-    theme=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
+  function setThemeUI(theme) {
+    const isDark = theme === 'dark';
+    const icon = document.getElementById('theme-icon');
+    const label = document.getElementById('theme-label');
+    const btn = document.getElementById('theme-toggle-bar');
+    if (icon) icon.textContent = isDark ? '☀️' : '🌙';
+    if (label) label.textContent = isDark ? 'Switch to light' : 'Switch to dark';
+    if (btn) btn.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
   }
-  html.setAttribute('data-theme',theme);
-  setThemeUI(theme);
-}
 
-document.addEventListener('DOMContentLoaded',()=>{
-  initTheme();
-  updateResponsiveUI();
-});
-setTimeout(updateResponsiveUI,100);
+  function toggleTheme() {
+    const html = document.documentElement;
+    const currentTheme = html.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme-preference', newTheme);
+    setThemeUI(newTheme);
+  }
 
-render();
-initOnboarding();
+  function initTheme() {
+    const html = document.documentElement;
+    let theme = localStorage.getItem('theme-preference');
+    if (!theme) {
+      theme = window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
+    }
+    html.setAttribute('data-theme', theme);
+    setThemeUI(theme);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
+    updateResponsiveUI();
+  });
+  setTimeout(updateResponsiveUI, 100);
+
+  render();
+  initOnboarding();
 </script>
