@@ -1,3 +1,8 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ff6b35">
+<meta name="description" content="Fun Calendar - Draw, write, and track your daily journey">
+<title>Fun Calendar</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap');
 
@@ -41,6 +46,9 @@
 }
 
 *{box-sizing:border-box;}
+body{margin:0;padding:0;font-family:var(--font-ui);}
+@media(max-width:767px){body{padding-top:8px;}}
+
 @keyframes celebrateSave{0%{transform:scale(0.9);opacity:0;}50%{transform:scale(1.1);}100%{transform:scale(1);opacity:0;}}
 @keyframes drawStroke{0%{opacity:0.5;transform:scale(0.8);}100%{opacity:1;transform:scale(1);}}
 @keyframes pulse{0%{transform:scale(1);}50%{transform:scale(1.05);}100%{transform:scale(1);}}
@@ -52,7 +60,7 @@
 @keyframes fadeOutEditor{from{opacity:1;}to{opacity:0;}}
 @keyframes staggerContainer{0%{opacity:0;}100%{opacity:1;}}
 @media(prefers-reduced-motion:no-preference){
-  .dc,.csw,.tbtn,.wbtn,.svbtn,.more-btn{transition:all .15s cubic-bezier(0.34,1.56,0.64,1);}
+  .dc,.csw,.tbtn,.wbtn,.svbtn,.more-btn{transition:all .15s cubic-bezier(0.25,0.46,0.45,0.94);}
 }
 .dc{border:0.5px solid var(--color-border-tertiary);border-radius:4px;cursor:pointer;display:flex;flex-direction:column;overflow:hidden;transition:border-color .12s,background .12s,box-shadow .12s;}
 .dc:hover{border-color:var(--color-secondary);background:var(--color-background-secondary);box-shadow:0 4px 12px rgba(78,205,196,0.25);transform:translateY(-2px);}
@@ -68,9 +76,13 @@
 .wbtn:hover,.wbtn.on{border-color:var(--color-border-secondary);background:var(--color-background-primary);}
 .tbtn{font-size:var(--fs-sm);font-family:var(--font-ui);font-weight:500;padding:var(--space-xs) var(--space-sm);border-radius:4px;border:0.5px solid var(--color-border-secondary);cursor:pointer;background:none;color:var(--color-text-secondary);transition:all .12s;}
 .tbtn:hover{background:var(--color-background-secondary);color:var(--color-primary);border-color:var(--color-primary);box-shadow:0 2px 6px rgba(255,107,53,0.15);}
+.tbtn:focus{outline:2px solid var(--color-primary);outline-offset:2px;}
+.tbtn:disabled{opacity:0.5;cursor:not-allowed;}
 .tbtn.on{background:var(--color-primary-light);border-color:var(--color-primary);color:var(--color-primary-dark);}
-.svbtn{font-size:calc(var(--fs-sm) + 1px);font-family:var(--font-ui);font-weight:700;padding:calc(var(--space-xs) + 2px) calc(var(--space-lg) + 4px);border-radius:6px;border:none;cursor:pointer;background:var(--color-primary);color:white;transition:all .15s;box-shadow:0 4px 16px rgba(255,107,53,0.35);text-transform:uppercase;letter-spacing:0.5px;}
-.svbtn:hover{background:var(--color-primary-dark);transform:translateY(-4px) scale(1.05);box-shadow:0 8px 24px rgba(255,107,53,0.45);}
+.svbtn{font-size:calc(var(--fs-sm) + 1px);font-family:var(--font-ui);font-weight:700;padding:calc(var(--space-xs) + 2px) calc(var(--space-lg) + 4px);border-radius:6px;border:none;cursor:pointer;background:var(--color-primary);color:white;transition:all .15s cubic-bezier(0.25,0.46,0.45,0.94);box-shadow:0 4px 16px rgba(255,107,53,0.35);text-transform:uppercase;letter-spacing:0.5px;}
+.svbtn:hover{background:var(--color-primary-dark);transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,107,53,0.45);}
+.svbtn:focus{outline:2px solid var(--color-primary-dark);outline-offset:2px;}
+.svbtn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
 textarea{font-family:var(--font-ui);font-size:var(--fs-sm);line-height:var(--lh-sm);}
 textarea::placeholder{color:var(--color-text-tertiary);}
 textarea:focus{border-color:var(--color-secondary) !important;box-shadow:0 0 0 3px rgba(78,205,196,0.1);}
@@ -116,11 +128,43 @@ textarea:focus{border-color:var(--color-secondary) !important;box-shadow:0 0 0 3
 .color-more.show,.width-more.show{display:inline-flex;}
 .more-btn{font-size:var(--fs-xs);padding:var(--space-xs) var(--space-sm);background:var(--color-secondary-light);border:1px solid var(--color-secondary);color:var(--color-secondary-dark);cursor:pointer;border-radius:4px;font-weight:700;transition:all .12s;box-shadow:0 1px 4px rgba(78,205,196,0.2);}
 .more-btn:hover{box-shadow:0 2px 8px rgba(78,205,196,0.3);transform:translateY(-1px);}
+
+#main-container{display:flex;gap:var(--space-lg);height:680px;font-family:var(--font-ui);padding:var(--space-lg);}
+#calendar-panel{flex:0 0 298px;}
+#editor-panel{flex:1;}
+
+@media(max-width:1023px){
+  #main-container{height:auto;flex-direction:column;gap:var(--space-md);padding:var(--space-md);}
+  #calendar-panel{flex:0 0 auto;min-height:300px;}
+  #editor-panel{flex:1;min-height:400px;}
+}
+
+@media(max-width:767px){
+  #main-container{height:auto;flex-direction:column;gap:var(--space-md);padding:var(--space-md);}
+  #calendar-panel{flex:0 0 auto;min-height:280px;display:none;}
+  #calendar-panel.show{display:flex;}
+  #editor-panel{flex:1;min-height:calc(100vh - 140px);}
+  .calendar-toggle{display:block !important;margin:0 0 var(--space-sm) 0;width:100%;padding:var(--space-sm) var(--space-md);min-height:44px;font-size:var(--fs-sm);}
+  .tbtn{padding:var(--space-xs) var(--space-sm);min-width:44px;min-height:44px;font-size:var(--fs-xs);}
+  .tbtn:focus,.tbtn:active{outline:2px solid var(--color-secondary);}
+  .svbtn{min-height:44px;font-size:var(--fs-sm);}
+  #eDate{font-size:var(--fs-sm);}
+  textarea{font-size:16px;min-height:80px;}
+}
+
+@media(max-width:480px){
+  #main-container{gap:var(--space-xs);padding:var(--space-xs);}
+  #editor-panel{min-height:calc(100vh - 100px);}
+  .svbtn{padding:var(--space-sm) var(--space-md);min-height:44px;}
+  textarea{font-size:16px;min-height:100px;}
+  .calendar-toggle{padding:var(--space-sm) var(--space-xs);margin:0;}
+  #cwrap{padding:var(--space-sm);}
+}
 </style>
 
-<div style="display:flex;gap:var(--space-lg);height:680px;font-family:var(--font-ui);padding:var(--space-lg);">
+<div id="main-container">
 
-  <div style="flex:0 0 298px;display:flex;flex-direction:column;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-primary);">
+  <div id="calendar-panel" style="flex:0 0 298px;display:flex;flex-direction:column;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-primary);">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-md) var(--space-lg);border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);">
       <button class="tbtn" style="font-size:18px;padding:1px 8px;" onclick="go(-1)">&#8249;</button>
       <span id="mTtl" style="font-size:var(--fs-xl);font-weight:700;font-family:var(--font-display);color:var(--color-primary);letter-spacing:.5px;"></span>
@@ -138,7 +182,8 @@ textarea:focus{border-color:var(--color-secondary) !important;box-shadow:0 0 0 3
     <div id="grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:var(--space-xs);padding:var(--space-xs);min-height:300px;overflow:auto;"></div>
   </div>
 
-  <div style="flex:1;display:flex;flex-direction:column;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-primary);">
+  <div id="editor-panel" style="flex:1;display:flex;flex-direction:column;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-primary);">
+    <button class="calendar-toggle" id="cal-toggle" onclick="toggleCalendarPanel()" style="display:none;align-self:flex-start;margin:var(--space-sm);padding:var(--space-xs) var(--space-sm);background:var(--color-background-secondary);border:1px solid var(--color-border-secondary);border-radius:4px;cursor:pointer;color:var(--color-text-primary);font-size:var(--fs-sm);min-height:44px;">📅 Show Calendar</button>
     <div id="empty" style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;">
       <div style="width:48px;height:48px;border:2px solid var(--color-secondary);border-radius:8px;display:flex;align-items:center;justify-content:center;position:relative;animation:pulse 2s ease-in-out infinite;">
         <div style="position:absolute;top:-8px;left:10px;width:4px;height:10px;background:var(--color-secondary);border-radius:2px;"></div>
@@ -281,7 +326,6 @@ function clrC(){
       }
       showToast('Drawing cleared ✓');
     }catch(e){
-      console.error('Failed to clear canvas:',e);
       showToast('❌ Could not clear drawing.');
     }
   }
@@ -329,9 +373,7 @@ function saveStateToHistory(){
     if(drawingHistory.length>MAX_HISTORY)drawingHistory.shift();
     else historyIdx++;
     updateHistoryButtons();
-  }catch(e){
-    console.warn('Failed to save drawing state:',e);
-  }
+  }catch(e){}
 }
 
 function undoDrawing(){
@@ -358,13 +400,11 @@ function restoreDrawing(){
       updateHistoryButtons();
     };
     img.onerror=()=>{
-      showToast('❌ Failed to restore drawing state.');
-      console.error('Failed to load history image');
+      showToast('⚠️ Could not restore drawing.');
     };
     img.src=drawingHistory[historyIdx];
   }catch(e){
-    console.error('Restore drawing failed:',e);
-    showToast('❌ Could not restore drawing.');
+    showToast('⚠️ Could not restore drawing.');
   }
 }
 
@@ -385,17 +425,13 @@ function go(dir){
       try{
         cur=new Date(cur.getFullYear(),cur.getMonth()+dir,1);
         render();
-      }catch(e){
-        console.error('Failed to render next month:',e);
-      }finally{
+      }catch(e){}finally{
         g.style.opacity='1';
         g.style.pointerEvents='auto';
       }
     },150);
     return timer;
-  }catch(e){
-    console.error('Navigation failed:',e);
-  }
+  }catch(e){}
 }
 
 function render(){
@@ -406,10 +442,7 @@ function render(){
       mTitle.textContent=`${MNS[m]||'month'} ${y}`;
     }
     const g=document.getElementById('grid');
-    if(!g){
-      console.warn('render: grid container not found');
-      return;
-    }
+    if(!g)return;
     g.innerHTML='';
     const first=new Date(y,m,1).getDay(), days=new Date(y,m+1,0).getDate();
     const pd=new Date(y,m,0).getDate(), td=new Date();
@@ -437,14 +470,10 @@ function render(){
               setThumb(k,data.canvas);
             }
           }
-        }catch(e){
-          console.warn(`Failed to load thumbnail for ${k}:`,e);
-        }
+        }catch(e){}
       }
     }
-  }catch(e){
-    console.error('Render failed:',e);
-  }
+  }catch(e){}
 }
 
 function mkCell(g,y,m,d,faded,isToday){
@@ -476,9 +505,7 @@ function mkCell(g,y,m,d,faded,isToday){
       });
     }
     g.appendChild(cell);
-  }catch(e){
-    console.warn(`Failed to create cell for ${y}-${m}-${d}:`,e);
-  }
+  }catch(e){}
 }
 
 function setThumb(k,url){
@@ -491,13 +518,10 @@ function setThumb(k,url){
         setTimeout(()=>img.classList.remove('day-thumb'),300);
       };
       img.onerror=()=>{
-        console.warn(`Failed to load thumbnail for ${k}`);
         img.style.display='none';
       };
       img.src=url;
-    }catch(e){
-      console.warn(`Error setting thumbnail for ${k}:`,e);
-    }
+    }catch(e){}
   });
 }
 
@@ -521,21 +545,18 @@ async function openDay(k,label){
         data=JSON.parse(raw);
         cache.set(k,data);
       }
-    }catch(e){
-      console.warn(`Failed to load day data for ${k}:`,e);
-    }
+    }catch(e){}
   }
 
   if(!cinit){
     try{
       await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
       const wrap=document.getElementById('cwrap');
-      if(!wrap){console.error('Canvas wrapper not found');return;}
+      if(!wrap)return;
       cv.width=Math.max(wrap.clientWidth-32,300);
       cv.height=Math.max(wrap.clientHeight-32,200);
       cinit=true;
     }catch(e){
-      console.error('Failed to initialize canvas:',e);
       return;
     }
   }
@@ -551,13 +572,9 @@ async function openDay(k,label){
       try{
         ctx.globalCompositeOperation='source-over';
         ctx.drawImage(img,0,0);
-      }catch(e){
-        console.warn('Failed to draw image:',e);
-      }
+      }catch(e){}
     };
-    img.onerror=()=>{
-      console.warn(`Failed to load canvas image for ${k}`);
-    };
+    img.onerror=()=>{};
     img.src=data.canvas;
   }
   if(data?.note){
@@ -580,9 +597,7 @@ async function openDay(k,label){
       saveStateToHistory();
       updateHistoryButtons();
     },100);
-  }catch(e){
-    console.warn('Failed to initialize drawing history:',e);
-  }
+  }catch(e){}
 }
 
 
@@ -637,7 +652,6 @@ async function saveDay(){
       }else{
         showToastWithRetry('⚠️ Could not save to storage. Retry?', 'retrySave');
       }
-      console.error('Storage error:',e);
       throw e;
     }
     
@@ -650,7 +664,6 @@ async function saveDay(){
       isSaving=false;
     },800);
   }catch(e){
-    console.error('Save failed:',e);
     if(!lastSaveFailure){
       showToast('❌ Save failed. Please try again.');
     }
@@ -668,7 +681,6 @@ function retrySave(){
       lastSaveFailure=null;
       showToast('✓ Saved successfully!');
     }catch(e){
-      console.error('Retry save failed:',e);
       showToastWithRetry('❌ Save still failed. Retry?', 'retrySave');
     }
   }
@@ -703,9 +715,9 @@ function showToastWithRetry(msg,retryFn){
 
 const ONBOARD_KEY='fun-calendar-onboarding-done';
 const ONBOARD_STEPS=[
-  'Welcome to Fun Calendar! Click a day on the left to open the editor and start drawing or writing.',
-  'Try changing pen color and width in the toolbar above the canvas. Saving stores your work to the calendar.',
-  'Use the month arrows to switch dates, then repeat. Close this tip when you are ready.'
+  'Click any day to open the editor. Start drawing or writing to create your daily entry.',
+  'Customize with colors and brush sizes in the toolbar. Save your work to the calendar.',
+  'Navigate between months using the arrow buttons. Explore your calendar journey anytime.'
 ];
 let onboardIdx=0;
 
@@ -749,6 +761,49 @@ function initOnboarding(){
   onboardIdx=0;
   updateOnboarding();
 }
+
+function toggleCalendarPanel(){
+  const cal=document.getElementById('calendar-panel');
+  const btn=document.getElementById('cal-toggle');
+  if(cal.classList.contains('show')){
+    cal.classList.remove('show');
+    btn.textContent='📅 Show Calendar';
+  }else{
+    cal.classList.add('show');
+    btn.textContent='📅 Hide Calendar';
+  }
+}
+
+function updateResponsiveUI(){
+  const width=window.innerWidth;
+  const toggle=document.getElementById('cal-toggle');
+  const cal=document.getElementById('calendar-panel');
+  if(width<=767){
+    if(toggle)toggle.style.display='block';
+    if(cal)cal.classList.remove('show');
+  }else{
+    if(toggle)toggle.style.display='none';
+    if(cal)cal.classList.remove('show');
+  }
+}
+
+window.addEventListener('resize',()=>{
+  updateResponsiveUI();
+  if(cinit && cv && selKey){
+    setTimeout(()=>{
+      const wrap=document.getElementById('cwrap');
+      if(wrap){
+        cv.width=Math.max(wrap.clientWidth-32,300);
+        cv.height=Math.max(wrap.clientHeight-32,200);
+      }
+    },100);
+  }
+});
+window.addEventListener('orientationchange',()=>{
+  setTimeout(updateResponsiveUI,100);
+});
+document.addEventListener('DOMContentLoaded',updateResponsiveUI);
+setTimeout(updateResponsiveUI,100);
 
 render();
 initOnboarding();
