@@ -315,7 +315,7 @@ function render(){
   for(let d=1;d<=days;d++){
     const k=dkey(y,m,d);
     if(cache.has(k)){setThumb(k,cache.get(k).canvas);}
-    else{window.storage.get(`cal:${k}`).then(r=>{if(r){const data=JSON.parse(r.value);cache.set(k,data);setThumb(k,data.canvas);}}).catch(()=>{});}
+    else{try{const raw=localStorage.getItem(`cal:${k}`);if(raw){const data=JSON.parse(raw);cache.set(k,data);setThumb(k,data.canvas);}}catch(e){}}
   }
 }
 
@@ -349,7 +349,7 @@ async function openDay(k,label){
   editor.style.display='flex';
 
   let data=cache.get(k);
-  if(!data){try{const r=await window.storage.get(`cal:${k}`);if(r){data=JSON.parse(r.value);cache.set(k,data);}}catch(e){}}
+  if(!data){try{const raw=localStorage.getItem(`cal:${k}`);if(raw){data=JSON.parse(raw);cache.set(k,data);}}catch(e){}}
 
   if(!cinit){
     await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
@@ -401,7 +401,7 @@ async function saveDay(){
   const note=document.getElementById('notes').value;
   const data={canvas:url,note};
   cache.set(selKey,data);
-  try{await window.storage.set(`cal:${selKey}`,JSON.stringify(data));}catch(e){}
+  try{localStorage.setItem(`cal:${selKey}`,JSON.stringify(data));}catch(e){}
   setThumb(selKey,url);
   const btn=document.getElementById('svbtn');
   btn.classList.add('save-success');
