@@ -174,7 +174,7 @@ textarea:focus{border-color:var(--color-secondary) !important;box-shadow:0 0 0 3
 
 <div id="main-container">
 
-  <div id="calendar-panel" style="flex:0 0 298px;display:flex;flex-direction:column;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-primary);">
+  <div id="calendar-panel" style="flex:0 0 298px;flex-direction:column;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-primary);">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-md) var(--space-lg);border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);">
       <button class="tbtn" style="font-size:18px;padding:1px 8px;" onclick="go(-1)">&#8249;</button>
       <span id="mTtl" style="font-size:var(--fs-xl);font-weight:700;font-family:var(--font-display);color:var(--color-primary);letter-spacing:.5px;"></span>
@@ -778,11 +778,12 @@ function initOnboarding(){
 function toggleCalendarPanel(){
   const cal=document.getElementById('calendar-panel');
   const btn=document.getElementById('cal-toggle');
-  if(cal.classList.contains('show')){
-    cal.classList.remove('show');
+  const isVisible=cal.style.display==='flex';
+  if(isVisible){
+    cal.style.display='none';
     btn.textContent='📅 Show Calendar';
   }else{
-    cal.classList.add('show');
+    cal.style.display='flex';
     btn.textContent='📅 Hide Calendar';
   }
 }
@@ -796,14 +797,14 @@ function updateResponsiveUI(){
   if(isMobile){
     if(toggle)toggle.style.display='block';
     // Only reset calendar visibility when first entering mobile breakpoint
-    if(_prevMobile===false){
-      if(cal)cal.classList.remove('show');
+    if(_prevMobile!==true){
+      if(cal)cal.style.display='none';
       if(toggle)toggle.textContent='📅 Show Calendar';
     }
   }else{
     if(toggle)toggle.style.display='none';
-    // Always hide the panel on desktop (it shows via flex by default)
-    if(cal)cal.classList.remove('show');
+    // Always show the panel on desktop
+    if(cal)cal.style.display='flex';
   }
   _prevMobile=isMobile;
 }
