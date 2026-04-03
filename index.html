@@ -1,82 +1,184 @@
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap');
+
+:root{
+  --font-display:'Outfit',sans-serif;
+  --font-ui:'Inter',sans-serif;
+  --fs-xs:11px;--lh-xs:1.3;
+  --fs-sm:13px;--lh-sm:1.4;
+  --fs-base:14px;--lh-base:1.5;
+  --fs-md:16px;--lh-md:1.5;
+  --fs-lg:18px;--lh-lg:1.4;
+  --fs-xl:22px;--lh-xl:1.3;
+  --fs-2xl:28px;--lh-2xl:1.2;
+  --space-xs:4px;--space-sm:8px;--space-md:12px;--space-lg:16px;--space-xl:24px;--space-2xl:32px;--space-3xl:48px;
+  --color-primary:#ff6b35;--color-primary-light:#ffb999;--color-primary-dark:#cc5228;
+  --color-secondary:#4ecdc4;--color-secondary-light:#7ee8e0;--color-secondary-dark:#3aa89f;
+  --color-accent:#ffd93d;--color-accent-dark:#ffb700;
+  --color-success:#2ecc71;--color-success-light:#58e08a;--color-success-dark:#27ae60;
+  --color-warning:#ff9f43;--color-warning-light:#ffd89a;
+  --color-error:#e74c3c;--color-error-light:#ee7b67;
+  --color-neutral-bg:#fffdfa;--color-neutral-bg-secondary:#f7f4f0;--color-neutral-border:#e4dad0;--color-neutral-border-light:#ede5dd;
+  --color-text-primary:#362e24;--color-text-secondary:#5a5047;--color-text-tertiary:#7d746d;
+}
+
+@media (prefers-color-scheme:dark){
+  :root{
+    --color-neutral-bg:#1a1410;--color-neutral-bg-secondary:#262219;--color-neutral-border:#3d3530;--color-neutral-border-light:#5a5047;
+    --color-text-primary:#faf8f6;--color-text-secondary:#d1ccc6;--color-text-tertiary:#9a8f87;
+  }
+}
+
+:root{
+  --color-background-primary:var(--color-neutral-bg);
+  --color-background-secondary:var(--color-neutral-bg-secondary);
+  --color-border-primary:var(--color-primary);
+  --color-border-secondary:var(--color-neutral-border);
+  --color-border-tertiary:var(--color-neutral-border-light);
+  --color-text-primary:var(--color-text-primary);
+  --color-text-secondary:var(--color-text-secondary);
+  --color-text-tertiary:var(--color-text-tertiary);
+  --border-radius-md:6px;
+  --border-radius-lg:8px;
+}
+
 *{box-sizing:border-box;}
-.dc{border:0.5px solid var(--color-border-tertiary);border-radius:4px;cursor:pointer;display:flex;flex-direction:column;overflow:hidden;transition:border-color .12s,background .12s;}
-.dc:hover{border-color:var(--color-border-secondary);background:var(--color-background-secondary);}
-.dc.sel{border:1.5px solid var(--color-border-primary);}
+@keyframes celebrateSave{0%{transform:scale(0.9);opacity:0;}50%{transform:scale(1.1);}100%{transform:scale(1);opacity:0;}}
+@keyframes drawStroke{0%{opacity:0.5;transform:scale(0.8);}100%{opacity:1;transform:scale(1);}}
+@keyframes pulse{0%{transform:scale(1);}50%{transform:scale(1.05);}100%{transform:scale(1);}}
+@keyframes slideIn{from{transform:translateY(8px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes slideInGrid{from{transform:translateY(12px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+@keyframes slideOutLeft{from{opacity:1;transform:translateX(0);}to{opacity:0;transform:translateX(-12px);}}
+@keyframes slideInRight{from{opacity:0;transform:translateX(12px);}to{opacity:1;transform:translateX(0);}}
+@keyframes fadeOutEditor{from{opacity:1;}to{opacity:0;}}
+@keyframes staggerContainer{0%{opacity:0;}100%{opacity:1;}}
+@media(prefers-reduced-motion:no-preference){
+  .dc,.csw,.tbtn,.wbtn,.svbtn,.more-btn{transition:all .15s cubic-bezier(0.34,1.56,0.64,1);}
+}
+.dc{border:0.5px solid var(--color-border-tertiary);border-radius:4px;cursor:pointer;display:flex;flex-direction:column;overflow:hidden;transition:border-color .12s,background .12s,box-shadow .12s;}
+.dc:hover{border-color:var(--color-secondary);background:var(--color-background-secondary);box-shadow:0 4px 12px rgba(78,205,196,0.25);transform:translateY(-2px);}
+.dc.sel{border:2.5px solid var(--color-primary);box-shadow:0 0 0 4px rgba(255,107,53,0.2),0 4px 16px rgba(255,107,53,0.25);transform:scale(1.02);}
 .dc.fad{opacity:.2;pointer-events:none;}
-.dc.tod .dn{background:var(--color-text-primary);color:var(--color-background-primary);border-radius:50%;}
-.dn{width:20px;height:20px;font-size:11px;font-weight:500;color:var(--color-text-primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin:2px;}
+.dc.tod .dn{background:var(--color-primary);color:white;border-radius:50%;box-shadow:0 4px 12px rgba(255,107,53,0.4);transform:scale(1.15);font-weight:700;}
+.dn{width:20px;height:20px;font-size:var(--fs-xs);font-weight:500;line-height:var(--lh-xs);color:var(--color-text-primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin:var(--space-xs);}
 .th{width:100%;flex:1;object-fit:cover;display:none;border-top:0.5px solid var(--color-border-tertiary);}
-.csw{width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .1s;flex-shrink:0;}
-.csw:hover{transform:scale(1.2);}
-.csw.on{border-color:var(--color-text-primary);}
-.wbtn{padding:3px 5px;border-radius:4px;border:0.5px solid transparent;cursor:pointer;background:none;display:flex;align-items:center;justify-content:center;}
+.csw{width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .1s,box-shadow .15s;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,0.1);}
+.csw:hover{transform:scale(1.25);box-shadow:0 4px 10px rgba(0,0,0,0.2);}
+.csw.on{border-color:var(--color-text-primary);box-shadow:0 0 0 2px var(--color-background-primary),0 0 12px rgba(0,0,0,0.25);transform:scale(1.1);}
+.wbtn{padding:var(--space-xs);border-radius:4px;border:0.5px solid transparent;cursor:pointer;background:none;display:flex;align-items:center;justify-content:center;}
 .wbtn:hover,.wbtn.on{border-color:var(--color-border-secondary);background:var(--color-background-primary);}
-.tbtn{font-size:12px;padding:3px 8px;border-radius:4px;border:0.5px solid var(--color-border-tertiary);cursor:pointer;background:none;color:var(--color-text-secondary);}
-.tbtn:hover{background:var(--color-background-secondary);color:var(--color-text-primary);}
-.tbtn.on{background:var(--color-background-secondary);border-color:var(--color-border-primary);color:var(--color-text-primary);}
-.svbtn{font-size:12px;padding:4px 14px;border-radius:4px;border:0.5px solid var(--color-border-tertiary);cursor:pointer;background:var(--color-text-primary);color:var(--color-background-primary);}
-.svbtn:hover{opacity:.8;}
-textarea:focus{outline:none;}
+.tbtn{font-size:var(--fs-sm);font-family:var(--font-ui);font-weight:500;padding:var(--space-xs) var(--space-sm);border-radius:4px;border:0.5px solid var(--color-border-secondary);cursor:pointer;background:none;color:var(--color-text-secondary);transition:all .12s;}
+.tbtn:hover{background:var(--color-background-secondary);color:var(--color-primary);border-color:var(--color-primary);box-shadow:0 2px 6px rgba(255,107,53,0.15);}
+.tbtn.on{background:var(--color-primary-light);border-color:var(--color-primary);color:var(--color-primary-dark);}
+.svbtn{font-size:calc(var(--fs-sm) + 1px);font-family:var(--font-ui);font-weight:700;padding:calc(var(--space-xs) + 2px) calc(var(--space-lg) + 4px);border-radius:6px;border:none;cursor:pointer;background:var(--color-primary);color:white;transition:all .15s;box-shadow:0 4px 16px rgba(255,107,53,0.35);text-transform:uppercase;letter-spacing:0.5px;}
+.svbtn:hover{background:var(--color-primary-dark);transform:translateY(-4px) scale(1.05);box-shadow:0 8px 24px rgba(255,107,53,0.45);}
+textarea{font-family:var(--font-ui);font-size:var(--fs-sm);line-height:var(--lh-sm);}
+textarea::placeholder{color:var(--color-text-tertiary);}
+textarea:focus{border-color:var(--color-secondary) !important;box-shadow:0 0 0 3px rgba(78,205,196,0.1);}
+#erbtn.on{background:var(--color-warning);border-color:var(--color-warning);color:white;}
+.save-success{animation:celebrateSave 0.6s ease-out !important;}
+.toast{position:fixed;bottom:var(--space-xl);right:var(--space-xl);background:var(--color-success);color:white;padding:var(--space-md) var(--space-lg);border-radius:6px;font-size:var(--fs-sm);font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,0.2);animation:slideIn 0.3s cubic-bezier(0.34,1.56,0.64,1);z-index:999;}
+.toast.hide{animation:slideIn 0.3s cubic-bezier(0.34,1.56,0.64,1) reverse;}
+.save-pulse{animation:pulse 0.4s ease-out;}
+.day-thumb{animation:slideIn 0.3s ease-out;}
+#cv{position:relative;transition:box-shadow 0.2s;}
+#cv:hover{box-shadow:0 2px 8px rgba(255,107,53,0.15);}
+#cv.drawing{box-shadow:0 4px 16px rgba(255,107,53,0.25);}
+#editor{animation:slideInRight 0.35s cubic-bezier(0.34,1.56,0.64,1);}
+#editor.closing{animation:slideOutLeft 0.25s ease-in forwards;}
+#grid{transition:opacity 0.15s ease-in-out;}
+#empty{animation:fadeIn 0.3s ease-out;}
+#empty.closing{animation:fadeOutEditor 0.25s ease-in forwards;}
+.dc{animation:slideInGrid 0.4s cubic-bezier(0.34,1.56,0.64,1) backwards;}
+.dc:nth-child(1){animation-delay:0ms;}
+.dc:nth-child(2){animation-delay:30ms;}
+.dc:nth-child(3){animation-delay:60ms;}
+.dc:nth-child(4){animation-delay:90ms;}
+.dc:nth-child(5){animation-delay:120ms;}
+.dc:nth-child(6){animation-delay:150ms;}
+.dc:nth-child(7){animation-delay:180ms;}
+.dc:nth-child(8){animation-delay:210ms;}
+.dc:nth-child(9){animation-delay:240ms;}
+.dc:nth-child(10){animation-delay:270ms;}
+.dc:nth-child(n+11){animation-delay:0;}
+.toolbar-section{animation:slideIn 0.3s cubic-bezier(0.34,1.56,0.64,1);}
+.toolbar-section:nth-of-type(2){animation-delay:50ms;}
+.toolbar-section:nth-of-type(3){animation-delay:100ms;}
+.color-more,.width-more{display:none;}
+.color-more.show,.width-more.show{display:inline-flex;}
+.more-btn{font-size:var(--fs-xs);padding:var(--space-xs) var(--space-sm);background:var(--color-secondary-light);border:1px solid var(--color-secondary);color:var(--color-secondary-dark);cursor:pointer;border-radius:4px;font-weight:700;transition:all .12s;box-shadow:0 1px 4px rgba(78,205,196,0.2);}
+.more-btn:hover{box-shadow:0 2px 8px rgba(78,205,196,0.3);transform:translateY(-1px);}
 </style>
 
-<div style="display:flex;gap:12px;height:680px;font-family:var(--font-sans);padding:1rem 0;">
+<div style="display:flex;gap:var(--space-lg);height:680px;font-family:var(--font-ui);padding:var(--space-lg);">
 
   <div style="flex:0 0 298px;display:flex;flex-direction:column;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-primary);">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-md) var(--space-lg);border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);">
       <button class="tbtn" style="font-size:18px;padding:1px 8px;" onclick="go(-1)">&#8249;</button>
-      <span id="mTtl" style="font-size:13px;font-weight:500;color:var(--color-text-primary);letter-spacing:.5px;"></span>
+      <span id="mTtl" style="font-size:var(--fs-xl);font-weight:700;font-family:var(--font-display);color:var(--color-primary);letter-spacing:.5px;"></span>
       <button class="tbtn" style="font-size:18px;padding:1px 8px;" onclick="go(1)">&#8250;</button>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(7,1fr);padding:4px 5px 2px;gap:1px;">
-      <div style="text-align:center;font-size:10px;color:var(--color-text-tertiary);font-weight:500;padding:2px;">S</div>
-      <div style="text-align:center;font-size:10px;color:var(--color-text-tertiary);font-weight:500;padding:2px;">M</div>
-      <div style="text-align:center;font-size:10px;color:var(--color-text-tertiary);font-weight:500;padding:2px;">T</div>
-      <div style="text-align:center;font-size:10px;color:var(--color-text-tertiary);font-weight:500;padding:2px;">W</div>
-      <div style="text-align:center;font-size:10px;color:var(--color-text-tertiary);font-weight:500;padding:2px;">T</div>
-      <div style="text-align:center;font-size:10px;color:var(--color-text-tertiary);font-weight:500;padding:2px;">F</div>
-      <div style="text-align:center;font-size:10px;color:var(--color-text-tertiary);font-weight:500;padding:2px;">S</div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);padding:var(--space-md) var(--space-md) var(--space-sm);gap:var(--space-xs);">
+      <div style="text-align:center;font-size:var(--fs-xs);color:var(--color-text-tertiary);font-weight:600;font-family:var(--font-ui);padding:var(--space-xs);">S</div>
+      <div style="text-align:center;font-size:var(--fs-xs);color:var(--color-text-tertiary);font-weight:600;font-family:var(--font-ui);padding:var(--space-xs);">M</div>
+      <div style="text-align:center;font-size:var(--fs-xs);color:var(--color-text-tertiary);font-weight:600;font-family:var(--font-ui);padding:var(--space-xs);">T</div>
+      <div style="text-align:center;font-size:var(--fs-xs);color:var(--color-text-tertiary);font-weight:600;font-family:var(--font-ui);padding:var(--space-xs);">W</div>
+      <div style="text-align:center;font-size:var(--fs-xs);color:var(--color-text-tertiary);font-weight:600;font-family:var(--font-ui);padding:var(--space-xs);">T</div>
+      <div style="text-align:center;font-size:var(--fs-xs);color:var(--color-text-tertiary);font-weight:600;font-family:var(--font-ui);padding:var(--space-xs);">F</div>
+      <div style="text-align:center;font-size:var(--fs-xs);color:var(--color-text-tertiary);font-weight:600;font-family:var(--font-ui);padding:var(--space-xs);">S</div>
     </div>
-    <div id="grid" style="display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:1fr;gap:2px;padding:2px 5px 6px;flex:1;min-height:0;overflow:hidden;"></div>
+    <div id="grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:var(--space-xs);padding:var(--space-xs);min-height:300px;overflow:auto;"></div>
   </div>
 
   <div style="flex:1;display:flex;flex-direction:column;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-primary);">
     <div id="empty" style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;">
-      <div style="width:40px;height:40px;border:1.5px solid var(--color-border-secondary);border-radius:6px;display:flex;align-items:center;justify-content:center;position:relative;">
-        <div style="position:absolute;top:-6px;left:8px;width:3px;height:8px;background:var(--color-border-secondary);border-radius:2px;"></div>
-        <div style="position:absolute;top:-6px;right:8px;width:3px;height:8px;background:var(--color-border-secondary);border-radius:2px;"></div>
-        <div style="width:20px;height:2px;background:var(--color-border-tertiary);border-radius:1px;margin-top:2px;"></div>
+      <div style="width:48px;height:48px;border:2px solid var(--color-secondary);border-radius:8px;display:flex;align-items:center;justify-content:center;position:relative;animation:pulse 2s ease-in-out infinite;">
+        <div style="position:absolute;top:-8px;left:10px;width:4px;height:10px;background:var(--color-secondary);border-radius:2px;"></div>
+        <div style="position:absolute;top:-8px;right:10px;width:4px;height:10px;background:var(--color-secondary);border-radius:2px;"></div>
+        <div style="width:24px;height:2px;background:var(--color-border-tertiary);border-radius:1px;margin-top:2px;"></div>
       </div>
-      <p style="font-size:13px;color:var(--color-text-tertiary);">Select a day to draw</p>
+      <div style="text-align:center;">
+        <p style="font-size:var(--fs-base);font-family:var(--font-ui);line-height:var(--lh-base);color:var(--color-text-primary);margin:0 0 4px 0;font-weight:600;">Pick a day, create your story</p>
+        <p style="font-size:var(--fs-xs);font-family:var(--font-ui);line-height:var(--lh-xs);color:var(--color-text-tertiary);margin:0;">Draw, write, and track your journey</p>
+      </div>
     </div>
     <div id="editor" style="display:none;flex-direction:column;flex:1;min-height:0;overflow:hidden;">
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);flex-shrink:0;">
-        <span id="eDate" style="font-size:13px;font-weight:500;color:var(--color-text-primary);"></span>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-md) var(--space-lg);border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);flex-shrink:0;">
+        <span id="eDate" style="font-size:var(--fs-md);font-weight:600;font-family:var(--font-ui);color:var(--color-text-primary);"></span>
         <button class="tbtn" onclick="closeEd()" style="padding:2px 7px;">&#10005;</button>
       </div>
-      <div style="display:flex;align-items:center;gap:6px;padding:6px 10px;border-bottom:0.5px solid var(--color-border-tertiary);flex-wrap:wrap;flex-shrink:0;background:var(--color-background-secondary);">
-        <div id="cRow" style="display:flex;gap:4px;align-items:center;"></div>
+      <div style="display:flex;align-items:center;gap:var(--space-md);padding:var(--space-md) var(--space-lg);border-bottom:0.5px solid var(--color-border-tertiary);flex-wrap:wrap;flex-shrink:0;background:var(--color-background-secondary);">
+        <div style="display:flex;gap:var(--space-xs);align-items:center;">
+          <div id="cRow" style="display:flex;gap:var(--space-xs);align-items:center;"></div>
+          <button class="more-btn" id="cMoreBtn" onclick="toggleMoreColors()" style="display:none;">More</button>
+        </div>
         <div style="width:0.5px;height:18px;background:var(--color-border-secondary);flex-shrink:0;"></div>
-        <div id="wRow" style="display:flex;gap:4px;align-items:center;"></div>
+        <div style="display:flex;gap:var(--space-xs);align-items:center;">
+          <div id="wRow" style="display:flex;gap:var(--space-xs);align-items:center;"></div>
+          <button class="more-btn" id="wMoreBtn" onclick="toggleMoreWidths()" style="display:none;">More</button>
+        </div>
         <div style="width:0.5px;height:18px;background:var(--color-border-secondary);flex-shrink:0;"></div>
-        <button class="tbtn" id="erbtn" onclick="setErs()">Eraser</button>
-        <button class="tbtn" onclick="clrC()">Clear</button>
+        <div style="display:flex;gap:var(--space-xs);align-items:center;">
+          <button class="tbtn" id="erbtn" onclick="setErs()">Eraser</button>
+          <button class="tbtn" onclick="clrC()">Clear</button>
+        </div>
         <div style="flex:1;"></div>
         <button class="svbtn" id="svbtn" onclick="saveDay()">Save</button>
       </div>
-      <div id="cwrap" style="flex:1;min-height:0;overflow:auto;background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;padding:12px;">
-        <canvas id="cv" style="background:white;cursor:crosshair;touch-action:none;border-radius:2px;display:block;"></canvas>
+      <div id="cwrap" style="flex:1;min-height:0;overflow:auto;background:linear-gradient(135deg,rgba(255,216,61,0.04),rgba(78,205,196,0.04));display:flex;align-items:center;justify-content:center;padding:var(--space-lg);">
+        <canvas id="cv" style="background:white;cursor:crosshair;touch-action:none;border-radius:4px;display:block;box-shadow:0 1px 3px rgba(0,0,0,0.1);"></canvas>
       </div>
-      <div style="padding:6px 12px;border-top:0.5px solid var(--color-border-tertiary);flex-shrink:0;">
-        <textarea id="notes" placeholder="Add notes for this day..." style="width:100%;height:52px;resize:none;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:5px 8px;font-size:12px;font-family:var(--font-sans);background:var(--color-background-primary);color:var(--color-text-primary);display:block;"></textarea>
+      <div style="padding:var(--space-lg);border-top:0.5px solid var(--color-border-tertiary);flex-shrink:0;">
+        <textarea id="notes" placeholder="What's on your mind today?" style="width:100%;height:60px;resize:none;border:1.5px solid var(--color-border-secondary);border-left:3px solid var(--color-secondary);border-radius:var(--border-radius-md);padding:var(--space-md);font-size:var(--fs-sm);font-family:var(--font-ui);line-height:var(--lh-sm);background:var(--color-background-primary);color:var(--color-text-primary);display:block;transition:all .12s;"></textarea>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-const COLS=['#111111','#ef4444','#f97316','#ca8a04','#16a34a','#0891b2','#2563eb','#7c3aed','#db2777','#9f1239','#475569'];
+const COLS=['#2c2416','#ff6b35','#ffd93d','#2ecc71','#4ecdc4','#3aa89f','#5ba3d0','#7c5cef','#ff9f43','#e74c3c','#9a8f87'];
 const WS=[1,3,6,12,22];
 const MNS=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const DNS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -89,37 +191,57 @@ const ctx=cv.getContext('2d');
 
 // Build color row
 const cRow=document.getElementById('cRow');
-COLS.forEach(c=>{
+const CORE_COLORS=4;
+COLS.forEach((c,i)=>{
   const el=document.createElement('div');
-  el.className='csw'+(c===col?' on':'');
+  el.className='csw'+(c===col?' on':'')+(i>=CORE_COLORS?' color-more':'');
   el.style.background=c;
   if(c==='#f8fafc')el.style.boxShadow='inset 0 0 0 0.5px var(--color-border-tertiary)';
   el.onclick=()=>{
-    document.querySelectorAll('.csw').forEach(x=>x.classList.remove('on'));
-    el.classList.add('on'); col=c; ers=false;
+    document.querySelectorAll('.csw').forEach(x=>x.classList.remove('on','save-pulse'));
+    el.classList.add('on','save-pulse');
+    setTimeout(()=>el.classList.remove('save-pulse'),400);
+    col=c; ers=false;
     document.getElementById('erbtn').classList.remove('on');
   };
   cRow.appendChild(el);
 });
+if(COLS.length>CORE_COLORS)document.getElementById('cMoreBtn').style.display='block';
 
 // Build width row
 const wRow=document.getElementById('wRow');
 const DISP=[4,6,10,14,19];
+const CORE_WIDTHS=3;
 WS.forEach((sz,i)=>{
   const btn=document.createElement('div');
-  btn.className='wbtn'+(sz===penW?' on':'');
+  btn.className='wbtn'+(sz===penW?' on':'')+(i>=CORE_WIDTHS?' width-more':'');
   const dot=document.createElement('div');
   dot.style.cssText=`width:${DISP[i]}px;height:${DISP[i]}px;border-radius:50%;background:var(--color-text-primary);`;
   btn.appendChild(dot);
   btn.onclick=()=>{
-    document.querySelectorAll('.wbtn').forEach(x=>x.classList.remove('on'));
-    btn.classList.add('on'); penW=sz;
+    document.querySelectorAll('.wbtn').forEach(x=>x.classList.remove('on','save-pulse'));
+    btn.classList.add('on','save-pulse');
+    setTimeout(()=>btn.classList.remove('save-pulse'),400);
+    penW=sz;
   };
   wRow.appendChild(btn);
 });
+if(WS.length>CORE_WIDTHS)document.getElementById('wMoreBtn').style.display='block';
 
-function setErs(){ers=!ers;document.getElementById('erbtn').classList.toggle('on',ers);}
-function clrC(){ctx.globalCompositeOperation='source-over';ctx.fillStyle='white';ctx.fillRect(0,0,cv.width,cv.height);}
+function toggleMoreColors(){const more=document.querySelectorAll('.color-more');const btn=document.getElementById('cMoreBtn');const showing=more[0]?.classList.contains('show');more.forEach(el=>el.classList.toggle('show'));btn.textContent=showing?'More':'Less';btn.classList.add('save-pulse');setTimeout(()=>btn.classList.remove('save-pulse'),400);}
+function toggleMoreWidths(){const more=document.querySelectorAll('.width-more');const btn=document.getElementById('wMoreBtn');const showing=more[0]?.classList.contains('show');more.forEach(el=>el.classList.toggle('show'));btn.textContent=showing?'More':'Less';btn.classList.add('save-pulse');setTimeout(()=>btn.classList.remove('save-pulse'),400);}
+
+function setErs(){ers=!ers;const btn=document.getElementById('erbtn');btn.classList.toggle('on',ers);btn.classList.add('save-pulse');setTimeout(()=>btn.classList.remove('save-pulse'),400);}
+function clrC(){
+  if(confirm('Clear your drawing? You can undo with Ctrl+Z')) {
+    ctx.globalCompositeOperation='source-over';
+    ctx.fillStyle='white';
+    ctx.fillRect(0,0,cv.width,cv.height);
+    const cvWrap=document.getElementById('cwrap');
+    cvWrap.style.animation='none';
+    setTimeout(()=>cvWrap.style.animation='',10);
+  }
+}
 
 function gp(e){
   const r=cv.getBoundingClientRect(), sx=cv.width/r.width, sy=cv.height/r.height;
@@ -128,6 +250,7 @@ function gp(e){
 }
 function sd(e){
   drw=true; const p=gp(e); lx=p.x; ly=p.y;
+  cv.classList.add('drawing');
   ctx.globalCompositeOperation=ers?'destination-out':'source-over';
   ctx.beginPath();
   ctx.arc(lx,ly,(ers?penW*3:penW)/2,0,Math.PI*2);
@@ -146,19 +269,34 @@ function mv(e){
 }
 cv.addEventListener('mousedown',sd);
 cv.addEventListener('mousemove',mv);
-cv.addEventListener('mouseup',()=>drw=false);
-cv.addEventListener('mouseleave',()=>drw=false);
+cv.addEventListener('mouseup',()=>{drw=false;cv.classList.remove('drawing');});
+cv.addEventListener('mouseleave',()=>{drw=false;cv.classList.remove('drawing');});
 cv.addEventListener('touchstart',e=>{e.preventDefault();sd(e);},{passive:false});
 cv.addEventListener('touchmove',e=>{e.preventDefault();mv(e);},{passive:false});
-cv.addEventListener('touchend',()=>drw=false);
+cv.addEventListener('touchend',()=>{drw=false;cv.classList.remove('drawing');});
 
 function dkey(y,m,d){return`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;}
-function go(dir){cur=new Date(cur.getFullYear(),cur.getMonth()+dir,1);render();}
+function go(dir){
+  const g=document.getElementById('grid');
+  g.style.opacity='0.5';
+  g.style.pointerEvents='none';
+  setTimeout(()=>{
+    cur=new Date(cur.getFullYear(),cur.getMonth()+dir,1);
+    render();
+    g.style.opacity='1';
+    g.style.pointerEvents='auto';
+  },150);
+}
 
 function render(){
   const y=cur.getFullYear(), m=cur.getMonth();
   document.getElementById('mTtl').textContent=`${MNS[m]} ${y}`;
-  const g=document.getElementById('grid'); g.innerHTML='';
+  const g=document.getElementById('grid');
+  if(!g){
+    console.warn('render: grid container not found');
+    return;
+  }
+  g.innerHTML='';
   const first=new Date(y,m,1).getDay(), days=new Date(y,m+1,0).getDate();
   const pd=new Date(y,m,0).getDate(), td=new Date();
   for(let i=first-1;i>=0;i--)mkCell(g,y,m-1,pd-i,true,false);
@@ -191,14 +329,18 @@ function mkCell(g,y,m,d,faded,isToday){
 }
 
 function setThumb(k,url){
-  document.querySelectorAll(`img.th[data-key="${k}"]`).forEach(img=>{img.src=url;img.style.display='block';});
+  document.querySelectorAll(`img.th[data-key="${k}"]`).forEach(img=>{img.src=url;img.style.display='block';img.classList.add('day-thumb');setTimeout(()=>img.classList.remove('day-thumb'),300);});
 }
 
 async function openDay(k,label){
   selKey=k;
   document.getElementById('eDate').textContent=label;
-  document.getElementById('empty').style.display='none';
-  document.getElementById('editor').style.display='flex';
+  const empty=document.getElementById('empty');
+  const editor=document.getElementById('editor');
+  empty.classList.remove('closing');
+  editor.classList.remove('closing');
+  empty.style.display='none';
+  editor.style.display='flex';
 
   let data=cache.get(k);
   if(!data){try{const r=await window.storage.get(`cal:${k}`);if(r){data=JSON.parse(r.value);cache.set(k,data);}}catch(e){}}
@@ -229,8 +371,16 @@ async function openDay(k,label){
 
 function closeEd(){
   selKey=null;
-  document.getElementById('editor').style.display='none';
-  document.getElementById('empty').style.display='flex';
+  const editor=document.getElementById('editor');
+  const empty=document.getElementById('empty');
+  editor.classList.add('closing');
+  empty.classList.add('closing');
+  setTimeout(()=>{
+    editor.style.display='none';
+    empty.style.display='flex';
+    editor.classList.remove('closing');
+    empty.classList.remove('closing');
+  },250);
   document.querySelectorAll('.dc').forEach(c=>c.classList.remove('sel'));
 }
 
@@ -248,8 +398,20 @@ async function saveDay(){
   try{await window.storage.set(`cal:${selKey}`,JSON.stringify(data));}catch(e){}
   setThumb(selKey,url);
   const btn=document.getElementById('svbtn');
-  btn.textContent='Saved!';
-  setTimeout(()=>btn.textContent='Save',1500);
+  btn.classList.add('save-success');
+  const oldText=btn.textContent;
+  btn.textContent='✓ Saved';
+  btn.disabled=true;
+  showToast('Your day is saved! 🎉');
+  setTimeout(()=>{btn.classList.remove('save-success');btn.textContent=oldText;btn.disabled=false;},800);
+}
+
+function showToast(msg){
+  const toast=document.createElement('div');
+  toast.className='toast';
+  toast.textContent=msg;
+  document.body.appendChild(toast);
+  setTimeout(()=>{toast.classList.add('hide');setTimeout(()=>toast.remove(),300);},2000);
 }
 
 render();
