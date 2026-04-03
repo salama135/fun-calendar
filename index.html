@@ -167,6 +167,8 @@ textarea:focus{border-color:var(--color-secondary) !important;box-shadow:0 0 0 3
         </div>
         <div style="width:0.5px;height:18px;background:var(--color-border-secondary);flex-shrink:0;"></div>
         <div style="display:flex;gap:var(--space-xs);align-items:center;">
+          <button class="tbtn" id="undobtn" onclick="undoDrawing()" title="Undo (Ctrl+Z)" disabled>↶ Undo</button>
+          <button class="tbtn" id="redobtn" onclick="redoDrawing()" title="Redo (Ctrl+Shift+Z)" disabled>↷ Redo</button>
           <button class="tbtn" id="erbtn" onclick="setErs()">Eraser</button>
           <button class="tbtn" onclick="clrC()">Clear</button>
         </div>
@@ -198,6 +200,9 @@ let col=COLS[0], penW=3, ers=false, cinit=false, isSaving=false;
 const cache=new Map();
 const cv=document.getElementById('cv');
 const ctx=cv.getContext('2d');
+const MAX_HISTORY=30;
+let drawingHistory=[];
+let historyIdx=-1;
 
 const notesEl=document.getElementById('notes');
 notesEl.addEventListener('input',(e)=>{
@@ -206,6 +211,12 @@ notesEl.addEventListener('input',(e)=>{
   if(countEl)countEl.textContent=`${count}/500`;
 });
 
+document.addEventListener('keydown',(e)=>{
+  if(e.ctrlKey||e.metaKey){
+    if(e.key==='z'&&!e.shiftKey){e.preventDefault();undoDrawing();}
+    else if((e.key==='z'&&e.shiftKey)||(e.key==='y')){e.preventDefault();redoDrawing();}
+  }
+});
 
 // Build color row
 const cRow=document.getElementById('cRow');
@@ -255,11 +266,14 @@ function clrC(){
     showToast('❌ Canvas not available.');
     return;
   }
-  if(confirm('Clear your drawing? This cannot be undone.')) {
+  if(confirm('Clear your drawing? This cannot be undone. Your undo history will also be cleared.')) {
     try{
       ctx.globalCompositeOperation='source-over';
       ctx.fillStyle='white';
       ctx.fillRect(0,0,cv.width,cv.height);
+      drawingHistory=[];
+      historyIdx=-1;
+      updateHistoryButtons();
       const cvWrap=document.getElementById('cwrap');
       if(cvWrap){
         cvWrap.style.animation='none';
@@ -299,13 +313,68 @@ function mv(e){
 }
 cv.addEventListener('mousedown',sd);
 cv.addEventListener('mousemove',mv);
-cv.addEventListener('mouseup',()=>{drw=false;cv.classList.remove('drawing');});
+cv.addEventListener('mouseup',()=>{drw=false;cv.classList.remove('drawing');saveStateToHistory();});
 cv.addEventListener('mouseleave',()=>{drw=false;cv.classList.remove('drawing');});
 cv.addEventListener('touchstart',e=>{e.preventDefault();sd(e);},{passive:false});
 cv.addEventListener('touchmove',e=>{e.preventDefault();mv(e);},{passive:false});
-cv.addEventListener('touchend',()=>{drw=false;cv.classList.remove('drawing');});
+cv.addEventListener('touchend',()=>{drw=false;cv.classList.remove('drawing');saveStateToHistory();});
 
 function dkey(y,m,d){return`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;}
+
+function saveStateToHistory(){
+  try{
+    const imageData=cv.toDataURL('image/png');
+    drawingHistory=drawingHistory.slice(0,historyIdx+1);
+    drawingHistory.push(imageData);
+    if(drawingHistory.length>MAX_HISTORY)drawingHistory.shift();
+    else historyIdx++;
+    updateHistoryButtons();
+  }catch(e){
+    console.warn('Failed to save drawing state:',e);
+  }
+}
+
+function undoDrawing(){
+  if(historyIdx<=0)return;
+  historyIdx--;
+  restoreDrawing();
+}
+
+function redoDrawing(){
+  if(historyIdx>=drawingHistory.length-1)return;
+  historyIdx++;
+  restoreDrawing();
+}
+
+function restoreDrawing(){
+  if(historyIdx<0||historyIdx>=drawingHistory.length)return;
+  try{
+    const img=new Image();
+    img.onload=()=>{
+      ctx.globalCompositeOperation='source-over';
+      ctx.fillStyle='white';
+      ctx.fillRect(0,0,cv.width,cv.height);
+      ctx.drawImage(img,0,0);
+      updateHistoryButtons();
+    };
+    img.onerror=()=>{
+      showToast('❌ Failed to restore drawing state.');
+      console.error('Failed to load history image');
+    };
+    img.src=drawingHistory[historyIdx];
+  }catch(e){
+    console.error('Restore drawing failed:',e);
+    showToast('❌ Could not restore drawing.');
+  }
+}
+
+function updateHistoryButtons(){
+  const undo=document.getElementById('undobtn');
+  const redo=document.getElementById('redobtn');
+  if(undo)undo.disabled=historyIdx<=0;
+  if(redo)redo.disabled=historyIdx>=drawingHistory.length-1;
+}
+
 function go(dir){
   try{
     const g=document.getElementById('grid');
@@ -502,6 +571,18 @@ async function openDay(k,label){
   document.querySelector(`.dc[data-key="${k}"]`)?.classList.add('sel');
   document.getElementById('svbtn').textContent='Save';
   isSaving=false;
+
+  // Initialize drawing history
+  try{
+    setTimeout(()=>{
+      drawingHistory=[];
+      historyIdx=-1;
+      saveStateToHistory();
+      updateHistoryButtons();
+    },100);
+  }catch(e){
+    console.warn('Failed to initialize drawing history:',e);
+  }
 }
 
 
@@ -519,6 +600,8 @@ function closeEd(){
   },250);
   document.querySelectorAll('.dc').forEach(c=>c.classList.remove('sel'));
 }
+
+let lastSaveFailure=null;
 
 async function saveDay(){
   if(!selKey || isSaving) return;
@@ -546,13 +629,16 @@ async function saveDay(){
     
     try{
       localStorage.setItem(`cal:${selKey}`,JSON.stringify(data));
+      lastSaveFailure=null;
     }catch(e){
+      lastSaveFailure={key:selKey,data,error:e};
       if(e.name==='QuotaExceededError'){
-        showToast('⚠️ Storage full. Try deleting old entries.');
+        showToastWithRetry('⚠️ Storage full. Retry or delete old entries.', 'retrySave');
       }else{
-        showToast('⚠️ Could not save to storage.');
+        showToastWithRetry('⚠️ Could not save to storage. Retry?', 'retrySave');
       }
       console.error('Storage error:',e);
+      throw e;
     }
     
     setThumb(selKey,url);
@@ -565,10 +651,26 @@ async function saveDay(){
     },800);
   }catch(e){
     console.error('Save failed:',e);
-    showToast('❌ Save failed. Please try again.');
+    if(!lastSaveFailure){
+      showToast('❌ Save failed. Please try again.');
+    }
     btn.textContent=oldText;
     btn.disabled=false;
     isSaving=false;
+  }
+}
+
+function retrySave(){
+  if(lastSaveFailure){
+    try{
+      localStorage.setItem(`cal:${lastSaveFailure.key}`,JSON.stringify(lastSaveFailure.data));
+      cache.set(lastSaveFailure.key,lastSaveFailure.data);
+      lastSaveFailure=null;
+      showToast('✓ Saved successfully!');
+    }catch(e){
+      console.error('Retry save failed:',e);
+      showToastWithRetry('❌ Save still failed. Retry?', 'retrySave');
+    }
   }
 }
 
@@ -579,6 +681,24 @@ function showToast(msg){
   toast.textContent=msg;
   document.body.appendChild(toast);
   setTimeout(()=>{toast.classList.add('hide');setTimeout(()=>toast.remove(),300);},2000);
+}
+
+function showToastWithRetry(msg,retryFn){
+  const toast=document.createElement('div');
+  toast.className='toast';
+  toast.style.display='flex';
+  toast.style.alignItems='center';
+  toast.style.gap='12px';
+  const text=document.createElement('span');
+  text.textContent=msg;
+  const btn=document.createElement('button');
+  btn.textContent='Retry';
+  btn.style.cssText='background:white;color:#2ecc71;border:none;border-radius:4px;padding:4px 8px;cursor:pointer;font-size:12px;font-weight:600;';
+  btn.onclick=()=>{window[retryFn]?.();toast.remove();};
+  toast.appendChild(text);
+  toast.appendChild(btn);
+  document.body.appendChild(toast);
+  setTimeout(()=>{toast.classList.add('hide');setTimeout(()=>toast.remove(),300);},4000);
 }
 
 const ONBOARD_KEY='fun-calendar-onboarding-done';
