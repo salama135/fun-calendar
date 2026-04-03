@@ -1,0 +1,256 @@
+
+<style>
+*{box-sizing:border-box;}
+.dc{border:0.5px solid var(--color-border-tertiary);border-radius:4px;cursor:pointer;display:flex;flex-direction:column;overflow:hidden;transition:border-color .12s,background .12s;}
+.dc:hover{border-color:var(--color-border-secondary);background:var(--color-background-secondary);}
+.dc.sel{border:1.5px solid var(--color-border-primary);}
+.dc.fad{opacity:.2;pointer-events:none;}
+.dc.tod .dn{background:var(--color-text-primary);color:var(--color-background-primary);border-radius:50%;}
+.dn{width:20px;height:20px;font-size:11px;font-weight:500;color:var(--color-text-primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin:2px;}
+.th{width:100%;flex:1;object-fit:cover;display:none;border-top:0.5px solid var(--color-border-tertiary);}
+.csw{width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .1s;flex-shrink:0;}
+.csw:hover{transform:scale(1.2);}
+.csw.on{border-color:var(--color-text-primary);}
+.wbtn{padding:3px 5px;border-radius:4px;border:0.5px solid transparent;cursor:pointer;background:none;display:flex;align-items:center;justify-content:center;}
+.wbtn:hover,.wbtn.on{border-color:var(--color-border-secondary);background:var(--color-background-primary);}
+.tbtn{font-size:12px;padding:3px 8px;border-radius:4px;border:0.5px solid var(--color-border-tertiary);cursor:pointer;background:none;color:var(--color-text-secondary);}
+.tbtn:hover{background:var(--color-background-secondary);color:var(--color-text-primary);}
+.tbtn.on{background:var(--color-background-secondary);border-color:var(--color-border-primary);color:var(--color-text-primary);}
+.svbtn{font-size:12px;padding:4px 14px;border-radius:4px;border:0.5px solid var(--color-border-tertiary);cursor:pointer;background:var(--color-text-primary);color:var(--color-background-primary);}
+.svbtn:hover{opacity:.8;}
+textarea:focus{outline:none;}
+</style>
+
+<div style="display:flex;gap:12px;height:680px;font-family:var(--font-sans);padding:1rem 0;">
+
+  <div style="flex:0 0 298px;display:flex;flex-direction:column;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-primary);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);">
+      <button class="tbtn" style="font-size:18px;padding:1px 8px;" onclick="go(-1)">&#8249;</button>
+      <span id="mTtl" style="font-size:13px;font-weight:500;color:var(--color-text-primary);letter-spacing:.5px;"></span>
+      <button class="tbtn" style="font-size:18px;padding:1px 8px;" onclick="go(1)">&#8250;</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);padding:4px 5px 2px;gap:1px;">
+      <div style="text-align:center;font-size:10px;color:var(--color-text-tertiary);font-weight:500;padding:2px;">S</div>
+      <div style="text-align:center;font-size:10px;color:var(--color-text-tertiary);font-weight:500;padding:2px;">M</div>
+      <div style="text-align:center;font-size:10px;color:var(--color-text-tertiary);font-weight:500;padding:2px;">T</div>
+      <div style="text-align:center;font-size:10px;color:var(--color-text-tertiary);font-weight:500;padding:2px;">W</div>
+      <div style="text-align:center;font-size:10px;color:var(--color-text-tertiary);font-weight:500;padding:2px;">T</div>
+      <div style="text-align:center;font-size:10px;color:var(--color-text-tertiary);font-weight:500;padding:2px;">F</div>
+      <div style="text-align:center;font-size:10px;color:var(--color-text-tertiary);font-weight:500;padding:2px;">S</div>
+    </div>
+    <div id="grid" style="display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:1fr;gap:2px;padding:2px 5px 6px;flex:1;min-height:0;overflow:hidden;"></div>
+  </div>
+
+  <div style="flex:1;display:flex;flex-direction:column;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-primary);">
+    <div id="empty" style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;">
+      <div style="width:40px;height:40px;border:1.5px solid var(--color-border-secondary);border-radius:6px;display:flex;align-items:center;justify-content:center;position:relative;">
+        <div style="position:absolute;top:-6px;left:8px;width:3px;height:8px;background:var(--color-border-secondary);border-radius:2px;"></div>
+        <div style="position:absolute;top:-6px;right:8px;width:3px;height:8px;background:var(--color-border-secondary);border-radius:2px;"></div>
+        <div style="width:20px;height:2px;background:var(--color-border-tertiary);border-radius:1px;margin-top:2px;"></div>
+      </div>
+      <p style="font-size:13px;color:var(--color-text-tertiary);">Select a day to draw</p>
+    </div>
+    <div id="editor" style="display:none;flex-direction:column;flex:1;min-height:0;overflow:hidden;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);flex-shrink:0;">
+        <span id="eDate" style="font-size:13px;font-weight:500;color:var(--color-text-primary);"></span>
+        <button class="tbtn" onclick="closeEd()" style="padding:2px 7px;">&#10005;</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;padding:6px 10px;border-bottom:0.5px solid var(--color-border-tertiary);flex-wrap:wrap;flex-shrink:0;background:var(--color-background-secondary);">
+        <div id="cRow" style="display:flex;gap:4px;align-items:center;"></div>
+        <div style="width:0.5px;height:18px;background:var(--color-border-secondary);flex-shrink:0;"></div>
+        <div id="wRow" style="display:flex;gap:4px;align-items:center;"></div>
+        <div style="width:0.5px;height:18px;background:var(--color-border-secondary);flex-shrink:0;"></div>
+        <button class="tbtn" id="erbtn" onclick="setErs()">Eraser</button>
+        <button class="tbtn" onclick="clrC()">Clear</button>
+        <div style="flex:1;"></div>
+        <button class="svbtn" id="svbtn" onclick="saveDay()">Save</button>
+      </div>
+      <div id="cwrap" style="flex:1;min-height:0;overflow:auto;background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;padding:12px;">
+        <canvas id="cv" style="background:white;cursor:crosshair;touch-action:none;border-radius:2px;display:block;"></canvas>
+      </div>
+      <div style="padding:6px 12px;border-top:0.5px solid var(--color-border-tertiary);flex-shrink:0;">
+        <textarea id="notes" placeholder="Add notes for this day..." style="width:100%;height:52px;resize:none;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:5px 8px;font-size:12px;font-family:var(--font-sans);background:var(--color-background-primary);color:var(--color-text-primary);display:block;"></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const COLS=['#111111','#ef4444','#f97316','#ca8a04','#16a34a','#0891b2','#2563eb','#7c3aed','#db2777','#9f1239','#475569'];
+const WS=[1,3,6,12,22];
+const MNS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DNS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+let cur=new Date(), selKey=null, drw=false, lx=0, ly=0;
+let col=COLS[0], penW=3, ers=false, cinit=false;
+const cache=new Map();
+const cv=document.getElementById('cv');
+const ctx=cv.getContext('2d');
+
+// Build color row
+const cRow=document.getElementById('cRow');
+COLS.forEach(c=>{
+  const el=document.createElement('div');
+  el.className='csw'+(c===col?' on':'');
+  el.style.background=c;
+  if(c==='#f8fafc')el.style.boxShadow='inset 0 0 0 0.5px var(--color-border-tertiary)';
+  el.onclick=()=>{
+    document.querySelectorAll('.csw').forEach(x=>x.classList.remove('on'));
+    el.classList.add('on'); col=c; ers=false;
+    document.getElementById('erbtn').classList.remove('on');
+  };
+  cRow.appendChild(el);
+});
+
+// Build width row
+const wRow=document.getElementById('wRow');
+const DISP=[4,6,10,14,19];
+WS.forEach((sz,i)=>{
+  const btn=document.createElement('div');
+  btn.className='wbtn'+(sz===penW?' on':'');
+  const dot=document.createElement('div');
+  dot.style.cssText=`width:${DISP[i]}px;height:${DISP[i]}px;border-radius:50%;background:var(--color-text-primary);`;
+  btn.appendChild(dot);
+  btn.onclick=()=>{
+    document.querySelectorAll('.wbtn').forEach(x=>x.classList.remove('on'));
+    btn.classList.add('on'); penW=sz;
+  };
+  wRow.appendChild(btn);
+});
+
+function setErs(){ers=!ers;document.getElementById('erbtn').classList.toggle('on',ers);}
+function clrC(){ctx.globalCompositeOperation='source-over';ctx.fillStyle='white';ctx.fillRect(0,0,cv.width,cv.height);}
+
+function gp(e){
+  const r=cv.getBoundingClientRect(), sx=cv.width/r.width, sy=cv.height/r.height;
+  const s=e.touches?e.touches[0]:e;
+  return{x:(s.clientX-r.left)*sx, y:(s.clientY-r.top)*sy};
+}
+function sd(e){
+  drw=true; const p=gp(e); lx=p.x; ly=p.y;
+  ctx.globalCompositeOperation=ers?'destination-out':'source-over';
+  ctx.beginPath();
+  ctx.arc(lx,ly,(ers?penW*3:penW)/2,0,Math.PI*2);
+  ctx.fillStyle=ers?'rgba(0,0,0,1)':col;
+  ctx.fill();
+}
+function mv(e){
+  if(!drw)return; e.preventDefault();
+  const p=gp(e);
+  ctx.globalCompositeOperation=ers?'destination-out':'source-over';
+  ctx.beginPath(); ctx.moveTo(lx,ly); ctx.lineTo(p.x,p.y);
+  ctx.strokeStyle=ers?'rgba(0,0,0,1)':col;
+  ctx.lineWidth=ers?penW*3:penW;
+  ctx.lineCap='round'; ctx.lineJoin='round'; ctx.stroke();
+  lx=p.x; ly=p.y;
+}
+cv.addEventListener('mousedown',sd);
+cv.addEventListener('mousemove',mv);
+cv.addEventListener('mouseup',()=>drw=false);
+cv.addEventListener('mouseleave',()=>drw=false);
+cv.addEventListener('touchstart',e=>{e.preventDefault();sd(e);},{passive:false});
+cv.addEventListener('touchmove',e=>{e.preventDefault();mv(e);},{passive:false});
+cv.addEventListener('touchend',()=>drw=false);
+
+function dkey(y,m,d){return`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;}
+function go(dir){cur=new Date(cur.getFullYear(),cur.getMonth()+dir,1);render();}
+
+function render(){
+  const y=cur.getFullYear(), m=cur.getMonth();
+  document.getElementById('mTtl').textContent=`${MNS[m]} ${y}`;
+  const g=document.getElementById('grid'); g.innerHTML='';
+  const first=new Date(y,m,1).getDay(), days=new Date(y,m+1,0).getDate();
+  const pd=new Date(y,m,0).getDate(), td=new Date();
+  for(let i=first-1;i>=0;i--)mkCell(g,y,m-1,pd-i,true,false);
+  for(let d=1;d<=days;d++){
+    const isT=y===td.getFullYear()&&m===td.getMonth()&&d===td.getDate();
+    mkCell(g,y,m,d,false,isT);
+  }
+  const tot=g.children.length, rows=Math.ceil(tot/7);
+  for(let d=1;d<=rows*7-tot;d++)mkCell(g,y,m+1,d,true,false);
+  for(let d=1;d<=days;d++){
+    const k=dkey(y,m,d);
+    if(cache.has(k)){setThumb(k,cache.get(k).canvas);}
+    else{window.storage.get(`cal:${k}`).then(r=>{if(r){const data=JSON.parse(r.value);cache.set(k,data);setThumb(k,data.canvas);}}).catch(()=>{});}
+  }
+}
+
+function mkCell(g,y,m,d,faded,isToday){
+  const date=new Date(y,m,d), ry=date.getFullYear(), rm=date.getMonth(), rd=date.getDate();
+  const k=dkey(ry,rm,rd);
+  const cell=document.createElement('div');
+  cell.className='dc'+(faded?' fad':'')+(isToday?' tod':'');
+  cell.dataset.key=k;
+  const num=document.createElement('div'); num.className='dn'; num.textContent=d; cell.appendChild(num);
+  const img=document.createElement('img'); img.className='th'; img.dataset.key=k; cell.appendChild(img);
+  if(!faded){
+    const lbl=`${DNS[date.getDay()]}, ${MNS[rm]} ${rd} ${ry}`;
+    cell.onclick=()=>openDay(k,lbl);
+  }
+  g.appendChild(cell);
+}
+
+function setThumb(k,url){
+  document.querySelectorAll(`img.th[data-key="${k}"]`).forEach(img=>{img.src=url;img.style.display='block';});
+}
+
+async function openDay(k,label){
+  selKey=k;
+  document.getElementById('eDate').textContent=label;
+  document.getElementById('empty').style.display='none';
+  document.getElementById('editor').style.display='flex';
+
+  let data=cache.get(k);
+  if(!data){try{const r=await window.storage.get(`cal:${k}`);if(r){data=JSON.parse(r.value);cache.set(k,data);}}catch(e){}}
+
+  if(!cinit){
+    await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+    const wrap=document.getElementById('cwrap');
+    cv.width=Math.max(wrap.clientWidth-24,300);
+    cv.height=Math.max(wrap.clientHeight-24,200);
+    cinit=true;
+  }
+
+  ctx.globalCompositeOperation='source-over';
+  ctx.fillStyle='white'; ctx.fillRect(0,0,cv.width,cv.height);
+  document.getElementById('notes').value='';
+
+  if(data?.canvas){
+    const img=new Image();
+    img.onload=()=>{ctx.globalCompositeOperation='source-over';ctx.drawImage(img,0,0);};
+    img.src=data.canvas;
+  }
+  if(data?.note)document.getElementById('notes').value=data.note;
+
+  document.querySelectorAll('.dc').forEach(c=>c.classList.remove('sel'));
+  document.querySelector(`.dc[data-key="${k}"]`)?.classList.add('sel');
+  document.getElementById('svbtn').textContent='Save';
+}
+
+function closeEd(){
+  selKey=null;
+  document.getElementById('editor').style.display='none';
+  document.getElementById('empty').style.display='flex';
+  document.querySelectorAll('.dc').forEach(c=>c.classList.remove('sel'));
+}
+
+async function saveDay(){
+  if(!selKey)return;
+  const tmp=document.createElement('canvas');
+  tmp.width=cv.width; tmp.height=cv.height;
+  const tc=tmp.getContext('2d');
+  tc.fillStyle='white'; tc.fillRect(0,0,tmp.width,tmp.height);
+  tc.drawImage(cv,0,0);
+  const url=tmp.toDataURL('image/png');
+  const note=document.getElementById('notes').value;
+  const data={canvas:url,note};
+  cache.set(selKey,data);
+  try{await window.storage.set(`cal:${selKey}`,JSON.stringify(data));}catch(e){}
+  setThumb(selKey,url);
+  const btn=document.getElementById('svbtn');
+  btn.textContent='Saved!';
+  setTimeout(()=>btn.textContent='Save',1500);
+}
+
+render();
+</script>
