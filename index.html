@@ -34,6 +34,16 @@
   }
 }
 
+html[data-theme="dark"]{
+  --color-neutral-bg:#1a1410;--color-neutral-bg-secondary:#262219;--color-neutral-border:#3d3530;--color-neutral-border-light:#5a5047;
+  --color-text-primary:#faf8f6;--color-text-secondary:#d1ccc6;--color-text-tertiary:#9a8f87;
+}
+
+html[data-theme="light"]{
+  --color-neutral-bg:#fffdfa;--color-neutral-bg-secondary:#f7f4f0;--color-neutral-border:#e4dad0;--color-neutral-border-light:#ede5dd;
+  --color-text-primary:#6b5c50;--color-text-secondary:#9a8d82;--color-text-tertiary:#b8ada5;
+}
+
 :root{
   --color-background-primary:var(--color-neutral-bg);
   --color-background-secondary:var(--color-neutral-bg-secondary);
@@ -168,7 +178,10 @@ textarea:focus{border-color:var(--color-secondary) !important;box-shadow:0 0 0 3
     <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-md) var(--space-lg);border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);">
       <button class="tbtn" style="font-size:18px;padding:1px 8px;" onclick="go(-1)">&#8249;</button>
       <span id="mTtl" style="font-size:var(--fs-xl);font-weight:700;font-family:var(--font-display);color:var(--color-primary);letter-spacing:.5px;"></span>
-      <button class="tbtn" style="font-size:18px;padding:1px 8px;" onclick="go(1)">&#8250;</button>
+      <div style="display:flex;gap:var(--space-xs);align-items:center;">
+        <button class="tbtn" style="font-size:18px;padding:1px 8px;" onclick="go(1)">&#8250;</button>
+        <button class="tbtn" id="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode" aria-label="Toggle dark mode">🌙</button>
+      </div>
     </div>
     <div style="display:grid;grid-template-columns:repeat(7,1fr);padding:var(--space-md) var(--space-md) var(--space-sm);gap:var(--space-xs);">
       <div style="text-align:center;font-size:var(--fs-xs);color:var(--color-text-tertiary);font-weight:600;font-family:var(--font-ui);padding:var(--space-xs);">S</div>
@@ -802,7 +815,32 @@ window.addEventListener('resize',()=>{
 window.addEventListener('orientationchange',()=>{
   setTimeout(updateResponsiveUI,100);
 });
-document.addEventListener('DOMContentLoaded',updateResponsiveUI);
+
+function toggleTheme(){
+  const html=document.documentElement;
+  const currentTheme=html.getAttribute('data-theme');
+  const newTheme=currentTheme==='dark'?'light':'dark';
+  html.setAttribute('data-theme',newTheme);
+  localStorage.setItem('theme-preference',newTheme);
+  const btn=document.getElementById('theme-toggle');
+  if(btn)btn.textContent=newTheme==='dark'?'☀️':'🌙';
+}
+
+function initTheme(){
+  const html=document.documentElement;
+  let theme=localStorage.getItem('theme-preference');
+  if(!theme){
+    theme=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
+  }
+  html.setAttribute('data-theme',theme);
+  const btn=document.getElementById('theme-toggle');
+  if(btn)btn.textContent=theme==='dark'?'☀️':'🌙';
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  initTheme();
+  updateResponsiveUI();
+});
 setTimeout(updateResponsiveUI,100);
 
 render();
