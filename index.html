@@ -787,17 +787,25 @@ function toggleCalendarPanel(){
   }
 }
 
+let _prevMobile=null;
 function updateResponsiveUI(){
   const width=window.innerWidth;
+  const isMobile=width<=767;
   const toggle=document.getElementById('cal-toggle');
   const cal=document.getElementById('calendar-panel');
-  if(width<=767){
+  if(isMobile){
     if(toggle)toggle.style.display='block';
-    if(cal)cal.classList.remove('show');
+    // Only reset calendar visibility when first entering mobile breakpoint
+    if(_prevMobile===false){
+      if(cal)cal.classList.remove('show');
+      if(toggle)toggle.textContent='📅 Show Calendar';
+    }
   }else{
     if(toggle)toggle.style.display='none';
+    // Always hide the panel on desktop (it shows via flex by default)
     if(cal)cal.classList.remove('show');
   }
+  _prevMobile=isMobile;
 }
 
 window.addEventListener('resize',()=>{
