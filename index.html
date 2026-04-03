@@ -139,6 +139,99 @@ textarea:focus{border-color:var(--color-secondary) !important;box-shadow:0 0 0 3
 .more-btn{font-size:var(--fs-xs);padding:var(--space-xs) var(--space-sm);background:var(--color-secondary-light);border:1px solid var(--color-secondary);color:var(--color-secondary-dark);cursor:pointer;border-radius:4px;font-weight:700;transition:all .12s;box-shadow:0 1px 4px rgba(78,205,196,0.2);}
 .more-btn:hover{box-shadow:0 2px 8px rgba(78,205,196,0.3);transform:translateY(-1px);}
 
+/* ── Top bar ─────────────────────────────────────────────────────── */
+#top-bar{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:var(--space-sm) var(--space-xl);
+  border-bottom:0.5px solid var(--color-border-tertiary);
+  background:var(--color-background-secondary);
+  gap:var(--space-md);
+  font-family:var(--font-ui);
+}
+#top-bar-left{display:flex;align-items:center;gap:var(--space-md);}
+#top-bar-right{display:flex;align-items:center;gap:var(--space-sm);}
+
+/* Title — dominant element */
+#app-title{
+  font-family:var(--font-display);
+  font-size:var(--fs-xl);
+  font-weight:700;
+  color:var(--color-primary);
+  letter-spacing:.5px;
+  white-space:nowrap;
+  margin:0;
+  line-height:1;
+}
+
+/* Shared bar-btn base — subordinate, ghost style */
+.bar-btn{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:var(--fs-xs);
+  font-family:var(--font-ui);
+  font-weight:600;
+  letter-spacing:0.3px;
+  padding:5px var(--space-sm);
+  border-radius:20px;
+  border:1px solid var(--color-neutral-border);
+  cursor:pointer;
+  background:transparent;
+  color:var(--color-text-secondary);
+  transition:background .15s,color .15s,border-color .15s,box-shadow .15s;
+  min-height:32px;
+  white-space:nowrap;
+  text-transform:none;
+}
+.bar-btn:hover{
+  background:var(--color-background-primary);
+  color:var(--color-primary);
+  border-color:var(--color-primary);
+  box-shadow:0 2px 6px rgba(255,107,53,0.12);
+}
+.bar-btn:focus-visible{outline:2px solid var(--color-primary);outline-offset:2px;}
+
+/* Active (open) state for cal-toggle */
+#cal-toggle.active{
+  background:var(--color-primary);
+  color:white;
+  border-color:var(--color-primary);
+  box-shadow:0 2px 8px rgba(255,107,53,0.3);
+}
+#cal-toggle.active:hover{
+  background:var(--color-primary-dark);
+  border-color:var(--color-primary-dark);
+}
+
+/* Hide cal-toggle on desktop; show on ≤767 */
+#cal-toggle{display:none;}
+
+/* Mobile floating calendar button (thumb zone) */
+#cal-fab{
+  display:none;
+  position:fixed;
+  bottom:var(--space-xl);
+  left:50%;
+  transform:translateX(-50%);
+  z-index:200;
+  background:var(--color-primary);
+  color:white;
+  border:none;
+  border-radius:24px;
+  padding:10px var(--space-xl);
+  font-size:var(--fs-sm);
+  font-family:var(--font-ui);
+  font-weight:700;
+  cursor:pointer;
+  box-shadow:0 4px 20px rgba(255,107,53,0.4);
+  transition:transform .15s,box-shadow .15s,background .15s;
+  gap:6px;
+  align-items:center;
+  white-space:nowrap;
+}
+#cal-fab:hover{transform:translateX(-50%) translateY(-2px);box-shadow:0 8px 24px rgba(255,107,53,0.5);}
+#cal-fab.active{background:var(--color-text-primary);box-shadow:0 4px 20px rgba(0,0,0,0.25);}
+#cal-fab.active:hover{background:var(--color-text-primary);}
+
 #main-container{display:flex;gap:var(--space-lg);height:680px;font-family:var(--font-ui);padding:var(--space-lg);}
 #calendar-panel{flex:0 0 298px;}
 #editor-panel{flex:1;}
@@ -150,27 +243,49 @@ textarea:focus{border-color:var(--color-secondary) !important;box-shadow:0 0 0 3
 }
 
 @media(max-width:767px){
-  #main-container{height:auto;flex-direction:column;gap:var(--space-md);padding:var(--space-md);}
-  #calendar-panel{flex:0 0 auto;min-height:280px;display:none;}
-  #calendar-panel.show{display:flex;}
-  #editor-panel{flex:1;min-height:calc(100vh - 140px);}
-  .calendar-toggle{display:block !important;margin:0 0 var(--space-sm) 0;width:100%;padding:var(--space-sm) var(--space-md);min-height:44px;font-size:var(--fs-sm);}
+  #main-container{height:auto;flex-direction:column;gap:var(--space-md);padding:var(--space-md);padding-bottom:72px;}
+  #calendar-panel{flex:0 0 auto;min-height:280px;}
+  #editor-panel{flex:1;min-height:calc(100vh - 160px);}
+  #cal-toggle{display:none !important;}/* hidden on mobile — FAB takes over */
+  #cal-fab{display:inline-flex;}
   .tbtn{padding:var(--space-xs) var(--space-sm);min-width:44px;min-height:44px;font-size:var(--fs-xs);}
   .tbtn:focus,.tbtn:active{outline:2px solid var(--color-secondary);}
   .svbtn{min-height:44px;font-size:var(--fs-sm);}
   #eDate{font-size:var(--fs-sm);}
   textarea{font-size:16px;min-height:80px;}
+  #top-bar{padding:var(--space-xs) var(--space-md);}
+  #app-title{font-size:var(--fs-lg);}
 }
 
 @media(max-width:480px){
-  #main-container{gap:var(--space-xs);padding:var(--space-xs);}
-  #editor-panel{min-height:calc(100vh - 100px);}
+  #main-container{gap:var(--space-xs);padding:var(--space-xs);padding-bottom:72px;}
+  #editor-panel{min-height:calc(100vh - 120px);}
   .svbtn{padding:var(--space-sm) var(--space-md);min-height:44px;}
   textarea{font-size:16px;min-height:100px;}
-  .calendar-toggle{padding:var(--space-sm) var(--space-xs);margin:0;}
   #cwrap{padding:var(--space-sm);}
+  #app-title{font-size:var(--fs-md);}
 }
 </style>
+
+<header id="top-bar" role="banner">
+  <div id="top-bar-left">
+    <button id="cal-toggle" class="bar-btn" onclick="toggleCalendarPanel()" aria-label="Show calendar" aria-expanded="false">
+      <span aria-hidden="true">📅</span> Show Calendar
+    </button>
+    <h1 id="app-title">Fun Calendar</h1>
+  </div>
+  <div id="top-bar-right">
+    <button id="theme-toggle-bar" class="bar-btn" onclick="toggleTheme()" aria-label="Switch to dark mode">
+      <span id="theme-icon" aria-hidden="true">🌙</span>
+      <span id="theme-label">Switch to dark</span>
+    </button>
+  </div>
+</header>
+
+<!-- Mobile floating calendar button (thumb zone) -->
+<button id="cal-fab" onclick="toggleCalendarPanel()" aria-label="Show calendar" aria-expanded="false">
+  <span aria-hidden="true">📅</span> Show Calendar
+</button>
 
 <div id="main-container">
 
@@ -178,10 +293,7 @@ textarea:focus{border-color:var(--color-secondary) !important;box-shadow:0 0 0 3
     <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-md) var(--space-lg);border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);">
       <button class="tbtn" style="font-size:18px;padding:1px 8px;" onclick="go(-1)">&#8249;</button>
       <span id="mTtl" style="font-size:var(--fs-xl);font-weight:700;font-family:var(--font-display);color:var(--color-primary);letter-spacing:.5px;"></span>
-      <div style="display:flex;gap:var(--space-xs);align-items:center;">
-        <button class="tbtn" style="font-size:18px;padding:1px 8px;" onclick="go(1)">&#8250;</button>
-        <button class="tbtn" id="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode" aria-label="Toggle dark mode">🌙</button>
-      </div>
+      <button class="tbtn" style="font-size:18px;padding:1px 8px;" onclick="go(1)">&#8250;</button>
     </div>
     <div style="display:grid;grid-template-columns:repeat(7,1fr);padding:var(--space-md) var(--space-md) var(--space-sm);gap:var(--space-xs);">
       <div style="text-align:center;font-size:var(--fs-xs);color:var(--color-text-tertiary);font-weight:600;font-family:var(--font-ui);padding:var(--space-xs);">S</div>
@@ -196,7 +308,6 @@ textarea:focus{border-color:var(--color-secondary) !important;box-shadow:0 0 0 3
   </div>
 
   <div id="editor-panel" style="flex:1;display:flex;flex-direction:column;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-primary);">
-    <button class="calendar-toggle" id="cal-toggle" onclick="toggleCalendarPanel()" style="display:none;align-self:flex-start;margin:var(--space-sm);padding:var(--space-xs) var(--space-sm);background:var(--color-background-secondary);border:1px solid var(--color-border-secondary);border-radius:4px;cursor:pointer;color:var(--color-text-primary);font-size:var(--fs-sm);min-height:44px;">📅 Show Calendar</button>
     <div id="empty" style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;">
       <div style="width:48px;height:48px;border:2px solid var(--color-secondary);border-radius:8px;display:flex;align-items:center;justify-content:center;position:relative;animation:pulse 2s ease-in-out infinite;">
         <div style="position:absolute;top:-8px;left:10px;width:4px;height:10px;background:var(--color-secondary);border-radius:2px;"></div>
@@ -775,35 +886,47 @@ function initOnboarding(){
   updateOnboarding();
 }
 
+function setCalendarToggleState(visible){
+  // Sync both the top-bar button and the FAB
+  const btn=document.getElementById('cal-toggle');
+  const fab=document.getElementById('cal-fab');
+  const expanded=String(visible);
+  if(btn){
+    btn.classList.toggle('active',visible);
+    btn.setAttribute('aria-expanded',expanded);
+    btn.innerHTML=visible
+      ?'<span aria-hidden="true">📅</span> Hide Calendar'
+      :'<span aria-hidden="true">📅</span> Show Calendar';
+  }
+  if(fab){
+    fab.classList.toggle('active',visible);
+    fab.setAttribute('aria-expanded',expanded);
+    fab.innerHTML=visible
+      ?'<span aria-hidden="true">📅</span> Hide Calendar'
+      :'<span aria-hidden="true">📅</span> Show Calendar';
+  }
+}
+
 function toggleCalendarPanel(){
   const cal=document.getElementById('calendar-panel');
-  const btn=document.getElementById('cal-toggle');
   const isVisible=cal.style.display==='flex';
-  if(isVisible){
-    cal.style.display='none';
-    btn.textContent='📅 Show Calendar';
-  }else{
-    cal.style.display='flex';
-    btn.textContent='📅 Hide Calendar';
-  }
+  cal.style.display=isVisible?'none':'flex';
+  setCalendarToggleState(!isVisible);
 }
 
 let _prevMobile=null;
 function updateResponsiveUI(){
   const width=window.innerWidth;
   const isMobile=width<=767;
-  const toggle=document.getElementById('cal-toggle');
   const cal=document.getElementById('calendar-panel');
   if(isMobile){
-    if(toggle)toggle.style.display='block';
     // Only reset calendar visibility when first entering mobile breakpoint
     if(_prevMobile!==true){
       if(cal)cal.style.display='none';
-      if(toggle)toggle.textContent='📅 Show Calendar';
+      setCalendarToggleState(false);
     }
   }else{
-    if(toggle)toggle.style.display='none';
-    // Always show the panel on desktop
+    // Desktop: always show calendar
     if(cal)cal.style.display='flex';
   }
   _prevMobile=isMobile;
@@ -825,14 +948,23 @@ window.addEventListener('orientationchange',()=>{
   setTimeout(updateResponsiveUI,100);
 });
 
+function setThemeUI(theme){
+  const isDark=theme==='dark';
+  const icon=document.getElementById('theme-icon');
+  const label=document.getElementById('theme-label');
+  const btn=document.getElementById('theme-toggle-bar');
+  if(icon)icon.textContent=isDark?'☀️':'🌙';
+  if(label)label.textContent=isDark?'Switch to light':'Switch to dark';
+  if(btn)btn.setAttribute('aria-label',isDark?'Switch to light mode':'Switch to dark mode');
+}
+
 function toggleTheme(){
   const html=document.documentElement;
   const currentTheme=html.getAttribute('data-theme');
   const newTheme=currentTheme==='dark'?'light':'dark';
   html.setAttribute('data-theme',newTheme);
   localStorage.setItem('theme-preference',newTheme);
-  const btn=document.getElementById('theme-toggle');
-  if(btn)btn.textContent=newTheme==='dark'?'☀️':'🌙';
+  setThemeUI(newTheme);
 }
 
 function initTheme(){
@@ -842,8 +974,7 @@ function initTheme(){
     theme=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
   }
   html.setAttribute('data-theme',theme);
-  const btn=document.getElementById('theme-toggle');
-  if(btn)btn.textContent=theme==='dark'?'☀️':'🌙';
+  setThemeUI(theme);
 }
 
 document.addEventListener('DOMContentLoaded',()=>{
