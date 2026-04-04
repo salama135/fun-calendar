@@ -3,6 +3,7 @@
 <meta name="theme-color" content="#ff6b35">
 <meta name="description" content="Fun Calendar - Draw, write, and track your daily journey">
 <title>Fun Calendar</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap');
 
@@ -111,6 +112,13 @@
     body {
       padding-top: 8px;
     }
+  }
+
+  .material-symbols-rounded {
+    font-size: inherit;
+    vertical-align: middle;
+    line-height: 1;
+    font-variation-settings: 'FILL' 0, 'wght' 600, 'GRAD' 0, 'opsz' 24;
   }
 
   @keyframes celebrateSave {
@@ -996,13 +1004,13 @@
   <div id="top-bar-left">
     <button id="cal-toggle" class="bar-btn" onclick="toggleCalendarPanel()" aria-label="Show calendar"
       aria-expanded="false">
-      <span aria-hidden="true">📅</span> Show Calendar
+      <span class="material-symbols-rounded" aria-hidden="true">calendar_month</span> Show Calendar
     </button>
     <h1 id="app-title">Fun Calendar</h1>
   </div>
   <div id="top-bar-right">
     <button id="theme-toggle-bar" class="bar-btn" onclick="toggleTheme()" aria-label="Switch to dark mode">
-      <span id="theme-icon" aria-hidden="true">🌙</span>
+      <span id="theme-icon" class="material-symbols-rounded" aria-hidden="true">dark_mode</span>
       <span id="theme-label">Switch to dark</span>
     </button>
   </div>
@@ -1010,7 +1018,7 @@
 
 <!-- Mobile floating calendar button (thumb zone) -->
 <button id="cal-fab" onclick="toggleCalendarPanel()" aria-label="Show calendar" aria-expanded="false">
-  <span aria-hidden="true">📅</span> Show Calendar
+  <span class="material-symbols-rounded" aria-hidden="true">calendar_month</span> Show Calendar
 </button>
 
 <div id="main-container">
@@ -1019,10 +1027,10 @@
     style="flex:0 0 298px;flex-direction:column;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:scroll;background:var(--color-background-primary);">
     <div
       style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-md) var(--space-lg);border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);">
-      <button class="tbtn" style="font-size:18px;padding:1px 8px;" onclick="go(-1)">&#8249;</button>
+      <button class="tbtn" style="font-size:24px;padding:1px 4px;line-height:0;" onclick="go(-1)"><span class="material-symbols-rounded">chevron_left</span></button>
       <span id="mTtl"
         style="font-size:var(--fs-xl);font-weight:700;font-family:var(--font-display);color:var(--color-primary);letter-spacing:.5px;"></span>
-      <button class="tbtn" style="font-size:18px;padding:1px 8px;" onclick="go(1)">&#8250;</button>
+      <button class="tbtn" style="font-size:24px;padding:1px 4px;line-height:0;" onclick="go(1)"><span class="material-symbols-rounded">chevron_right</span></button>
     </div>
     <div
       style="display:grid;grid-template-columns:repeat(7,1fr);padding:var(--space-md) var(--space-md) var(--space-sm);gap:var(--space-xs);">
@@ -1082,7 +1090,7 @@
         style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-md) var(--space-lg);border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);flex-shrink:0;">
         <span id="eDate"
           style="font-size:var(--fs-md);font-weight:600;font-family:var(--font-ui);color:var(--color-text-primary);"></span>
-        <button class="tbtn" onclick="closeEd()" style="padding:2px 7px;">&#10005;</button>
+        <button class="tbtn" onclick="closeEd()" style="padding:4px;"><span class="material-symbols-rounded">close</span></button>
       </div>
       <div
         style="display:flex;align-items:center;gap:var(--space-md);padding:var(--space-md) var(--space-lg);border-bottom:0.5px solid var(--color-border-tertiary);flex-wrap:wrap;flex-shrink:0;background:var(--color-background-secondary);">
@@ -1100,10 +1108,10 @@
           <input type="file" id="photo-upload" accept="image/*" style="display:none;"
             onchange="handlePhotoUpload(event)">
           <button class="tbtn" onclick="document.getElementById('photo-upload').click()"
-            title="Upload Photo">📎</button>
-          <button class="tbtn" id="camBtn" onclick="toggleCamera()" title="Take Photo">📸</button>
+            title="Upload Photo"><span class="material-symbols-rounded">attach_file</span></button>
+          <button class="tbtn" id="camBtn" onclick="toggleCamera()" title="Take Photo"><span class="material-symbols-rounded">photo_camera</span></button>
           <div style="position:relative;">
-            <button class="tbtn" id="stickerBtn" onclick="toggleStickers()">✨</button>
+            <button class="tbtn" id="stickerBtn" onclick="toggleStickers()"><span class="material-symbols-rounded">sentiment_satisfied</span></button>
             <div id="sticker-panel"
               style="display:none;position:absolute;top:calc(100% + var(--space-xs));left:50%;transform:translateX(-50%);background:var(--color-background-primary);border:1px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:var(--space-sm);box-shadow:0 4px 12px rgba(0,0,0,0.15);grid-template-columns:repeat(4,1fr);gap:var(--space-xs);z-index:300;">
               <!-- Stickers populated by JS -->
@@ -1112,10 +1120,10 @@
         </div>
         <div style="width:0.5px;height:18px;background:var(--color-border-secondary);flex-shrink:0;"></div>
         <div style="display:flex;gap:var(--space-xs);align-items:center;">
-          <button class="tbtn" id="undobtn" onclick="undoDrawing()" title="Undo (Ctrl+Z)" disabled>↶</button>
-          <button class="tbtn" id="redobtn" onclick="redoDrawing()" title="Redo (Ctrl+Shift+Z)" disabled>↷</button>
-          <button class="tbtn" id="erbtn" onclick="setErs()">Eraser</button>
-          <button class="tbtn" onclick="clrC()">Clear</button>
+          <button class="tbtn" id="undobtn" onclick="undoDrawing()" title="Undo (Ctrl+Z)" disabled><span class="material-symbols-rounded">undo</span></button>
+          <button class="tbtn" id="redobtn" onclick="redoDrawing()" title="Redo (Ctrl+Shift+Z)" disabled><span class="material-symbols-rounded">redo</span></button>
+          <button class="tbtn" id="erbtn" onclick="setErs()" style="display:flex;align-items:center;gap:4px;"><span class="material-symbols-rounded" style="font-size:16px;">ink_eraser</span>Eraser</button>
+          <button class="tbtn" onclick="clrC()" style="display:flex;align-items:center;gap:4px;"><span class="material-symbols-rounded" style="font-size:16px;">delete</span>Clear</button>
         </div>
         <div style="flex:1;"></div>
         <button class="svbtn" id="svbtn" onclick="saveDay()">Save</button>
@@ -1718,15 +1726,15 @@
       btn.classList.toggle('active', visible);
       btn.setAttribute('aria-expanded', expanded);
       btn.innerHTML = visible
-        ? '<span aria-hidden="true">📅</span> Hide Calendar'
-        : '<span aria-hidden="true">📅</span> Show Calendar';
+        ? '<span class="material-symbols-rounded" aria-hidden="true">calendar_month</span> Hide Calendar'
+        : '<span class="material-symbols-rounded" aria-hidden="true">calendar_month</span> Show Calendar';
     }
     if (fab) {
       fab.classList.toggle('active', visible);
       fab.setAttribute('aria-expanded', expanded);
       fab.innerHTML = visible
-        ? '<span aria-hidden="true">📅</span> Hide Calendar'
-        : '<span aria-hidden="true">📅</span> Show Calendar';
+        ? '<span class="material-symbols-rounded" aria-hidden="true">calendar_month</span> Hide Calendar'
+        : '<span class="material-symbols-rounded" aria-hidden="true">calendar_month</span> Show Calendar';
     }
   }
 
@@ -1776,7 +1784,7 @@
     const icon = document.getElementById('theme-icon');
     const label = document.getElementById('theme-label');
     const btn = document.getElementById('theme-toggle-bar');
-    if (icon) icon.textContent = isDark ? '☀️' : '🌙';
+    if (icon) icon.textContent = isDark ? 'light_mode' : 'dark_mode';
     if (label) label.textContent = isDark ? 'Switch to light' : 'Switch to dark';
     if (btn) btn.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
   }
