@@ -643,6 +643,98 @@
     transform: translateY(-1px);
   }
 
+  /* Scrapbook items */
+  .scrapbook-item {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+    z-index: 10;
+  }
+
+  .scrapbook-item:active {
+    cursor: grabbing;
+  }
+
+  .scrapbook-item.selected {
+    outline: 2px dashed var(--color-primary);
+    z-index: 20;
+  }
+
+  .scrapbook-item .del-btn {
+    display: none;
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    width: 24px;
+    height: 24px;
+    background: var(--color-error);
+    color: white;
+    border-radius: 50%;
+    border: 2px solid white;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    line-height: 1;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .scrapbook-item.selected .del-btn {
+    display: flex;
+  }
+
+  .scrapbook-item .scale-handle {
+    display: none;
+    position: absolute;
+    bottom: -8px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border: 2px solid var(--color-primary);
+    border-radius: 50%;
+    cursor: nwse-resize;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .scrapbook-item.selected .scale-handle {
+    display: block;
+  }
+
+  .scrapbook-item img {
+    display: block;
+    max-width: 200px;
+    max-height: 200px;
+    object-fit: contain;
+    pointer-events: none;
+  }
+
+  .scrapbook-item .sticker-text {
+    font-size: 64px;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .sticker-btn {
+    font-size: 24px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    background: transparent;
+    border: none;
+    transition: transform 0.1s;
+  }
+
+  .sticker-btn:hover {
+    transform: scale(1.2);
+    background: var(--color-background-secondary);
+  }
+
   /* ── Top bar ─────────────────────────────────────────────────────── */
   #top-bar {
     position: sticky;
@@ -924,7 +1016,7 @@
 <div id="main-container">
 
   <div id="calendar-panel"
-    style="flex:0 0 298px;flex-direction:column;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-primary);">
+    style="flex:0 0 298px;flex-direction:column;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:scroll;background:var(--color-background-primary);">
     <div
       style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-md) var(--space-lg);border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);">
       <button class="tbtn" style="font-size:18px;padding:1px 8px;" onclick="go(-1)">&#8249;</button>
@@ -1005,8 +1097,23 @@
         </div>
         <div style="width:0.5px;height:18px;background:var(--color-border-secondary);flex-shrink:0;"></div>
         <div style="display:flex;gap:var(--space-xs);align-items:center;">
-          <button class="tbtn" id="undobtn" onclick="undoDrawing()" title="Undo (Ctrl+Z)" disabled>↶ Undo</button>
-          <button class="tbtn" id="redobtn" onclick="redoDrawing()" title="Redo (Ctrl+Shift+Z)" disabled>↷ Redo</button>
+          <input type="file" id="photo-upload" accept="image/*" style="display:none;"
+            onchange="handlePhotoUpload(event)">
+          <button class="tbtn" onclick="document.getElementById('photo-upload').click()"
+            title="Upload Photo">📎</button>
+          <button class="tbtn" id="camBtn" onclick="toggleCamera()" title="Take Photo">📸</button>
+          <div style="position:relative;">
+            <button class="tbtn" id="stickerBtn" onclick="toggleStickers()">✨</button>
+            <div id="sticker-panel"
+              style="display:none;position:absolute;top:calc(100% + var(--space-xs));left:50%;transform:translateX(-50%);background:var(--color-background-primary);border:1px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:var(--space-sm);box-shadow:0 4px 12px rgba(0,0,0,0.15);grid-template-columns:repeat(4,1fr);gap:var(--space-xs);z-index:300;">
+              <!-- Stickers populated by JS -->
+            </div>
+          </div>
+        </div>
+        <div style="width:0.5px;height:18px;background:var(--color-border-secondary);flex-shrink:0;"></div>
+        <div style="display:flex;gap:var(--space-xs);align-items:center;">
+          <button class="tbtn" id="undobtn" onclick="undoDrawing()" title="Undo (Ctrl+Z)" disabled>↶</button>
+          <button class="tbtn" id="redobtn" onclick="redoDrawing()" title="Redo (Ctrl+Shift+Z)" disabled>↷</button>
           <button class="tbtn" id="erbtn" onclick="setErs()">Eraser</button>
           <button class="tbtn" onclick="clrC()">Clear</button>
         </div>
@@ -1015,8 +1122,15 @@
       </div>
       <div id="cwrap"
         style="flex:1;min-height:0;overflow:auto;background:linear-gradient(135deg,rgba(255,216,61,0.04),rgba(78,205,196,0.04));display:flex;align-items:center;justify-content:center;padding:var(--space-lg);">
-        <canvas id="cv"
-          style="background:white;cursor:crosshair;touch-action:none;border-radius:4px;display:block;box-shadow:0 1px 3px rgba(0,0,0,0.1);"></canvas>
+        <div id="cv-container" style="position:relative;">
+          <canvas id="cv"
+            style="background:white;cursor:crosshair;touch-action:none;border-radius:4px;display:block;box-shadow:0 1px 3px rgba(0,0,0,0.1);"></canvas>
+          <video id="camera-ve" autoplay playsinline
+            style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border-radius:4px;z-index:50;background:black;"></video>
+          <button id="camera-snap-btn" onclick="takeSnapshot()"
+            style="display:none;position:absolute;bottom:10px;left:50%;transform:translateX(-50%);z-index:60;padding:8px 16px;border-radius:20px;border:none;background:var(--color-primary);color:white;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(255,107,53,0.4);">Take
+            Photo</button>
+        </div>
       </div>
       <div style="padding:var(--space-lg);border-top:0.5px solid var(--color-border-tertiary);flex-shrink:0;">
         <textarea id="notes" placeholder="What's on your mind today?" maxlength="500" aria-label="Daily notes"
@@ -1114,6 +1228,7 @@
         ctx.globalCompositeOperation = 'source-over';
         ctx.fillStyle = 'white';
         ctx.fillRect(0, 0, cv.width, cv.height);
+        document.querySelectorAll('.scrapbook-item').forEach(el => el.remove());
         drawingHistory = [];
         historyIdx = -1;
         updateHistoryButtons();
@@ -1411,6 +1526,7 @@
       editor.classList.remove('closing');
       empty.classList.remove('closing');
     }, 250);
+    document.querySelectorAll('.scrapbook-item').forEach(el => el.remove());
     document.querySelectorAll('.dc').forEach(c => c.classList.remove('sel'));
   }
 
@@ -1423,6 +1539,39 @@
     const oldText = btn.textContent;
     btn.textContent = 'Saving...';
     btn.disabled = true;
+
+    // Flatten scrapbook items to main canvas
+    const items = document.querySelectorAll('.scrapbook-item');
+    if (items.length > 0) {
+      items.forEach(item => {
+        const type = item.firstChild.dataset.type;
+        const scale = parseFloat(item.dataset.scale) || 1;
+        const cx = item.offsetLeft;
+        const cy = item.offsetTop;
+
+        ctx.save();
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.translate(cx, cy);
+        ctx.scale(scale, scale);
+
+        if (type === 'img') {
+          const img = item.firstChild;
+          const w = img.clientWidth;
+          const h = img.clientHeight;
+          ctx.drawImage(img, -w / 2, -h / 2, w, h);
+        } else if (type === 'text') {
+          const text = item.firstChild.textContent;
+          ctx.font = '64px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(text, 0, 0);
+        }
+        ctx.restore();
+
+        item.remove();
+      });
+      saveStateToHistory();
+    }
 
     try {
       const tmp = document.createElement('canvas');
@@ -1659,4 +1808,159 @@
 
   render();
   initOnboarding();
+
+  // --- Scrapbook Engine ---
+  const EMOJIS = ['⭐️', '❤️', '✨', '🎉', '🚀', '🔥', '💡', '🌸', '🎈', '🍕', '🎂', '🐶', '🐱', '🌈', '🌻', '🍩'];
+  const stickerPanel = document.getElementById('sticker-panel');
+  EMOJIS.forEach(emoji => {
+    const btn = document.createElement('button');
+    btn.className = 'sticker-btn';
+    btn.textContent = emoji;
+    btn.onclick = () => { addSticker(emoji); toggleStickers(); };
+    stickerPanel.appendChild(btn);
+  });
+
+  function toggleStickers() {
+    const isVis = stickerPanel.style.display === 'grid';
+    stickerPanel.style.display = isVis ? 'none' : 'grid';
+    document.getElementById('stickerBtn').classList.toggle('on', !isVis);
+  }
+
+  let camStream = null;
+  async function toggleCamera() {
+    const ve = document.getElementById('camera-ve');
+    const snapBtn = document.getElementById('camera-snap-btn');
+    const camBtn = document.getElementById('camBtn');
+    if (camStream) {
+      camStream.getTracks().forEach(t => t.stop());
+      camStream = null;
+      ve.style.display = 'none';
+      snapBtn.style.display = 'none';
+      camBtn.classList.remove('on');
+    } else {
+      try {
+        camStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        ve.srcObject = camStream;
+        ve.style.display = 'block';
+        snapBtn.style.display = 'block';
+        camBtn.classList.add('on');
+      } catch (e) {
+        showToast('❌ Camera access denied or unavailable.');
+      }
+    }
+  }
+
+  function takeSnapshot() {
+    const ve = document.getElementById('camera-ve');
+    if (!ve.videoWidth) return;
+    const canvas = document.createElement('canvas');
+    canvas.width = ve.videoWidth;
+    canvas.height = ve.videoHeight;
+    canvas.getContext('2d').drawImage(ve, 0, 0);
+    toggleCamera(); // turn off
+    addPhoto(canvas.toDataURL('image/png'));
+  }
+
+  function handlePhotoUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => { addPhoto(ev.target.result); };
+    reader.readAsDataURL(file);
+    e.target.value = ''; // reset
+  }
+
+  let activeItem = null;
+  function addScrapbookItem(contentEl) {
+    const cvContainer = document.getElementById('cv-container');
+    const item = document.createElement('div');
+    item.className = 'scrapbook-item selected';
+    item.style.left = '50%';
+    item.style.top = '50%';
+    item.dataset.scale = '1';
+    item.dataset.rotation = '0';
+
+    const delBtn = document.createElement('div');
+    delBtn.className = 'del-btn';
+    delBtn.textContent = '×';
+    delBtn.onpointerdown = (e) => { e.stopPropagation(); item.remove(); };
+
+    const scaleHandle = document.createElement('div');
+    scaleHandle.className = 'scale-handle';
+
+    item.appendChild(contentEl);
+    item.appendChild(delBtn);
+    item.appendChild(scaleHandle);
+    cvContainer.appendChild(item);
+
+    if (activeItem) activeItem.classList.remove('selected');
+    activeItem = item;
+
+    // Draggable / Resizable Logic
+    let isDragging = false, isResizing = false;
+    let startX, startY, sLeft, sTop, sScale;
+
+    item.onpointerdown = (e) => {
+      e.stopPropagation();
+      if (activeItem && activeItem !== item) activeItem.classList.remove('selected');
+      activeItem = item;
+      item.classList.add('selected');
+
+      if (e.target === scaleHandle) {
+        isResizing = true;
+        startX = e.clientX;
+        sScale = parseFloat(item.dataset.scale);
+      } else {
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        sLeft = item.offsetLeft;
+        sTop = item.offsetTop;
+      }
+      item.setPointerCapture(e.pointerId);
+    };
+
+    item.onpointermove = (e) => {
+      if (isDragging) {
+        item.style.left = (sLeft + e.clientX - startX) + 'px';
+        item.style.top = (sTop + e.clientY - startY) + 'px';
+      } else if (isResizing) {
+        const dx = e.clientX - startX;
+        const newScale = Math.max(0.2, sScale + (dx * 0.01));
+        item.dataset.scale = newScale;
+        contentEl.style.transform = `scale(${newScale})`;
+      }
+    };
+
+    item.onpointerup = (e) => {
+      isDragging = false;
+      isResizing = false;
+      item.releasePointerCapture(e.pointerId);
+    };
+  }
+
+  function addSticker(emoji) {
+    const el = document.createElement('div');
+    el.className = 'sticker-text';
+    el.textContent = emoji;
+    el.dataset.type = 'text';
+    addScrapbookItem(el);
+  }
+
+  function addPhoto(src) {
+    const img = new Image();
+    img.onload = () => {
+      img.dataset.type = 'img';
+      addScrapbookItem(img);
+    };
+    img.src = src;
+  }
+
+  document.addEventListener('pointerdown', (e) => {
+    if (e.target.closest('.scrapbook-item') || e.target.closest('.tbtn') || e.target.closest('#sticker-panel')) return;
+    if (activeItem) {
+      activeItem.classList.remove('selected');
+      activeItem = null;
+    }
+  });
 </script>
