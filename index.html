@@ -1469,8 +1469,17 @@
               <input type="date" id="event-date-input" style="width:100%;padding:var(--space-sm);border:1.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);">
             </div>
             <div style="flex:1;">
-              <label style="display:block;font-size:var(--fs-xs);font-weight:700;color:var(--color-text-secondary);margin-bottom:4px;">TIME</label>
-              <input type="time" id="event-time-input" style="width:100%;padding:var(--space-sm);border:1.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);">
+              <label style="display:flex;align-items:center;justify-content:space-between;font-size:var(--fs-xs);font-weight:700;color:var(--color-text-secondary);margin-bottom:4px;">
+                TIME
+                <span style="font-weight:normal;display:flex;align-items:center;gap:4px;cursor:pointer;">
+                  <input type="checkbox" id="event-allday-input" onchange="toggleAllDay()" style="width:auto;margin:0;"> All-day
+                </span>
+              </label>
+              <div style="display:flex;gap:4px;align-items:center;">
+                <input type="time" id="event-time-input" style="flex:1;min-width:0;padding:var(--space-sm);border:1.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);">
+                <span id="time-separator" style="font-size:var(--fs-xs);color:var(--color-text-tertiary);">to</span>
+                <input type="time" id="event-endtime-input" style="flex:1;min-width:0;padding:var(--space-sm);border:1.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);">
+              </div>
             </div>
           </div>
           <div>
@@ -1688,6 +1697,10 @@
   cv.addEventListener('touchend', () => { drw = false; cv.classList.remove('drawing'); saveStateToHistory(); });
 
   function dkey(y, m, d) { return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`; }
+  function getLocalDateStr(date) {
+    const d = date || new Date();
+    return dkey(d.getFullYear(), d.getMonth(), d.getDate());
+  }
 
   function saveStateToHistory() {
     try {
@@ -2315,7 +2328,7 @@
   }
 
   function markAffirmationDone() {
-    const todayStr = new Date().toISOString().split('T')[0];
+    const todayStr = getLocalDateStr();
     if (affirmations.history[todayStr]) {
       showToast('Already done for today! ❤️');
       return;
@@ -2329,7 +2342,7 @@
   function updateAffirmationStreak() {
     let streak = 0;
     let d = new Date();
-    const todayStr = d.toISOString().split('T')[0];
+    const todayStr = getLocalDateStr(d);
 
     // Check if today is completed
     const doneToday = !!affirmations.history[todayStr];
@@ -2341,7 +2354,7 @@
     }
 
     while (true) {
-      const ds = d.toISOString().split('T')[0];
+      const ds = getLocalDateStr(d);
       if (affirmations.history[ds]) {
         streak++;
         d.setDate(d.getDate() - 1);
@@ -2380,13 +2393,15 @@
 
   let editingEventId = null;
 
-  function showNewEventForm() {
+  function showNewEventForm(dateStr) {
     editingEventId = null;
     document.getElementById('event-modal').style.display = 'flex';
     document.querySelector('#event-modal h3').textContent = 'Add New Event';
     document.querySelector('#event-modal .svbtn').textContent = 'Add Event';
     document.getElementById('event-title-input').value = '';
-    document.getElementById('event-date-input').value = new Date().toISOString().split('T')[0];
+    document.getElementById('event-date-input').value = dateStr || getLocalDateStr();
+    document.getElementById('event-allday-input').checked = false;
+    toggleAllDay();
     document.getElementById('event-time-input').value = '';
     document.getElementById('event-location-input').value = '';
     document.getElementById('event-description-input').value = '';
@@ -2413,21 +2428,25 @@
   function createNewEvent() {
     const title = document.getElementById('event-title-input').value.trim();
     const date = document.getElementById('event-date-input').value;
-    const time = document.getElementById('event-time-input').value;
+    const isAllDay = document.getElementById('event-allday-input').checked;
+    const time = isAllDay ? null : document.getElementById('event-time-input').value;
+    const endTime = isAllDay ? null : document.getElementById('event-endtime-input').value;
     const location = document.getElementById('event-location-input').value.trim();
     const description = document.getElementById('event-description-input').value.trim();
 
     if (!title || !date) { showToast('Please enter title and date'); return; }
 
+    const eventData = { title, date, isAllDay, time, endTime, location, description, emoji: selectedEventEmoji };
+
     if (editingEventId) {
       const idx = events.findIndex(e => e.id === editingEventId);
       if (idx !== -1) {
-        events[idx] = { ...events[idx], title, date, time, location, description, emoji: selectedEventEmoji };
+        events[idx] = { ...events[idx], ...eventData };
       }
       editingEventId = null;
       showToast('Event updated! ✨');
     } else {
-      const newEvent = { id: Date.now().toString(), title, date, time, location, description, emoji: selectedEventEmoji };
+      const newEvent = { id: Date.now().toString(), ...eventData };
       events.push(newEvent);
       showToast('Event added! 🗓️');
     }
@@ -2451,7 +2470,15 @@
     document.getElementById('detail-event-title').textContent = e.title;
     document.getElementById('detail-event-emoji').textContent = e.emoji;
     document.getElementById('detail-event-date').textContent = e.date;
-    document.getElementById('detail-event-time').textContent = e.time || 'No time set';
+
+    let timeText = 'No time set';
+    if (e.isAllDay) {
+      timeText = 'All-day';
+    } else if (e.time) {
+      timeText = e.time;
+      if (e.endTime) timeText += ` - ${e.endTime}`;
+    }
+    document.getElementById('detail-event-time').textContent = timeText;
 
     const locWrapper = document.getElementById('detail-event-location-wrapper');
     if (e.location) {
@@ -2492,7 +2519,10 @@
 
     document.getElementById('event-title-input').value = e.title;
     document.getElementById('event-date-input').value = e.date;
+    document.getElementById('event-allday-input').checked = !!e.isAllDay;
+    toggleAllDay();
     document.getElementById('event-time-input').value = e.time || '';
+    document.getElementById('event-endtime-input').value = e.endTime || '';
     document.getElementById('event-location-input').value = e.location || '';
     document.getElementById('event-description-input').value = e.description || '';
 
@@ -2521,6 +2551,17 @@
   function openInMaps() {
     const loc = document.getElementById('detail-event-location').textContent;
     window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc)}`, '_blank');
+  }
+
+  function toggleAllDay() {
+    const isAllDay = document.getElementById('event-allday-input').checked;
+    const start = document.getElementById('event-time-input');
+    const end = document.getElementById('event-endtime-input');
+    const sep = document.getElementById('time-separator');
+
+    start.style.visibility = isAllDay ? 'hidden' : 'visible';
+    end.style.visibility = isAllDay ? 'hidden' : 'visible';
+    sep.style.visibility = isAllDay ? 'hidden' : 'visible';
   }
 
   function setEventsView(view) {
@@ -2578,7 +2619,7 @@
         <span style="font-size:20px;">${e.emoji}</span>
         <div style="flex:1;overflow:hidden;">
           <div style="font-weight:700;font-size:var(--fs-sm);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${e.title}</div>
-          <div style="font-size:10px;color:var(--color-text-tertiary);">${e.date} ${e.time || ''}</div>
+          <div style="font-size:10px;color:var(--color-text-tertiary);">${e.date} ${e.isAllDay ? 'All-day' : (e.time || '')}</div>
         </div>
         <button class="tbtn" onclick="event.stopPropagation(); deleteEvent('${e.id}')" style="padding:2px;color:var(--color-error);border:none;"><span class="material-symbols-rounded" style="font-size:16px;">delete</span></button>
       `;
@@ -2613,6 +2654,8 @@
       day.style.borderRadius = 'var(--border-radius-md)';
       day.style.background = isToday ? 'var(--color-neutral-bg-secondary)' : 'var(--color-background-primary)';
       day.style.overflow = 'hidden';
+      day.style.cursor = 'pointer';
+      day.onclick = () => showNewEventForm(ds);
 
       day.innerHTML = `
         <div style="padding:var(--space-sm);text-align:center;border-bottom:1px solid var(--color-border-tertiary);background:var(--color-background-secondary);">
@@ -2621,7 +2664,7 @@
         </div>
         <div style="flex:1;padding:var(--space-xs);overflow-y:auto;display:flex;flex-direction:column;gap:4px;">
           ${dayEvents.map(e => `
-            <div onclick="showEventDetails('${e.id}')" style="cursor:pointer;font-size:11px;padding:4px;background:var(--color-background-secondary);border-radius:4px;display:flex;align-items:center;gap:4px;border-left:3px solid var(--color-primary);">
+            <div onclick="event.stopPropagation(); showEventDetails('${e.id}')" style="cursor:pointer;font-size:11px;padding:4px;background:var(--color-background-secondary);border-radius:4px;display:flex;align-items:center;gap:4px;border-left:3px solid var(--color-primary);">
               <span>${e.emoji}</span>
               <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${e.title}</span>
             </div>
@@ -2667,12 +2710,14 @@
       cell.style.minHeight = '60px';
       cell.style.padding = '2px';
       cell.style.background = isToday ? 'var(--color-neutral-bg-secondary)' : 'var(--color-background-primary)';
+      cell.style.cursor = 'pointer';
+      cell.onclick = () => showNewEventForm(ds);
 
       cell.innerHTML = `
         <div style="font-size:10px;font-weight:700;color:${isToday ? 'var(--color-primary)' : 'var(--color-text-tertiary)'}">${d}</div>
         <div style="display:flex;flex-wrap:wrap;gap:2px;margin-top:2px;">
           ${dayEvents.map(e => `
-            <div onclick="showEventDetails('${e.id}')" title="${e.title}" style="cursor:pointer;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:4px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 1px 2px rgba(0,0,0,0.05);">
+            <div onclick="event.stopPropagation(); showEventDetails('${e.id}')" title="${e.title}" style="cursor:pointer;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:4px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 1px 2px rgba(0,0,0,0.05);">
               ${e.emoji}
             </div>
           `).join('')}
