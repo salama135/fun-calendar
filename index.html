@@ -4,6 +4,8 @@
 <meta name="description" content="Fun Calendar - Draw, write, and track your daily journey">
 <title>Fun Calendar</title>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap');
 
@@ -998,6 +1000,31 @@
       font-size: var(--fs-md);
     }
   }
+
+  /* Mood picker */
+  .mood-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 4px;
+    border-radius: 4px;
+    transition: transform 0.1s;
+    line-height: 1;
+    opacity: 0.6;
+    filter: grayscale(1);
+  }
+  .mood-btn:hover {
+    transform: scale(1.2);
+    opacity: 1;
+    filter: grayscale(0);
+  }
+  .mood-btn.selected {
+    transform: scale(1.2);
+    background: var(--color-background-secondary);
+    opacity: 1;
+    filter: grayscale(0);
+  }
 </style>
 
 <header id="top-bar" role="banner">
@@ -1024,7 +1051,7 @@
 <div id="main-container">
 
   <div id="calendar-panel"
-    style="flex:0 0 298px;flex-direction:column;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:scroll;background:var(--color-background-primary);">
+    style="flex:0 0 298px;flex-direction:column;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow-y:auto;background:var(--color-background-primary);">
     <div
       style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-md) var(--space-lg);border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);">
       <button class="tbtn" style="font-size:24px;padding:1px 4px;line-height:0;" onclick="go(-1)"><span class="material-symbols-rounded">chevron_left</span></button>
@@ -1090,65 +1117,86 @@
         style="display:flex;align-items:center;justify-content:space-between;padding:var(--space-md) var(--space-lg);border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);flex-shrink:0;">
         <span id="eDate"
           style="font-size:var(--fs-md);font-weight:600;font-family:var(--font-ui);color:var(--color-text-primary);"></span>
+        
+        <div style="display:flex;gap:var(--space-xs);align-items:center;margin-left:auto;margin-right:var(--space-md);">
+          <span style="font-size:var(--fs-xs);color:var(--color-text-tertiary);font-weight:600;text-transform:uppercase;">Mood:</span>
+          <div id="mood-picker" style="display:flex;gap:4px;"></div>
+        </div>
+
         <button class="tbtn" onclick="closeEd()" style="padding:4px;"><span class="material-symbols-rounded">close</span></button>
       </div>
-      <div
-        style="display:flex;align-items:center;gap:var(--space-md);padding:var(--space-md) var(--space-lg);border-bottom:0.5px solid var(--color-border-tertiary);flex-wrap:wrap;flex-shrink:0;background:var(--color-background-secondary);">
-        <div style="display:flex;gap:var(--space-xs);align-items:center;">
-          <div id="cRow" style="display:flex;gap:var(--space-xs);align-items:center;"></div>
-          <button class="more-btn" id="cMoreBtn" onclick="toggleMoreColors()" style="display:none;">More</button>
-        </div>
-        <div style="width:0.5px;height:18px;background:var(--color-border-secondary);flex-shrink:0;"></div>
-        <div style="display:flex;gap:var(--space-xs);align-items:center;">
-          <div id="wRow" style="display:flex;gap:var(--space-xs);align-items:center;"></div>
-          <button class="more-btn" id="wMoreBtn" onclick="toggleMoreWidths()" style="display:none;">More</button>
-        </div>
-        <div style="width:0.5px;height:18px;background:var(--color-border-secondary);flex-shrink:0;"></div>
-        <div style="display:flex;gap:var(--space-xs);align-items:center;">
-          <input type="file" id="photo-upload" accept="image/*" style="display:none;"
-            onchange="handlePhotoUpload(event)">
-          <button class="tbtn" onclick="document.getElementById('photo-upload').click()"
-            title="Upload Photo"><span class="material-symbols-rounded">attach_file</span></button>
-          <button class="tbtn" id="camBtn" onclick="toggleCamera()" title="Take Photo"><span class="material-symbols-rounded">photo_camera</span></button>
-          <div style="position:relative;">
-            <button class="tbtn" id="stickerBtn" onclick="toggleStickers()"><span class="material-symbols-rounded">sentiment_satisfied</span></button>
-            <div id="sticker-panel"
-              style="display:none;position:absolute;top:calc(100% + var(--space-xs));left:50%;transform:translateX(-50%);background:var(--color-background-primary);border:1px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:var(--space-sm);box-shadow:0 4px 12px rgba(0,0,0,0.15);grid-template-columns:repeat(4,1fr);gap:var(--space-xs);z-index:300;">
-              <!-- Stickers populated by JS -->
+      <div id="blocks-container" style="flex:1; overflow-y:auto; display:flex; flex-direction:column; background:var(--color-background-primary);">
+        
+        <div id="block-drawing" class="editor-block" style="display:flex; flex-direction:column; flex-shrink:0; min-height:50vh;">
+          <div id="drawing-toolbar"
+            style="display:flex;align-items:center;gap:var(--space-md);padding:var(--space-md) var(--space-lg);border-bottom:0.5px solid var(--color-border-tertiary);flex-wrap:wrap;flex-shrink:0;background:var(--color-background-secondary);">
+            <div style="display:flex;gap:var(--space-xs);align-items:center;">
+              <div id="cRow" style="display:flex;gap:var(--space-xs);align-items:center;"></div>
+              <button class="more-btn" id="cMoreBtn" onclick="toggleMoreColors()" style="display:none;">More</button>
+            </div>
+            <div style="width:0.5px;height:18px;background:var(--color-border-secondary);flex-shrink:0;"></div>
+            <div style="display:flex;gap:var(--space-xs);align-items:center;">
+              <div id="wRow" style="display:flex;gap:var(--space-xs);align-items:center;"></div>
+              <button class="more-btn" id="wMoreBtn" onclick="toggleMoreWidths()" style="display:none;">More</button>
+            </div>
+            <div style="width:0.5px;height:18px;background:var(--color-border-secondary);flex-shrink:0;"></div>
+            <div style="display:flex;gap:var(--space-xs);align-items:center;">
+              <input type="file" id="photo-upload" accept="image/*" style="display:none;"
+                onchange="handlePhotoUpload(event)">
+              <button class="tbtn" onclick="document.getElementById('photo-upload').click()"
+                title="Upload Photo"><span class="material-symbols-rounded">attach_file</span></button>
+              <button class="tbtn" id="camBtn" onclick="toggleCamera()" title="Take Photo"><span class="material-symbols-rounded">photo_camera</span></button>
+              <div style="position:relative;">
+                <button class="tbtn" id="stickerBtn" onclick="toggleStickers()"><span class="material-symbols-rounded">sentiment_satisfied</span></button>
+                <div id="sticker-panel"
+                  style="display:none;position:absolute;top:calc(100% + var(--space-xs));left:50%;transform:translateX(-50%);background:var(--color-background-primary);border:1px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:var(--space-sm);box-shadow:0 4px 12px rgba(0,0,0,0.15);grid-template-columns:repeat(4,1fr);gap:var(--space-xs);z-index:300;">
+                  <!-- Stickers populated by JS -->
+                </div>
+              </div>
+            </div>
+            <div style="width:0.5px;height:18px;background:var(--color-border-secondary);flex-shrink:0;"></div>
+            <div style="display:flex;gap:var(--space-xs);align-items:center;">
+              <button class="tbtn" id="undobtn" onclick="undoDrawing()" title="Undo (Ctrl+Z)" disabled><span class="material-symbols-rounded">undo</span></button>
+              <button class="tbtn" id="redobtn" onclick="redoDrawing()" title="Redo (Ctrl+Shift+Z)" disabled><span class="material-symbols-rounded">redo</span></button>
+              <button class="tbtn" id="erbtn" onclick="setErs()" style="display:flex;align-items:center;gap:4px;"><span class="material-symbols-rounded" style="font-size:16px;">ink_eraser</span>Eraser</button>
+              <button class="tbtn" onclick="clrC()" style="display:flex;align-items:center;gap:4px;"><span class="material-symbols-rounded" style="font-size:16px;">delete</span>Clear</button>
+            </div>
+            <div style="flex:1;"></div>
+            <button class="svbtn" id="svbtn" onclick="saveDay()">Save</button>
+          </div>
+          <div id="cwrap"
+            style="flex:1;min-height:0;overflow:auto;background:linear-gradient(135deg,rgba(255,216,61,0.04),rgba(78,205,196,0.04));display:flex;align-items:center;justify-content:center;padding:var(--space-lg);">
+            <div id="cv-container" style="position:relative;">
+              <canvas id="cv"
+                style="background:white;cursor:crosshair;touch-action:none;border-radius:4px;display:block;box-shadow:0 1px 3px rgba(0,0,0,0.1);"></canvas>
+              <video id="camera-ve" autoplay playsinline
+                style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border-radius:4px;z-index:50;background:black;"></video>
+              <button id="camera-snap-btn" onclick="takeSnapshot()"
+                style="display:none;position:absolute;bottom:10px;left:50%;transform:translateX(-50%);z-index:60;padding:8px 16px;border-radius:20px;border:none;background:var(--color-primary);color:white;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(255,107,53,0.4);">Take
+                Photo</button>
             </div>
           </div>
         </div>
-        <div style="width:0.5px;height:18px;background:var(--color-border-secondary);flex-shrink:0;"></div>
-        <div style="display:flex;gap:var(--space-xs);align-items:center;">
-          <button class="tbtn" id="undobtn" onclick="undoDrawing()" title="Undo (Ctrl+Z)" disabled><span class="material-symbols-rounded">undo</span></button>
-          <button class="tbtn" id="redobtn" onclick="redoDrawing()" title="Redo (Ctrl+Shift+Z)" disabled><span class="material-symbols-rounded">redo</span></button>
-          <button class="tbtn" id="erbtn" onclick="setErs()" style="display:flex;align-items:center;gap:4px;"><span class="material-symbols-rounded" style="font-size:16px;">ink_eraser</span>Eraser</button>
-          <button class="tbtn" onclick="clrC()" style="display:flex;align-items:center;gap:4px;"><span class="material-symbols-rounded" style="font-size:16px;">delete</span>Clear</button>
+        
+        <div id="block-notes" class="editor-block" style="padding:var(--space-lg);border-top:0.5px solid var(--color-border-tertiary);flex-shrink:0;">
+          <textarea id="notes" placeholder="What's on your mind today?" maxlength="500" aria-label="Daily notes"
+            aria-describedby="notes-info"
+            style="width:100%;height:60px;resize:none;border:1.5px solid var(--color-border-secondary);border-left:3px solid var(--color-secondary);border-radius:var(--border-radius-md);padding:var(--space-md);font-size:var(--fs-sm);font-family:var(--font-ui);line-height:var(--lh-sm);background:var(--color-background-primary);color:var(--color-text-primary);display:block;transition:all .12s;"></textarea>
+          <div id="notes-info"
+            style="margin-top:4px;font-size:var(--fs-xs);color:var(--color-text-tertiary);display:flex;justify-content:space-between;">
+            <span>Add thoughts to your day</span>
+            <span id="notes-count" style="font-weight:600;">0/500</span>
+          </div>
         </div>
-        <div style="flex:1;"></div>
-        <button class="svbtn" id="svbtn" onclick="saveDay()">Save</button>
-      </div>
-      <div id="cwrap"
-        style="flex:1;min-height:0;overflow:auto;background:linear-gradient(135deg,rgba(255,216,61,0.04),rgba(78,205,196,0.04));display:flex;align-items:center;justify-content:center;padding:var(--space-lg);">
-        <div id="cv-container" style="position:relative;">
-          <canvas id="cv"
-            style="background:white;cursor:crosshair;touch-action:none;border-radius:4px;display:block;box-shadow:0 1px 3px rgba(0,0,0,0.1);"></canvas>
-          <video id="camera-ve" autoplay playsinline
-            style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border-radius:4px;z-index:50;background:black;"></video>
-          <button id="camera-snap-btn" onclick="takeSnapshot()"
-            style="display:none;position:absolute;bottom:10px;left:50%;transform:translateX(-50%);z-index:60;padding:8px 16px;border-radius:20px;border:none;background:var(--color-primary);color:white;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(255,107,53,0.4);">Take
-            Photo</button>
+
+        <div id="add-block-menu" style="display:flex; justify-content:center; gap: var(--space-sm); flex-wrap:wrap; padding: var(--space-xl); background: var(--color-neutral-bg-secondary);">
+           <button class="tbtn" style="padding: 8px 16px; border: 1px dashed var(--color-border-secondary); color: var(--color-text-secondary);" onclick="addChecklistBlock({title:'Tasks'})">+ Tasks</button>
+           <button class="tbtn" style="padding: 8px 16px; border: 1px dashed var(--color-border-secondary); color: var(--color-text-secondary);" onclick="addChecklistBlock({title:'Chores'})">+ Chores</button>
+           <button class="tbtn" style="padding: 8px 16px; border: 1px dashed var(--color-border-secondary); color: var(--color-text-secondary);" onclick="addChecklistBlock({title:'Routine'})">+ Routine</button>
+           <button class="tbtn" style="padding: 8px 16px; border: 1px dashed var(--color-border-secondary); color: var(--color-text-secondary);" onclick="addMapBlock()">+ Map</button>
+           <button class="tbtn" style="padding: 8px 16px; border: 1px dashed var(--color-border-secondary); color: var(--color-text-secondary);" onclick="addChecklistBlock({title:'Checklist'})">+ Check List</button>
         </div>
-      </div>
-      <div style="padding:var(--space-lg);border-top:0.5px solid var(--color-border-tertiary);flex-shrink:0;">
-        <textarea id="notes" placeholder="What's on your mind today?" maxlength="500" aria-label="Daily notes"
-          aria-describedby="notes-info"
-          style="width:100%;height:60px;resize:none;border:1.5px solid var(--color-border-secondary);border-left:3px solid var(--color-secondary);border-radius:var(--border-radius-md);padding:var(--space-md);font-size:var(--fs-sm);font-family:var(--font-ui);line-height:var(--lh-sm);background:var(--color-background-primary);color:var(--color-text-primary);display:block;transition:all .12s;"></textarea>
-        <div id="notes-info"
-          style="margin-top:4px;font-size:var(--fs-xs);color:var(--color-text-tertiary);display:flex;justify-content:space-between;">
-          <span>Add thoughts to your day</span>
-          <span id="notes-count" style="font-weight:600;">0/500</span>
-        </div>
+
       </div>
     </div>
   </div>
@@ -1378,18 +1426,16 @@
         const k = dkey(y, m, d);
         if (cache.has(k)) {
           const cached = cache.get(k);
-          if (cached?.canvas) {
-            setThumb(k, cached.canvas);
-          }
+          if (cached?.canvas) setThumb(k, cached.canvas);
+          if (cached?.mood) setMoodIcon(k, cached.mood);
         } else {
           try {
             const raw = localStorage.getItem(`cal:${k}`);
             if (raw) {
               const data = JSON.parse(raw);
-              if (data?.canvas) {
-                cache.set(k, data);
-                setThumb(k, data.canvas);
-              }
+              cache.set(k, data);
+              if (data?.canvas) setThumb(k, data.canvas);
+              if (data?.mood) setMoodIcon(k, data.mood);
             }
           } catch (e) { }
         }
@@ -1407,7 +1453,12 @@
       const num = document.createElement('div');
       num.className = 'dn';
       num.textContent = rd > 31 ? '?' : rd;
+      const moodSpan = document.createElement('span');
+      moodSpan.className = 'cell-mood';
+      moodSpan.dataset.key = k;
+      moodSpan.style.cssText = 'position:absolute;bottom:4px;right:4px;font-size:16px;z-index:2;line-height:1;text-shadow:0 1px 2px rgba(0,0,0,0.5);';
       cell.appendChild(num);
+      cell.appendChild(moodSpan);
       const img = document.createElement('img');
       img.className = 'th';
       img.dataset.key = k;
@@ -1446,9 +1497,29 @@
     });
   }
 
+  function setMoodIcon(k, mood) {
+    document.querySelectorAll(`span.cell-mood[data-key="${k}"]`).forEach(el => {
+      el.textContent = mood || '';
+    });
+  }
+
   async function openDay(k, label) {
     selKey = k;
     document.getElementById('eDate').textContent = label;
+    
+    let data = cache.get(k);
+    if (!data) {
+      try {
+        const raw = localStorage.getItem(`cal:${k}`);
+        if (raw) {
+          data = JSON.parse(raw);
+          cache.set(k, data);
+        }
+      } catch(e) {}
+    }
+    currentMood = data?.mood || null;
+    updateMoodUI();
+    
     const empty = document.getElementById('empty');
     const editor = document.getElementById('editor');
     empty.classList.remove('closing');
@@ -1456,17 +1527,16 @@
     empty.style.display = 'none';
     editor.style.display = 'flex';
 
-    let data = null;
-    if (cache.has(k)) {
-      data = cache.get(k);
-    } else {
-      try {
-        const raw = localStorage.getItem(`cal:${k}`);
-        if (raw) {
-          data = JSON.parse(raw);
-          cache.set(k, data);
+    document.querySelectorAll('.checklist-block').forEach(b => b.remove());
+    document.querySelectorAll('.map-block').forEach(b => b.remove());
+    if (data?.blocks && Array.isArray(data.blocks)) {
+      data.blocks.forEach(b => {
+        if (b.type === 'checklist') {
+          addChecklistBlock(b);
+        } else if (b.type === 'map') {
+          addMapBlock(b);
         }
-      } catch (e) { }
+      });
     }
 
     if (!cinit) {
@@ -1535,6 +1605,8 @@
       empty.classList.remove('closing');
     }, 250);
     document.querySelectorAll('.scrapbook-item').forEach(el => el.remove());
+    document.querySelectorAll('.checklist-block').forEach(el => el.remove());
+    document.querySelectorAll('.map-block').forEach(el => el.remove());
     document.querySelectorAll('.dc').forEach(c => c.classList.remove('sel'));
   }
 
@@ -1594,7 +1666,38 @@
       tc.drawImage(cv, 0, 0);
       const url = tmp.toDataURL('image/png');
       const note = String(document.getElementById('notes').value).substring(0, 500);
-      const data = { canvas: url, note };
+
+      const blocks = [];
+      document.querySelectorAll('.checklist-block').forEach(b => {
+        const title = b.querySelector('.checklist-title').value;
+        const items = [];
+        b.querySelectorAll('.checklist-item').forEach(itemDiv => {
+          const text = itemDiv.querySelector('.checklist-item-text').value.trim();
+          const done = itemDiv.querySelector('.checklist-item-cb').checked;
+          if (text) items.push({ text, done });
+        });
+        blocks.push({ type: 'checklist', title, items });
+      });
+
+      document.querySelectorAll('.map-block').forEach(b => {
+        let lat, lng, zoom, placeName;
+        if (b._leafletMap) {
+          zoom = b._leafletMap.getZoom();
+          if (b._leafletMarker) {
+            const pos = b._leafletMarker.getLatLng();
+            lat = pos.lat;
+            lng = pos.lng;
+          } else {
+            const cen = b._leafletMap.getCenter();
+            lat = cen.lat;
+            lng = cen.lng;
+          }
+        }
+        placeName = b.querySelector('.map-search').value;
+        blocks.push({ type: 'map', lat, lng, zoom, placeName });
+      });
+
+      const data = { canvas: url, note: note, mood: currentMood, blocks: blocks };
       cache.set(selKey, data);
 
       try {
@@ -1611,6 +1714,7 @@
       }
 
       setThumb(selKey, url);
+      setMoodIcon(selKey, currentMood);
       btn.classList.add('save-success');
       btn.textContent = '✓ Saved';
       showToast('Your day is saved! 🎉');
@@ -1814,8 +1918,225 @@
   });
   setTimeout(updateResponsiveUI, 100);
 
+  // --- Modular Life Tracker Engine ---
+  const MOODS = ['😊', '😎', '😐', '😔', '😡', '✨'];
+  let currentMood = null;
+
   render();
   initOnboarding();
+  initMoodPicker();
+
+  function initMoodPicker() {
+    const container = document.getElementById('mood-picker');
+    if (!container) return;
+    container.innerHTML = '';
+    MOODS.forEach(mood => {
+      const btn = document.createElement('button');
+      btn.className = 'mood-btn';
+      btn.textContent = mood;
+      btn.onclick = () => setMood(mood);
+      container.appendChild(btn);
+    });
+  }
+
+  function setMood(mood) {
+    currentMood = currentMood === mood ? null : mood;
+    updateMoodUI();
+  }
+
+  function updateMoodUI() {
+    document.querySelectorAll('.mood-btn').forEach(btn => {
+      if (btn.textContent === currentMood) {
+        btn.classList.add('selected');
+      } else {
+        btn.classList.remove('selected');
+      }
+    });
+  }
+
+  function addChecklistBlock(initialData = null) {
+    const container = document.getElementById('blocks-container');
+    const addMenu = document.getElementById('add-block-menu');
+    
+    const blockId = 'chk_' + Date.now() + Math.random().toString(36).substr(2, 5);
+    const block = document.createElement('div');
+    block.className = 'editor-block checklist-block';
+    block.dataset.id = blockId;
+    block.dataset.type = 'checklist';
+    block.style.cssText = 'padding:var(--space-lg);border-top:0.5px solid var(--color-border-tertiary);flex-shrink:0;';
+    
+    const header = document.createElement('div');
+    header.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;';
+    
+    const titleInput = document.createElement('input');
+    titleInput.type = 'text';
+    titleInput.className = 'checklist-title';
+    titleInput.placeholder = 'Checklist Title';
+    titleInput.value = initialData?.title || 'Tasks';
+    titleInput.style.cssText = 'font-weight:bold; border:none; background:transparent; font-size: 16px; outline:none; flex:1; color:var(--color-primary);';
+    
+    const delBtn = document.createElement('button');
+    delBtn.className = 'tbtn';
+    delBtn.innerHTML = '<span class="material-symbols-rounded">delete</span>';
+    delBtn.style.color = 'var(--color-error)';
+    delBtn.onclick = () => { if(confirm('Delete checklist?')) block.remove(); };
+    
+    header.appendChild(titleInput);
+    header.appendChild(delBtn);
+    
+    const itemsContainer = document.createElement('div');
+    itemsContainer.className = 'checklist-items';
+    
+    const addItemBtn = document.createElement('button');
+    addItemBtn.className = 'tbtn';
+    addItemBtn.innerHTML = '+ Add Item';
+    addItemBtn.style.cssText = 'margin-top: 8px; font-size:12px; font-weight:bold; color:var(--color-text-secondary);';
+    addItemBtn.onclick = () => createChecklistItem(itemsContainer);
+    
+    block.appendChild(header);
+    block.appendChild(itemsContainer);
+    block.appendChild(addItemBtn);
+    
+    container.insertBefore(block, addMenu);
+    
+    if (initialData?.items && initialData.items.length > 0) {
+      initialData.items.forEach(item => createChecklistItem(itemsContainer, item));
+    } else {
+      createChecklistItem(itemsContainer);
+    }
+  }
+
+  function createChecklistItem(container, data = null) {
+    const itemDiv = document.createElement('div');
+    itemDiv.className = 'checklist-item';
+    itemDiv.style.cssText = 'display:flex; align-items:center; gap: 8px; margin-bottom: 6px;';
+    
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.className = 'checklist-item-cb';
+    cb.checked = data?.done || false;
+    cb.style.cssText = 'width: 18px; height: 18px; accent-color: var(--color-primary); cursor:pointer;';
+    
+    const textInput = document.createElement('input');
+    textInput.type = 'text';
+    textInput.className = 'checklist-item-text';
+    textInput.placeholder = 'New item...';
+    textInput.value = data?.text || '';
+    textInput.style.cssText = 'flex:1; border:none; background:transparent; border-bottom: 1px solid var(--color-border-tertiary); font-size:14px; outline:none; color:var(--color-text-primary); transition: all 0.2s;';
+    
+    const updateStyle = () => {
+      textInput.style.textDecoration = cb.checked ? 'line-through' : 'none';
+      textInput.style.opacity = cb.checked ? '0.6' : '1';
+    };
+    cb.onchange = updateStyle;
+    updateStyle();
+    
+    const delBtn = document.createElement('button');
+    delBtn.className = 'tbtn';
+    delBtn.innerHTML = '<span class="material-symbols-rounded" style="font-size:16px;">close</span>';
+    delBtn.style.padding = '2px';
+    delBtn.onclick = () => itemDiv.remove();
+    
+    itemDiv.appendChild(cb);
+    itemDiv.appendChild(textInput);
+    itemDiv.appendChild(delBtn);
+    container.appendChild(itemDiv);
+  }
+
+  function addMapBlock(initialData = null) {
+    const container = document.getElementById('blocks-container');
+    const addMenu = document.getElementById('add-block-menu');
+    
+    const blockId = 'map_' + Date.now();
+    const block = document.createElement('div');
+    block.className = 'editor-block map-block';
+    block.dataset.id = blockId;
+    block.dataset.type = 'map';
+    block.style.cssText = 'padding:var(--space-lg);border-top:0.5px solid var(--color-border-tertiary);flex-shrink:0;';
+    
+    const headerDiv = document.createElement('div');
+    headerDiv.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;';
+    headerDiv.innerHTML = `<div style="font-weight:bold; font-size:16px; color:var(--color-primary); display:flex; align-items:center; gap:4px;"><span class="material-symbols-rounded" style="font-size:18px;">pin_drop</span> Places & Locations</div>
+    <button class="tbtn" style="color:var(--color-error);" onclick="if(confirm('Remove map?')) this.closest('.editor-block').remove();"><span class="material-symbols-rounded">delete</span></button>`;
+    
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.className = 'map-search';
+    searchInput.placeholder = 'Type place and hit enter...';
+    searchInput.value = initialData?.placeName || '';
+    searchInput.style.cssText = 'width:100%; box-sizing:border-box; border: 1px solid var(--color-border-secondary); background:var(--color-background-secondary); border-radius:var(--border-radius-sm); padding:var(--space-sm) var(--space-md); font-size:var(--fs-sm); margin-bottom:var(--space-sm); outline:none; color:var(--color-text-primary); transition:0.2s;';
+    
+    const mapDivWrapper = document.createElement('div');
+    mapDivWrapper.style.cssText = 'width:100%; height:240px; border-radius:var(--border-radius-md); overflow:hidden; border:1px solid var(--color-border-tertiary); position:relative; z-index:1;';
+    const mapDiv = document.createElement('div');
+    mapDiv.className = 'map-container';
+    mapDiv.style.cssText = 'width:100%; height:100%; z-index:1;';
+    mapDivWrapper.appendChild(mapDiv);
+    
+    block.appendChild(headerDiv);
+    block.appendChild(searchInput);
+    block.appendChild(mapDivWrapper);
+    
+    container.insertBefore(block, addMenu);
+    
+    if (typeof L !== 'undefined') {
+      const lat = initialData?.lat || 51.505;
+      const lng = initialData?.lng || -0.09;
+      const zoom = initialData?.zoom || 13;
+      
+      const map = L.map(mapDiv).setView([lat, lng], zoom);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+         attribution: '&copy; OpenStreetMap'
+      }).addTo(map);
+      
+      let marker;
+      if (initialData?.lat) {
+         marker = L.marker([lat, lng]).addTo(map);
+         if (initialData?.placeName) marker.bindPopup(initialData.placeName).openPopup();
+      }
+      
+      block._leafletMap = map;
+      block._leafletMarker = marker;
+      
+      map.on('click', (e) => {
+         if (block._leafletMarker) map.removeLayer(block._leafletMarker);
+         block._leafletMarker = L.marker(e.latlng).addTo(map);
+      });
+      
+      setTimeout(() => map.invalidateSize(), 150);
+
+      searchInput.addEventListener('keydown', async (e) => {
+         if (e.key === 'Enter') {
+            const query = searchInput.value.trim();
+            if (!query) return;
+            searchInput.disabled = true;
+            try {
+               const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+               const data = await res.json();
+               if (data && data.length > 0) {
+                  const result = data[0];
+                  const rLat = parseFloat(result.lat);
+                  const rLng = parseFloat(result.lon);
+                  
+                  map.setView([rLat, rLng], 15);
+                  if (block._leafletMarker) map.removeLayer(block._leafletMarker);
+                  block._leafletMarker = L.marker([rLat, rLng]).addTo(map)
+                    .bindPopup(result.display_name).openPopup();
+                    
+                  searchInput.value = result.display_name;
+               } else {
+                  showToast('Place not found. Try a different search.');
+               }
+            } catch(err) {
+               showToast('Search failed.');
+            }
+            searchInput.disabled = false;
+         }
+      });
+    } else {
+      mapDiv.innerHTML = '<div style="padding:20px;text-align:center;">Map library could not be loaded. Please check your internet connection.</div>';
+    }
+  }
 
   // --- Scrapbook Engine ---
   const EMOJIS = ['⭐️', '❤️', '✨', '🎉', '🚀', '🔥', '💡', '🌸', '🎈', '🍕', '🎂', '🐶', '🐱', '🌈', '🌻', '🍩'];
