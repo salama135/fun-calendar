@@ -1298,12 +1298,12 @@
       </div>
     </div>
 
-    <div id="habit-detail-panel" class="mode-habits hidden-mode" style="flex:1;flex-direction:column;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);background:var(--color-background-primary);overflow:hidden;">
+    <div id="habit-detail-panel" class="mode-habits hidden-mode" style="flex:1;display:flex;flex-direction:column;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);background:var(--color-background-primary);overflow:hidden;min-height:0;">
       <div id="habit-empty" style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;">
         <span class="material-symbols-rounded" style="font-size:48px;color:var(--color-text-tertiary);">track_changes</span>
         <p style="color:var(--color-text-secondary);font-weight:600;">Select a habit to view progress</p>
       </div>
-      <div id="habit-content" style="display:none;flex:1;flex-direction:column;min-height:0;">
+      <div id="habit-content" style="display:none;flex-direction:column;flex:1;min-height:0;overflow:hidden;">
         <div style="padding:var(--space-md) var(--space-lg);border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);display:flex;justify-content:space-between;align-items:center;">
           <h2 id="active-habit-name" style="font-size:var(--fs-lg);font-family:var(--font-display);color:var(--color-text-primary);margin:0;"></h2>
           <div style="display:flex;gap:var(--space-sm);">
