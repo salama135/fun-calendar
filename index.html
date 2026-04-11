@@ -2339,10 +2339,13 @@
 
     // Heatmap Grid
     const grid = document.createElement('div');
+    grid.style.overflowY = 'auto';
     grid.style.display = 'grid';
     grid.style.gridTemplateColumns = '40px repeat(7, 1fr)';
     grid.style.gap = '4px';
     grid.style.marginTop = 'var(--space-md)';
+    grid.style.paddingRight = '8px'; 
+    grid.style.maxHeight = '400px';
 
     // Header for Days
     grid.innerHTML = '<div style="grid-column: 1"></div>' +
