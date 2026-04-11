@@ -1153,6 +1153,12 @@
     <button class="tab-divider" onclick="switchMode('habits')" id="tab-habits">
       <span class="material-symbols-rounded">check_circle</span> Habits
     </button>
+    <button class="tab-divider" onclick="switchMode('affirmations')" id="tab-affirmations">
+      <span class="material-symbols-rounded">self_improvement</span> Affirmations
+    </button>
+    <button class="tab-divider" onclick="switchMode('events')" id="tab-events">
+      <span class="material-symbols-rounded">event</span> Events
+    </button>
   </nav>
 
   <div id="main-container">
@@ -1317,6 +1323,81 @@
       </div>
     </div>
 
+    <!-- Affirmations Panels -->
+    <div id="affirmations-sidebar" class="mode-affirmations hidden-mode" style="flex:0 0 298px;flex-direction:column;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);background:var(--color-background-primary);overflow:hidden;">
+      <div style="padding:var(--space-md) var(--space-lg);border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);">
+        <h2 style="font-size:var(--fs-lg);font-family:var(--font-display);color:var(--color-primary);margin:0;">Daily Tracking</h2>
+      </div>
+      <div style="flex:1;padding:var(--space-lg);display:flex;flex-direction:column;gap:var(--space-xl);">
+        <div style="text-align:center;">
+          <div id="affirmation-streak-count" style="font-size:48px;font-weight:800;color:var(--color-secondary);line-height:1;">0</div>
+          <div style="font-size:var(--fs-xs);font-weight:700;color:var(--color-text-tertiary);text-transform:uppercase;margin-top:4px;">Day Streak</div>
+        </div>
+        <button id="affirmation-done-btn" class="svbtn" style="width:100%;" onclick="markAffirmationDone()">I'm Grateful Today</button>
+        <div style="margin-top:auto;">
+          <h4 style="font-size:var(--fs-xs);font-weight:700;color:var(--color-text-secondary);margin-bottom:8px;text-transform:uppercase;">My Vision</h4>
+          <textarea id="vision-text" placeholder="What is your true purpose?" style="width:100%;height:120px;padding:var(--space-sm);border:1.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-primary);resize:none;font-size:var(--fs-sm);"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div id="affirmations-main" class="mode-affirmations hidden-mode" style="flex:1;display:flex;flex-direction:column;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);background:var(--color-background-primary);overflow:hidden;">
+      <div style="padding:var(--space-md) var(--space-lg);border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);display:flex;justify-content:space-between;align-items:center;">
+        <h2 style="font-size:var(--fs-lg);font-family:var(--font-display);color:var(--color-text-primary);margin:0;">Blessings & Goals</h2>
+        <button class="svbtn" onclick="saveAffirmations()">Save All</button>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:var(--space-lg);display:flex;flex-direction:column;gap:var(--space-lg);">
+        <section>
+          <h3 style="font-size:var(--fs-md);color:var(--color-primary);margin:0 0 var(--space-sm) 0;">Daily Gratitude & Affirmations</h3>
+          <textarea id="gratitude-input" placeholder="Today I am grateful for... (God's blessings, my health, etc.)" style="width:100%;height:100px;padding:var(--space-md);border:1.5px solid var(--color-border-secondary);border-left:4px solid var(--color-accent);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);resize:none;"></textarea>
+        </section>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--space-md);">
+          <section>
+            <h3 style="font-size:var(--fs-sm);color:var(--color-secondary-dark);margin:0 0 var(--space-xs) 0;">This Week's Goal</h3>
+            <textarea id="goal-week" placeholder="Focus on..." style="width:100%;height:80px;padding:var(--space-sm);border:1.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);resize:none;font-size:var(--fs-xs);"></textarea>
+          </section>
+          <section>
+            <h3 style="font-size:var(--fs-sm);color:var(--color-primary);margin:0 0 var(--space-xs) 0;">This Month's Goal</h3>
+            <textarea id="goal-month" placeholder="Aim for..." style="width:100%;height:80px;padding:var(--space-sm);border:1.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);resize:none;font-size:var(--fs-xs);"></textarea>
+          </section>
+          <section>
+            <h3 style="font-size:var(--fs-sm);color:var(--color-warning);margin:0 0 var(--space-xs) 0;">Yearly Goal</h3>
+            <textarea id="goal-year" placeholder="Accomplish..." style="width:100%;height:80px;padding:var(--space-sm);border:1.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);resize:none;font-size:var(--fs-xs);"></textarea>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <!-- Events Panels -->
+    <div id="events-sidebar" class="mode-events hidden-mode" style="flex:0 0 298px;flex-direction:column;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);background:var(--color-background-primary);overflow:hidden;">
+      <div style="padding:var(--space-md) var(--space-lg);border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);display:flex;justify-content:space-between;align-items:center;">
+        <h2 style="font-size:var(--fs-lg);font-family:var(--font-display);color:var(--color-primary);margin:0;">Upcoming</h2>
+        <button class="tbtn" onclick="showNewEventForm()"><span class="material-symbols-rounded">add</span></button>
+      </div>
+      <div id="events-list" style="flex:1;overflow-y:auto;padding:var(--space-sm);">
+        <!-- Event list items -->
+      </div>
+    </div>
+
+    <div id="events-main" class="mode-events hidden-mode" style="flex:1;display:flex;flex-direction:column;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);background:var(--color-background-primary);overflow:hidden;">
+      <div style="padding:var(--space-md) var(--space-lg);border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);display:flex;justify-content:space-between;align-items:center;">
+        <div style="display:flex;gap:var(--space-sm);align-items:center;">
+           <h2 id="events-view-title" style="font-size:var(--fs-lg);font-family:var(--font-display);color:var(--color-text-primary);margin:0;">Weekly View</h2>
+           <div style="display:flex;background:var(--color-neutral-border-light);padding:2px;border-radius:6px;">
+             <button id="btn-view-week" class="tbtn on" style="padding:4px 8px;border:none;" onclick="setEventsView('week')">Week</button>
+             <button id="btn-view-month" class="tbtn" style="padding:4px 8px;border:none;" onclick="setEventsView('month')">Month</button>
+           </div>
+        </div>
+        <div style="display:flex;gap:var(--space-sm);align-items:center;">
+          <button class="tbtn" onclick="moveEventsRange(-1)"><span class="material-symbols-rounded">chevron_left</span></button>
+          <button class="tbtn" onclick="moveEventsRange(1)"><span class="material-symbols-rounded">chevron_right</span></button>
+        </div>
+      </div>
+      <div id="events-content" style="flex:1;overflow:auto;padding:var(--space-lg);">
+        <!-- Week or Month view grid -->
+      </div>
+    </div>
+
     <!-- New Habit Modal/Form Overlay -->
     <div id="habit-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:var(--space-md);">
       <div style="background:var(--color-background-primary);border-radius:var(--border-radius-lg);width:100%;max-width:400px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.3);">
@@ -1370,6 +1451,33 @@
         </div>
       </div>
     </div>
+
+    <!-- New Event Modal -->
+    <div id="event-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:var(--space-md);">
+      <div style="background:var(--color-background-primary);border-radius:var(--border-radius-lg);width:100%;max-width:400px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.3);">
+        <div style="padding:var(--space-lg);background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);">
+          <h3 style="margin:0;font-family:var(--font-display);color:var(--color-primary);">Add New Event</h3>
+        </div>
+        <div style="padding:var(--space-lg);display:flex;flex-direction:column;gap:var(--space-md);">
+          <div>
+            <label style="display:block;font-size:var(--fs-xs);font-weight:700;color:var(--color-text-secondary);margin-bottom:4px;">EVENT TITLE</label>
+            <input type="text" id="event-title-input" placeholder="e.g. Marathon Training" style="width:100%;padding:var(--space-sm);border:1.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);">
+          </div>
+          <div>
+            <label style="display:block;font-size:var(--fs-xs);font-weight:700;color:var(--color-text-secondary);margin-bottom:4px;">DATE</label>
+            <input type="date" id="event-date-input" style="width:100%;padding:var(--space-sm);border:1.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);">
+          </div>
+          <div>
+            <label style="display:block;font-size:var(--fs-xs);font-weight:700;color:var(--color-text-secondary);margin-bottom:4px;">EMOJI</label>
+            <div id="event-emoji-picker" style="display:grid;grid-template-columns:repeat(8,1fr);gap:var(--space-xs);"></div>
+          </div>
+        </div>
+        <div style="padding:var(--space-lg);background:var(--color-background-secondary);border-top:0.5px solid var(--color-border-tertiary);display:flex;gap:var(--space-md);justify-content:flex-end;">
+          <button class="tbtn" onclick="hideNewEventForm()">Cancel</button>
+          <button class="svbtn" onclick="createNewEvent()">Add Event</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1388,8 +1496,23 @@
   let habits = [];
   let habitCompletions = {};
   let activeHabitId = null;
-  let appMode = 'journal'; // 'journal' or 'habits'
+  let appMode = 'journal'; // 'journal' or 'habits', 'affirmations', 'events'
   let heatmapFilter = 'all'; // 'all', 'month', 'week'
+
+  // Affirmations State
+  let affirmations = {
+    vision: '',
+    gratitude: '',
+    goalWeek: '',
+    goalMonth: '',
+    goalYear: '',
+    history: {} // { 'YYYY-MM-DD': true }
+  };
+
+  // Events State
+  let events = [];
+  let eventsView = 'week'; // 'week' or 'month'
+  let eventsBaseDate = new Date();
 
   const cache = new Map();
   const cv = document.getElementById('cv');
@@ -1642,6 +1765,23 @@
       img.dataset.key = k;
       img.alt = `Thumbnail for ${DNS[date.getDay()]}, ${MNS[rm]} ${rd}`;
       cell.appendChild(img);
+
+      const dayEvents = events.filter(e => e.date === k);
+      if (dayEvents.length > 0) {
+        const evDots = document.createElement('div');
+        evDots.style.display = 'flex';
+        evDots.style.gap = '2px';
+        evDots.style.justifyContent = 'center';
+        evDots.style.padding = '2px';
+        dayEvents.slice(0, 3).forEach(e => {
+          const dot = document.createElement('span');
+          dot.style.fontSize = '10px';
+          dot.textContent = e.emoji;
+          evDots.appendChild(dot);
+        });
+        cell.appendChild(evDots);
+      }
+
       if (!faded) {
         const lbl = `${DNS[date.getDay()]}, ${MNS[rm]} ${rd} ${ry}`;
         cell.onclick = () => openDay(k, lbl);
@@ -2094,6 +2234,295 @@
     localStorage.setItem('fun-habit-completions', JSON.stringify(habitCompletions));
   }
 
+  function initAffirmations() {
+    try {
+      const saved = localStorage.getItem('fun-affirmations');
+      if (saved) {
+        affirmations = JSON.parse(saved);
+        // Sync inputs
+        document.getElementById('vision-text').value = affirmations.vision || '';
+        document.getElementById('gratitude-input').value = affirmations.gratitude || '';
+        document.getElementById('goal-week').value = affirmations.goalWeek || '';
+        document.getElementById('goal-month').value = affirmations.goalMonth || '';
+        document.getElementById('goal-year').value = affirmations.goalYear || '';
+      }
+      updateAffirmationStreak();
+    } catch (e) {
+      console.error('Failed to load affirmations', e);
+    }
+  }
+
+  function saveAffirmations() {
+    affirmations.vision = document.getElementById('vision-text').value;
+    affirmations.gratitude = document.getElementById('gratitude-input').value;
+    affirmations.goalWeek = document.getElementById('goal-week').value;
+    affirmations.goalMonth = document.getElementById('goal-month').value;
+    affirmations.goalYear = document.getElementById('goal-year').value;
+
+    localStorage.setItem('fun-affirmations', JSON.stringify(affirmations));
+    showToast('Saved successfully! ✨');
+  }
+
+  function markAffirmationDone() {
+    const todayStr = new Date().toISOString().split('T')[0];
+    if (affirmations.history[todayStr]) {
+      showToast('Already done for today! ❤️');
+      return;
+    }
+    affirmations.history[todayStr] = true;
+    localStorage.setItem('fun-affirmations', JSON.stringify(affirmations));
+    updateAffirmationStreak();
+    showToast('Amazing! Keep up the gratitude 🌟');
+  }
+
+  function updateAffirmationStreak() {
+    let streak = 0;
+    let d = new Date();
+    const todayStr = d.toISOString().split('T')[0];
+
+    // Check if today is completed
+    const doneToday = !!affirmations.history[todayStr];
+    const btn = document.getElementById('affirmation-done-btn');
+    if (btn) {
+      btn.textContent = doneToday ? '✓ Done for Today' : "I'm Grateful Today";
+      btn.disabled = doneToday;
+      btn.style.opacity = doneToday ? '0.7' : '1';
+    }
+
+    while (true) {
+      const ds = d.toISOString().split('T')[0];
+      if (affirmations.history[ds]) {
+        streak++;
+        d.setDate(d.getDate() - 1);
+      } else {
+        // If not today, maybe yesterday?
+        if (ds === todayStr) {
+          d.setDate(d.getDate() - 1);
+          continue;
+        }
+        break;
+      }
+    }
+
+    const el = document.getElementById('affirmation-streak-count');
+    if (el) el.textContent = streak;
+  }
+
+  // --- Events Logic ---
+  const EVENT_EMOJIS = ['🏃‍♂️', '👟', '📅', '🎉', '✈️', '🍽️', '🏋️‍♀️', '📚', '💼', '🛒', '💊', '🎂', '🎈', '🎥', '🧼', '🚗'];
+  let selectedEventEmoji = EVENT_EMOJIS[0];
+
+  function initEvents() {
+    try {
+      const saved = localStorage.getItem('fun-events');
+      if (saved) events = JSON.parse(saved);
+      renderEvents();
+    } catch (e) {
+      console.error('Failed to load events', e);
+    }
+  }
+
+  function saveEvents() {
+    localStorage.setItem('fun-events', JSON.stringify(events));
+    renderEvents();
+  }
+
+  function showNewEventForm() {
+    document.getElementById('event-modal').style.display = 'flex';
+    document.getElementById('event-title-input').value = '';
+    document.getElementById('event-date-input').value = new Date().toISOString().split('T')[0];
+
+    const picker = document.getElementById('event-emoji-picker');
+    picker.innerHTML = '';
+    EVENT_EMOJIS.forEach(e => {
+      const btn = document.createElement('button');
+      btn.className = 'sticker-btn' + (e === selectedEventEmoji ? ' on' : '');
+      btn.textContent = e;
+      btn.onclick = () => {
+        selectedEventEmoji = e;
+        picker.querySelectorAll('button').forEach(b => b.classList.remove('on'));
+        btn.classList.add('on');
+      };
+      picker.appendChild(btn);
+    });
+  }
+
+  function hideNewEventForm() {
+    document.getElementById('event-modal').style.display = 'none';
+  }
+
+  function createNewEvent() {
+    const title = document.getElementById('event-title-input').value.trim();
+    const date = document.getElementById('event-date-input').value;
+    if (!title || !date) { showToast('Please enter title and date'); return; }
+
+    const newEvent = { id: Date.now().toString(), title, date, emoji: selectedEventEmoji };
+    events.push(newEvent);
+    saveEvents();
+    hideNewEventForm();
+    showToast('Event added! 🗓️');
+  }
+
+  function deleteEvent(id) {
+    events = events.filter(e => e.id !== id);
+    saveEvents();
+  }
+
+  function setEventsView(view) {
+    eventsView = view;
+    document.getElementById('btn-view-week').classList.toggle('on', view === 'week');
+    document.getElementById('btn-view-month').classList.toggle('on', view === 'month');
+    document.getElementById('events-view-title').textContent = view === 'week' ? 'Weekly View' : 'Monthly View';
+    renderEvents();
+  }
+
+  function moveEventsRange(dir) {
+    if (eventsView === 'week') {
+      eventsBaseDate.setDate(eventsBaseDate.getDate() + dir * 7);
+    } else {
+      eventsBaseDate.setMonth(eventsBaseDate.getMonth() + dir);
+    }
+    renderEvents();
+  }
+
+  function renderEvents() {
+    renderEventsList();
+    if (eventsView === 'week') renderWeeklyEvents();
+    else renderMonthlyEvents();
+
+    // Also re-render main journal calendar to show event markers if needed
+    render();
+  }
+
+  function renderEventsList() {
+    const container = document.getElementById('events-list');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const upcoming = events
+      .filter(e => new Date(e.date) >= new Date().setHours(0,0,0,0))
+      .sort((a,b) => new Date(a.date) - new Date(b.date));
+
+    if (upcoming.length === 0) {
+      container.innerHTML = '<div style="text-align:center;padding:var(--space-md);color:var(--color-text-tertiary);font-size:var(--fs-xs);">No upcoming events.</div>';
+      return;
+    }
+
+    upcoming.forEach(e => {
+      const el = document.createElement('div');
+      el.className = 'dc';
+      el.style.marginBottom = 'var(--space-sm)';
+      el.style.padding = 'var(--space-sm) var(--space-md)';
+      el.style.flexDirection = 'row';
+      el.style.alignItems = 'center';
+      el.style.gap = 'var(--space-sm)';
+      el.style.animation = 'none';
+
+      el.innerHTML = `
+        <span style="font-size:20px;">${e.emoji}</span>
+        <div style="flex:1;overflow:hidden;">
+          <div style="font-weight:700;font-size:var(--fs-sm);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${e.title}</div>
+          <div style="font-size:10px;color:var(--color-text-tertiary);">${e.date}</div>
+        </div>
+        <button class="tbtn" onclick="event.stopPropagation(); deleteEvent('${e.id}')" style="padding:2px;color:var(--color-error);border:none;"><span class="material-symbols-rounded" style="font-size:16px;">delete</span></button>
+      `;
+      container.appendChild(el);
+    });
+  }
+
+  function renderWeeklyEvents() {
+    const container = document.getElementById('events-content');
+    container.innerHTML = '';
+
+    const start = new Date(eventsBaseDate);
+    start.setDate(start.getDate() - start.getDay()); // Sunday
+
+    const grid = document.createElement('div');
+    grid.style.display = 'grid';
+    grid.style.gridTemplateColumns = 'repeat(7, 1fr)';
+    grid.style.gap = 'var(--space-md)';
+    grid.style.height = '100%';
+
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(start);
+      d.setDate(start.getDate() + i);
+      const ds = d.toISOString().split('T')[0];
+      const dayEvents = events.filter(e => e.date === ds);
+      const isToday = ds === new Date().toISOString().split('T')[0];
+
+      const day = document.createElement('div');
+      day.style.display = 'flex';
+      day.style.flexDirection = 'column';
+      day.style.border = '1px solid var(--color-border-tertiary)';
+      day.style.borderRadius = 'var(--border-radius-md)';
+      day.style.background = isToday ? 'var(--color-neutral-bg-secondary)' : 'var(--color-background-primary)';
+      day.style.overflow = 'hidden';
+
+      day.innerHTML = `
+        <div style="padding:var(--space-sm);text-align:center;border-bottom:1px solid var(--color-border-tertiary);background:var(--color-background-secondary);">
+          <div style="font-size:10px;font-weight:700;color:var(--color-text-tertiary);text-transform:uppercase;">${DNS[i].substring(0,3)}</div>
+          <div style="font-size:var(--fs-md);font-weight:800;color:${isToday ? 'var(--color-primary)' : 'var(--color-text-primary)'};">${d.getDate()}</div>
+        </div>
+        <div style="flex:1;padding:var(--space-xs);overflow-y:auto;display:flex;flex-direction:column;gap:4px;">
+          ${dayEvents.map(e => `
+            <div style="font-size:11px;padding:4px;background:var(--color-background-secondary);border-radius:4px;display:flex;align-items:center;gap:4px;border-left:3px solid var(--color-primary);">
+              <span>${e.emoji}</span>
+              <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${e.title}</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+      grid.appendChild(day);
+    }
+    container.appendChild(grid);
+  }
+
+  function renderMonthlyEvents() {
+    const container = document.getElementById('events-content');
+    container.innerHTML = '';
+
+    const y = eventsBaseDate.getFullYear(), m = eventsBaseDate.getMonth();
+    const first = new Date(y, m, 1).getDay(), days = new Date(y, m + 1, 0).getDate();
+
+    const grid = document.createElement('div');
+    grid.style.display = 'grid';
+    grid.style.gridTemplateColumns = 'repeat(7, 1fr)';
+    grid.style.gap = '4px';
+    grid.style.height = '100%';
+
+    // Headers
+    ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(h => {
+      const el = document.createElement('div');
+      el.style.textAlign = 'center'; el.style.fontSize = '10px'; el.style.fontWeight = '700'; el.style.color = 'var(--color-text-tertiary)';
+      el.textContent = h;
+      grid.appendChild(el);
+    });
+
+    for (let i = 0; i < first; i++) grid.appendChild(document.createElement('div'));
+
+    for (let d = 1; d <= days; d++) {
+      const ds = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const dayEvents = events.filter(e => e.date === ds);
+      const isToday = ds === new Date().toISOString().split('T')[0];
+
+      const cell = document.createElement('div');
+      cell.style.border = '0.5px solid var(--color-border-tertiary)';
+      cell.style.borderRadius = '4px';
+      cell.style.minHeight = '60px';
+      cell.style.padding = '2px';
+      cell.style.background = isToday ? 'var(--color-neutral-bg-secondary)' : 'var(--color-background-primary)';
+
+      cell.innerHTML = `
+        <div style="font-size:10px;font-weight:700;color:${isToday ? 'var(--color-primary)' : 'var(--color-text-tertiary)'}">${d}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:2px;margin-top:2px;">
+          ${dayEvents.map(e => `<span title="${e.title}" style="font-size:14px;">${e.emoji}</span>`).join('')}
+        </div>
+      `;
+      grid.appendChild(cell);
+    }
+    container.appendChild(grid);
+  }
+
   let selectedHabitColor = COLS[1];
 
   function showNewHabitForm() {
@@ -2483,19 +2912,32 @@
     appMode = mode;
     document.getElementById('tab-journal').classList.toggle('active', mode === 'journal');
     document.getElementById('tab-habits').classList.toggle('active', mode === 'habits');
+    document.getElementById('tab-affirmations').classList.toggle('active', mode === 'affirmations');
+    document.getElementById('tab-events').classList.toggle('active', mode === 'events');
     
     const journals = document.querySelectorAll('.mode-journal');
     const habitPanels = document.querySelectorAll('.mode-habits');
+    const affirmationPanels = document.querySelectorAll('.mode-affirmations');
+    const eventPanels = document.querySelectorAll('.mode-events');
     
+    // Hide all
+    [...journals, ...habitPanels, ...affirmationPanels, ...eventPanels].forEach(el => el.classList.add('hidden-mode'));
+
     if (mode === 'journal') {
       journals.forEach(el => el.classList.remove('hidden-mode'));
-      habitPanels.forEach(el => el.classList.add('hidden-mode'));
       document.getElementById('cal-fab').style.display = (window.innerWidth <= 767) ? 'inline-flex' : 'none';
-    } else {
-      journals.forEach(el => el.classList.add('hidden-mode'));
+    } else if (mode === 'habits') {
       habitPanels.forEach(el => el.classList.remove('hidden-mode'));
       document.getElementById('cal-fab').style.display = 'none';
       renderHabitList();
+    } else if (mode === 'affirmations') {
+      affirmationPanels.forEach(el => el.classList.remove('hidden-mode'));
+      document.getElementById('cal-fab').style.display = 'none';
+      updateAffirmationStreak();
+    } else if (mode === 'events') {
+      eventPanels.forEach(el => el.classList.remove('hidden-mode'));
+      document.getElementById('cal-fab').style.display = 'none';
+      renderEvents();
     }
     
     updateResponsiveUI();
@@ -2504,6 +2946,8 @@
   document.addEventListener('DOMContentLoaded', () => {
     initTheme();
     initHabits();
+    initAffirmations();
+    initEvents();
     updateResponsiveUI();
     
     // Start reminder check
