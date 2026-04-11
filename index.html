@@ -1298,12 +1298,12 @@
       </div>
     </div>
 
-    <div id="habit-detail-panel" class="mode-habits hidden-mode" style="flex:1;flex-direction:column;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);background:var(--color-background-primary);overflow:hidden;">
+    <div id="habit-detail-panel" class="mode-habits hidden-mode" style="flex:1;display:flex;flex-direction:column;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);background:var(--color-background-primary);overflow:hidden;min-height:0;">
       <div id="habit-empty" style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;">
         <span class="material-symbols-rounded" style="font-size:48px;color:var(--color-text-tertiary);">track_changes</span>
         <p style="color:var(--color-text-secondary);font-weight:600;">Select a habit to view progress</p>
       </div>
-      <div id="habit-content" style="display:none;flex:1;flex-direction:column;min-height:0;">
+      <div id="habit-content" style="display:none;flex-direction:column;flex:1;min-height:0;overflow:hidden;">
         <div style="padding:var(--space-md) var(--space-lg);border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);display:flex;justify-content:space-between;align-items:center;">
           <h2 id="active-habit-name" style="font-size:var(--fs-lg);font-family:var(--font-display);color:var(--color-text-primary);margin:0;"></h2>
           <div style="display:flex;gap:var(--space-sm);">
@@ -2104,7 +2104,7 @@
     document.getElementById('habit-start-input').value = today.toISOString().split('T')[0];
     document.getElementById('habit-duration-input').value = '1m';
     document.getElementById('habit-category-input').value = 'other';
-    
+
     const picker = document.getElementById('habit-color-picker');
     picker.innerHTML = '';
     COLS.forEach(c => {
@@ -2133,7 +2133,7 @@
     
     if (!name) { showToast('Please enter a habit name'); return; }
     if (!start) { showToast('Please select a start date'); return; }
-    
+
     // Calculate end date
     const startDate = new Date(start);
     const endDate = new Date(startDate);
@@ -2142,7 +2142,7 @@
     else if (duration === '1m') endDate.setMonth(startDate.getMonth() + 1);
     else if (duration === '2m') endDate.setMonth(startDate.getMonth() + 2);
     else if (duration === '1y') endDate.setFullYear(startDate.getFullYear() + 1);
-    
+
     const newHabit = {
       id: Date.now().toString(),
       name,
@@ -2235,6 +2235,14 @@
     }
   }
 
+  function getWeekNumber(d) {
+    const date = new Date(d.getTime());
+    date.setHours(0, 0, 0, 0);
+    date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+    const week1 = new Date(date.getFullYear(), 0, 4);
+    return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+  }
+
   function renderHabitHeatmap(h) {
     const container = document.getElementById('habit-heatmap-container');
     container.innerHTML = '';
@@ -2243,19 +2251,20 @@
     const filters = document.createElement('div');
     filters.style.display = 'flex';
     filters.style.gap = 'var(--space-sm)';
+    filters.style.flexWrap = 'wrap';
     filters.innerHTML = `
       <button class="tbtn ${heatmapFilter === 'all' ? 'on' : ''}" onclick="setHeatmapFilter('all')">All Time</button>
       <button class="tbtn ${heatmapFilter === 'month' ? 'on' : ''}" onclick="setHeatmapFilter('month')">Current Month</button>
       <button class="tbtn ${heatmapFilter === 'week' ? 'on' : ''}" onclick="setHeatmapFilter('week')">Current Week</button>
     `;
     container.appendChild(filters);
-    
+
     let start = new Date(h.start);
     let end = new Date(h.end);
-    
+
     const today = new Date();
     const todayStr = today.toISOString().split('T')[0];
-    
+
     if (heatmapFilter === 'month') {
       const first = new Date(today.getFullYear(), today.getMonth(), 1);
       const last = new Date(today.getFullYear(), today.getMonth() + 1, 0);
@@ -2269,7 +2278,7 @@
       if (first > start) start = first;
       if (last < end) end = last;
     }
-    
+
     // Stats section
     const stats = document.createElement('div');
     stats.style.display = 'flex';
@@ -2277,11 +2286,11 @@
     stats.style.padding = 'var(--space-md)';
     stats.style.background = 'var(--color-background-secondary)';
     stats.style.borderRadius = 'var(--border-radius-md)';
-    
+
     const completionData = habitCompletions[h.id] || {};
     const completionDates = Object.keys(completionData);
     const total = completionDates.length;
-    
+
     // Calculate streak
     let streak = 0;
     const streakToday = new Date().toISOString().split('T')[0];
@@ -2304,7 +2313,7 @@
     // Calculate progress
     const totalDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
     const progress = Math.min(100, Math.round((total / totalDays) * 100));
-    
+
     const radius = 30;
     const circumference = 2 * Math.PI * radius;
     const offset = circumference - (progress / 100) * circumference;
@@ -2330,17 +2339,25 @@
 
     // Heatmap Grid
     const grid = document.createElement('div');
+    grid.style.overflowY = 'auto';
     grid.style.display = 'grid';
-    grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(32px, 1fr))';
+    grid.style.gridTemplateColumns = '40px repeat(7, 1fr)';
     grid.style.gap = '4px';
-    
+    grid.style.marginTop = 'var(--space-md)';
+    grid.style.paddingRight = '8px'; 
+    grid.style.maxHeight = '400px';
+
+    // Header for Days
+    grid.innerHTML = '<div style="grid-column: 1"></div>' +
+      ['S','M','T','W','T','F','S'].map(d => `<div style="text-align:center;font-size:10px;font-weight:700;color:var(--color-text-tertiary);">${d}</div>`).join('');
+
     let current = new Date(start);
-    // Move to start of week (Sunday)
-    current.setDate(current.getDate() - current.getDay());
-    
+    current.setDate(current.getDate() - current.getDay()); // Sunday
+
     const last = new Date(end);
-    // Move to end of week (Saturday)
-    last.setDate(last.getDate() + (6 - last.getDay()));
+    last.setDate(last.getDate() + (6 - last.getDay())); // Saturday
+
+    let currentMonth = -1;
 
     while (current <= last) {
       const ds = current.toISOString().split('T')[0];
@@ -2348,8 +2365,39 @@
       const dayData = completionData[ds];
       const isCompleted = !!dayData;
       const isToday = ds === todayStr;
-      
+
+      // Month Label Row
+      if (current.getMonth() !== currentMonth) {
+        currentMonth = current.getMonth();
+        const monthHeader = document.createElement('div');
+        monthHeader.style.gridColumn = '1 / -1';
+        monthHeader.style.padding = '16px 0 8px 0';
+        monthHeader.style.fontSize = '14px';
+        monthHeader.style.fontWeight = '700';
+        monthHeader.style.color = h.color;
+        monthHeader.style.fontFamily = 'var(--font-display)';
+        monthHeader.style.borderBottom = `1px solid var(--color-border-tertiary)`;
+        monthHeader.style.marginBottom = '4px';
+        monthHeader.textContent = `${MNS[currentMonth]} ${current.getFullYear()}`;
+        grid.appendChild(monthHeader);
+      }
+
+      // Week Number (only on Sundays)
+      if (current.getDay() === 0) {
+        const weekNum = document.createElement('div');
+        weekNum.style.gridColumn = '1';
+        weekNum.style.display = 'flex';
+        weekNum.style.alignItems = 'center';
+        weekNum.style.justifyContent = 'center';
+        weekNum.style.fontSize = '9px';
+        weekNum.style.color = 'var(--color-text-tertiary)';
+        weekNum.style.fontWeight = '600';
+        weekNum.textContent = 'W' + getWeekNumber(current);
+        grid.appendChild(weekNum);
+      }
+
       const day = document.createElement('div');
+      day.style.gridColumn = (current.getDay() + 2).toString();
       day.style.aspectRatio = '1';
       day.style.borderRadius = '4px';
       day.style.border = '0.5px solid var(--color-border-tertiary)';
