@@ -1463,9 +1463,26 @@
             <label style="display:block;font-size:var(--fs-xs);font-weight:700;color:var(--color-text-secondary);margin-bottom:4px;">EVENT TITLE</label>
             <input type="text" id="event-title-input" placeholder="e.g. Marathon Training" style="width:100%;padding:var(--space-sm);border:1.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);">
           </div>
+          <div style="display:flex;gap:var(--space-md);">
+            <div style="flex:1;">
+              <label style="display:block;font-size:var(--fs-xs);font-weight:700;color:var(--color-text-secondary);margin-bottom:4px;">DATE</label>
+              <input type="date" id="event-date-input" style="width:100%;padding:var(--space-sm);border:1.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);">
+            </div>
+            <div style="flex:1;">
+              <label style="display:block;font-size:var(--fs-xs);font-weight:700;color:var(--color-text-secondary);margin-bottom:4px;">TIME</label>
+              <input type="time" id="event-time-input" style="width:100%;padding:var(--space-sm);border:1.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);">
+            </div>
+          </div>
           <div>
-            <label style="display:block;font-size:var(--fs-xs);font-weight:700;color:var(--color-text-secondary);margin-bottom:4px;">DATE</label>
-            <input type="date" id="event-date-input" style="width:100%;padding:var(--space-sm);border:1.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);">
+            <label style="display:block;font-size:var(--fs-xs);font-weight:700;color:var(--color-text-secondary);margin-bottom:4px;">LOCATION</label>
+            <div style="display:flex;gap:var(--space-sm);">
+              <input type="text" id="event-location-input" placeholder="Address or Place" style="flex:1;padding:var(--space-sm);border:1.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);">
+              <button class="tbtn" onclick="searchOnMaps()" title="Search on Maps"><span class="material-symbols-rounded">map</span></button>
+            </div>
+          </div>
+          <div>
+            <label style="display:block;font-size:var(--fs-xs);font-weight:700;color:var(--color-text-secondary);margin-bottom:4px;">DESCRIPTION</label>
+            <textarea id="event-description-input" placeholder="Notes about this event..." style="width:100%;height:80px;padding:var(--space-sm);border:1.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);resize:none;font-size:var(--fs-sm);"></textarea>
           </div>
           <div>
             <label style="display:block;font-size:var(--fs-xs);font-weight:700;color:var(--color-text-secondary);margin-bottom:4px;">EMOJI</label>
@@ -1475,6 +1492,40 @@
         <div style="padding:var(--space-lg);background:var(--color-background-secondary);border-top:0.5px solid var(--color-border-tertiary);display:flex;gap:var(--space-md);justify-content:flex-end;">
           <button class="tbtn" onclick="hideNewEventForm()">Cancel</button>
           <button class="svbtn" onclick="createNewEvent()">Add Event</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Event Details Modal -->
+    <div id="event-details-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1001;align-items:center;justify-content:center;padding:var(--space-md);">
+      <div style="background:var(--color-background-primary);border-radius:var(--border-radius-lg);width:100%;max-width:400px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.3);">
+        <div style="padding:var(--space-lg);background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);display:flex;justify-content:space-between;align-items:center;">
+          <h3 id="detail-event-title" style="margin:0;font-family:var(--font-display);color:var(--color-primary);">Event Details</h3>
+          <button class="tbtn" onclick="hideEventDetails()"><span class="material-symbols-rounded">close</span></button>
+        </div>
+        <div style="padding:var(--space-lg);display:flex;flex-direction:column;gap:var(--space-md);">
+          <div style="display:flex;align-items:center;gap:var(--space-md);">
+            <div id="detail-event-emoji" style="font-size:48px;background:var(--color-background-secondary);width:80px;height:80px;display:flex;align-items:center;justify-content:center;border-radius:12px;border:1px solid var(--color-border-tertiary);"></div>
+            <div>
+              <div id="detail-event-date" style="font-weight:700;font-size:var(--fs-md);color:var(--color-text-primary);"></div>
+              <div id="detail-event-time" style="color:var(--color-text-secondary);font-size:var(--fs-sm);"></div>
+            </div>
+          </div>
+          <div id="detail-event-location-wrapper" style="display:none;">
+             <label style="display:block;font-size:var(--fs-xs);font-weight:700;color:var(--color-text-secondary);margin-bottom:4px;text-transform:uppercase;">Location</label>
+             <div style="display:flex;justify-content:space-between;align-items:center;">
+               <span id="detail-event-location" style="color:var(--color-text-primary);font-size:var(--fs-sm);"></span>
+               <button class="tbtn" id="detail-maps-btn" onclick="openInMaps()" style="padding:4px 8px;font-size:var(--fs-xs);display:flex;align-items:center;gap:4px;"><span class="material-symbols-rounded" style="font-size:14px;">map</span>Open Maps</button>
+             </div>
+          </div>
+          <div id="detail-event-description-wrapper" style="display:none;">
+             <label style="display:block;font-size:var(--fs-xs);font-weight:700;color:var(--color-text-secondary);margin-bottom:4px;text-transform:uppercase;">Description</label>
+             <div id="detail-event-description" style="color:var(--color-text-primary);font-size:var(--fs-sm);background:var(--color-background-secondary);padding:var(--space-sm);border-radius:var(--border-radius-md);white-space:pre-wrap;"></div>
+          </div>
+        </div>
+        <div style="padding:var(--space-lg);background:var(--color-background-secondary);border-top:0.5px solid var(--color-border-tertiary);display:flex;gap:var(--space-md);justify-content:flex-end;">
+          <button class="tbtn" id="detail-edit-btn" style="color:var(--color-secondary-dark);"><span class="material-symbols-rounded" style="font-size:18px;">edit</span> Edit</button>
+          <button class="tbtn" id="detail-delete-btn" style="color:var(--color-error);"><span class="material-symbols-rounded" style="font-size:18px;">delete</span> Delete</button>
         </div>
       </div>
     </div>
@@ -2327,10 +2378,18 @@
     renderEvents();
   }
 
+  let editingEventId = null;
+
   function showNewEventForm() {
+    editingEventId = null;
     document.getElementById('event-modal').style.display = 'flex';
+    document.querySelector('#event-modal h3').textContent = 'Add New Event';
+    document.querySelector('#event-modal .svbtn').textContent = 'Add Event';
     document.getElementById('event-title-input').value = '';
     document.getElementById('event-date-input').value = new Date().toISOString().split('T')[0];
+    document.getElementById('event-time-input').value = '';
+    document.getElementById('event-location-input').value = '';
+    document.getElementById('event-description-input').value = '';
 
     const picker = document.getElementById('event-emoji-picker');
     picker.innerHTML = '';
@@ -2354,18 +2413,114 @@
   function createNewEvent() {
     const title = document.getElementById('event-title-input').value.trim();
     const date = document.getElementById('event-date-input').value;
+    const time = document.getElementById('event-time-input').value;
+    const location = document.getElementById('event-location-input').value.trim();
+    const description = document.getElementById('event-description-input').value.trim();
+
     if (!title || !date) { showToast('Please enter title and date'); return; }
 
-    const newEvent = { id: Date.now().toString(), title, date, emoji: selectedEventEmoji };
-    events.push(newEvent);
+    if (editingEventId) {
+      const idx = events.findIndex(e => e.id === editingEventId);
+      if (idx !== -1) {
+        events[idx] = { ...events[idx], title, date, time, location, description, emoji: selectedEventEmoji };
+      }
+      editingEventId = null;
+      showToast('Event updated! ✨');
+    } else {
+      const newEvent = { id: Date.now().toString(), title, date, time, location, description, emoji: selectedEventEmoji };
+      events.push(newEvent);
+      showToast('Event added! 🗓️');
+    }
+
     saveEvents();
     hideNewEventForm();
-    showToast('Event added! 🗓️');
   }
 
   function deleteEvent(id) {
-    events = events.filter(e => e.id !== id);
-    saveEvents();
+    if (confirm('Delete this event?')) {
+      events = events.filter(e => e.id !== id);
+      saveEvents();
+      hideEventDetails();
+    }
+  }
+
+  function showEventDetails(id) {
+    const e = events.find(x => x.id === id);
+    if (!e) return;
+
+    document.getElementById('detail-event-title').textContent = e.title;
+    document.getElementById('detail-event-emoji').textContent = e.emoji;
+    document.getElementById('detail-event-date').textContent = e.date;
+    document.getElementById('detail-event-time').textContent = e.time || 'No time set';
+
+    const locWrapper = document.getElementById('detail-event-location-wrapper');
+    if (e.location) {
+      locWrapper.style.display = 'block';
+      document.getElementById('detail-event-location').textContent = e.location;
+    } else {
+      locWrapper.style.display = 'none';
+    }
+
+    const descWrapper = document.getElementById('detail-event-description-wrapper');
+    if (e.description) {
+      descWrapper.style.display = 'block';
+      document.getElementById('detail-event-description').textContent = e.description;
+    } else {
+      descWrapper.style.display = 'none';
+    }
+
+    document.getElementById('detail-edit-btn').onclick = () => editEvent(e.id);
+    document.getElementById('detail-delete-btn').onclick = () => deleteEvent(e.id);
+
+    document.getElementById('event-details-modal').style.display = 'flex';
+  }
+
+  function hideEventDetails() {
+    document.getElementById('event-details-modal').style.display = 'none';
+  }
+
+  function editEvent(id) {
+    const e = events.find(x => x.id === id);
+    if (!e) return;
+
+    hideEventDetails();
+    editingEventId = id;
+
+    document.getElementById('event-modal').style.display = 'flex';
+    document.querySelector('#event-modal h3').textContent = 'Edit Event';
+    document.querySelector('#event-modal .svbtn').textContent = 'Update Event';
+
+    document.getElementById('event-title-input').value = e.title;
+    document.getElementById('event-date-input').value = e.date;
+    document.getElementById('event-time-input').value = e.time || '';
+    document.getElementById('event-location-input').value = e.location || '';
+    document.getElementById('event-description-input').value = e.description || '';
+
+    selectedEventEmoji = e.emoji;
+    const picker = document.getElementById('event-emoji-picker');
+    picker.innerHTML = '';
+    EVENT_EMOJIS.forEach(em => {
+      const btn = document.createElement('button');
+      btn.className = 'sticker-btn' + (em === selectedEventEmoji ? ' on' : '');
+      btn.textContent = em;
+      btn.onclick = () => {
+        selectedEventEmoji = em;
+        picker.querySelectorAll('button').forEach(b => b.classList.remove('on'));
+        btn.classList.add('on');
+      };
+      picker.appendChild(btn);
+    });
+  }
+
+  function searchOnMaps() {
+    const loc = document.getElementById('event-location-input').value.trim();
+    if (!loc) { showToast('Please enter a location first'); return; }
+    window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc)}`, '_blank');
+  }
+
+  function openInMaps() {
+    const loc = document.getElementById('detail-event-location').textContent;
+    window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc)}`, '_blank');
   }
 
   function setEventsView(view) {
@@ -2417,12 +2572,13 @@
       el.style.alignItems = 'center';
       el.style.gap = 'var(--space-sm)';
       el.style.animation = 'none';
+      el.onclick = () => showEventDetails(e.id);
 
       el.innerHTML = `
         <span style="font-size:20px;">${e.emoji}</span>
         <div style="flex:1;overflow:hidden;">
           <div style="font-weight:700;font-size:var(--fs-sm);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${e.title}</div>
-          <div style="font-size:10px;color:var(--color-text-tertiary);">${e.date}</div>
+          <div style="font-size:10px;color:var(--color-text-tertiary);">${e.date} ${e.time || ''}</div>
         </div>
         <button class="tbtn" onclick="event.stopPropagation(); deleteEvent('${e.id}')" style="padding:2px;color:var(--color-error);border:none;"><span class="material-symbols-rounded" style="font-size:16px;">delete</span></button>
       `;
@@ -2465,7 +2621,7 @@
         </div>
         <div style="flex:1;padding:var(--space-xs);overflow-y:auto;display:flex;flex-direction:column;gap:4px;">
           ${dayEvents.map(e => `
-            <div style="font-size:11px;padding:4px;background:var(--color-background-secondary);border-radius:4px;display:flex;align-items:center;gap:4px;border-left:3px solid var(--color-primary);">
+            <div onclick="showEventDetails('${e.id}')" style="cursor:pointer;font-size:11px;padding:4px;background:var(--color-background-secondary);border-radius:4px;display:flex;align-items:center;gap:4px;border-left:3px solid var(--color-primary);">
               <span>${e.emoji}</span>
               <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${e.title}</span>
             </div>
@@ -2515,7 +2671,11 @@
       cell.innerHTML = `
         <div style="font-size:10px;font-weight:700;color:${isToday ? 'var(--color-primary)' : 'var(--color-text-tertiary)'}">${d}</div>
         <div style="display:flex;flex-wrap:wrap;gap:2px;margin-top:2px;">
-          ${dayEvents.map(e => `<span title="${e.title}" style="font-size:14px;">${e.emoji}</span>`).join('')}
+          ${dayEvents.map(e => `
+            <div onclick="showEventDetails('${e.id}')" title="${e.title}" style="cursor:pointer;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:4px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 1px 2px rgba(0,0,0,0.05);">
+              ${e.emoji}
+            </div>
+          `).join('')}
         </div>
       `;
       grid.appendChild(cell);
