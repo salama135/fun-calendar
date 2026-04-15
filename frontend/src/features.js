@@ -2,7 +2,7 @@ export const FEATURES = {
   tabs: {
     journal: true,
     habits: true,
-    affirmations: true,
+    affirmations: false,
     events: true,
   },
   details: {
