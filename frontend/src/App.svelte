@@ -30,8 +30,8 @@
 
 <header id="top-bar">
   <div id="top-bar-left">
-    {#if $appMode === 'journal'}
-      <button class="bar-btn" class:active={calendarVisible} on:click={toggleCalendarPanel}>
+    {#if $appMode === 'journal' && !isMobile}
+      <button class="bar-btn" class:active={calendarVisible} on:click={toggleCalendarPanel} aria-pressed={calendarVisible} aria-label={calendarVisible ? 'Hide calendar panel' : 'Show calendar panel'}>
         <span class="material-symbols-rounded">calendar_month</span>
         {calendarVisible ? 'Hide Calendar' : 'Show Calendar'}
       </button>
@@ -39,7 +39,7 @@
     <h1 id="app-title">Fun Calendar</h1>
   </div>
   <div id="top-bar-right">
-    <button class="bar-btn" on:click={toggleTheme}>
+    <button class="bar-btn" on:click={toggleTheme} aria-label="Toggle theme">
       <span class="material-symbols-rounded">{$theme === 'dark' ? 'light_mode' : 'dark_mode'}</span>
       Switch to {$theme === 'dark' ? 'light' : 'dark'}
     </button>
@@ -103,6 +103,7 @@
     top: 0;
     z-index: 100;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     padding: var(--space-sm) var(--space-xl);
@@ -115,6 +116,11 @@
     display: flex;
     align-items: center;
     gap: var(--space-md);
+    min-width: 0;
+  }
+
+  #top-bar-right {
+    min-width: 0;
   }
 
   #app-title {
@@ -130,22 +136,29 @@
   .bar-btn {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    font-size: var(--fs-xs);
+    justify-content: center;
+    gap: 6px;
+    font-size: var(--fs-sm);
     font-weight: 600;
-    padding: 5px var(--space-sm);
+    padding: 8px var(--space-sm);
     border-radius: 20px;
     border: 1px solid var(--color-neutral-border);
     cursor: pointer;
     background: transparent;
     color: var(--color-text-secondary);
-    min-height: 32px;
+    min-height: 40px;
+    transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
   }
 
   .bar-btn:hover, .bar-btn.active {
     background: var(--color-primary);
     color: white;
     border-color: var(--color-primary);
+  }
+
+  .bar-btn:focus-visible {
+    outline: 3px solid rgba(255, 107, 53, 0.35);
+    outline-offset: 2px;
   }
 
   #main-wrapper {
@@ -166,6 +179,7 @@
     gap: var(--space-lg);
     flex: 1;
     position: relative;
+    min-width: 0;
   }
 
   #cal-fab {
@@ -178,13 +192,24 @@
     color: white;
     border: none;
     border-radius: 24px;
-    padding: 10px var(--space-xl);
+    padding: 10px var(--space-lg);
     font-size: var(--fs-sm);
     font-weight: 700;
     box-shadow: 0 4px 20px rgba(255, 107, 53, 0.4);
     display: flex;
     align-items: center;
     gap: 6px;
+    width: min(92%, 280px);
+    justify-content: center;
+  }
+
+  #cal-fab.active {
+    box-shadow: 0 6px 24px rgba(255, 107, 53, 0.35);
+  }
+
+  #cal-fab:focus-visible {
+    outline: 3px solid rgba(255, 255, 255, 0.9);
+    outline-offset: 2px;
   }
 
   @media(max-width:1023px) {
@@ -192,10 +217,55 @@
       height: auto;
       flex-direction: column;
       padding: var(--space-md);
+      gap: var(--space-md);
     }
     #sidebar-tabs {
       flex-direction: row;
+      flex-wrap: wrap;
       padding-top: 0;
+      overflow-x: auto;
+      white-space: nowrap;
+      padding-bottom: var(--space-sm);
+      margin-bottom: var(--space-sm);
+    }
+    #main-container {
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+    #sidebar-tabs::-webkit-scrollbar {
+      height: 6px;
+    }
+    #sidebar-tabs::-webkit-scrollbar-thumb {
+      background: rgba(0,0,0,0.12);
+      border-radius: 999px;
+    }
+  }
+
+  @media(max-width:767px) {
+    #top-bar {
+      padding: var(--space-sm) var(--space-lg);
+    }
+    #top-bar-left {
+      width: 100%;
+      justify-content: space-between;
+    }
+    #app-title {
+      font-size: var(--fs-lg);
+    }
+    .bar-btn {
+      font-size: var(--fs-sm);
+      padding: 10px 12px;
+      min-height: 44px;
+    }
+    #sidebar-tabs {
+      gap: var(--space-xs);
+    }
+    .tab-divider {
+      flex: 1 0 auto;
+      min-width: 112px;
+    }
+    #cal-fab {
+      bottom: calc(var(--space-xl) + 8px);
     }
   }
 </style>
