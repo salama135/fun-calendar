@@ -4,6 +4,7 @@ export const FEATURES = {
     habits: true,
     affirmations: false,
     events: true,
+    timeboxing: true,
   },
   details: {
     eventMaps: true,

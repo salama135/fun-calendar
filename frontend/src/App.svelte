@@ -5,6 +5,7 @@
   import Habits from './lib/Habits.svelte';
   import Affirmations from './lib/Affirmations.svelte';
   import Events from './lib/Events.svelte';
+  import Timeboxing from './lib/Timeboxing.svelte';
   import { onMount } from 'svelte';
 
   let calendarVisible = true;
@@ -74,6 +75,11 @@
         <span class="material-symbols-rounded">event</span> Events
       </button>
     {/if}
+    {#if FEATURES.tabs.timeboxing}
+      <button class="tab-divider" class:active={$appMode === 'timeboxing'} on:click={() => switchMode('timeboxing')}>
+        <span class="material-symbols-rounded">timer</span> Timeboxing
+      </button>
+    {/if}
   </nav>
 
   <div id="main-container">
@@ -85,6 +91,8 @@
       <Affirmations />
     {:else if $appMode === 'events'}
       <Events />
+    {:else if $appMode === 'timeboxing'}
+      <Timeboxing />
     {/if}
   </div>
 </div>
